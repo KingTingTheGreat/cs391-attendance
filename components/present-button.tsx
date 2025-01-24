@@ -1,5 +1,4 @@
 "use client";
-
 import markAsPresent from "@/lib/markAsPresent";
 
 export default function PresentButton() {
