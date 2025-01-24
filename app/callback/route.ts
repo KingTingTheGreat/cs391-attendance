@@ -8,9 +8,12 @@ export async function GET(req: NextRequest) {
   const error = req.nextUrl.searchParams.get("error");
 
   if (error || !code) {
-    return NextResponse.json(
-      { error: "please try to sign in again" },
-      { status: 400 },
+    return NextResponse.redirect(
+      req.nextUrl.origin +
+        "/error?message=" +
+        encodeURIComponent(
+          "something went wrong, perhaps you did not grant access. please sign in again.",
+        ),
     );
   }
 
@@ -19,9 +22,12 @@ export async function GET(req: NextRequest) {
   });
   const success = await setUserCookies(code, res);
   if (!success) {
-    return NextResponse.json(
-      { error: "please try to sign in again" },
-      { status: 400 },
+    return NextResponse.redirect(
+      req.nextUrl.origin +
+        "/error?message=" +
+        encodeURIComponent(
+          "something went wrong, on our end. please sign in again and notify the instructor.",
+        ),
     );
   }
 

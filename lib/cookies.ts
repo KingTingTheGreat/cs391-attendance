@@ -20,7 +20,10 @@ export async function setUserCookies(
 ): Promise<boolean> {
   const accessToken = await exchangeGoogleCode(googleCode);
   const googleUser = await getGoogleUser(accessToken);
-  if (!googleUser) return false;
+  if (!googleUser) {
+    console.error("failed to get user information from google");
+    return false;
+  }
 
   const sessionId = genSessionId();
 
@@ -50,7 +53,10 @@ export async function setUserCookies(
       upsert: true,
     },
   );
-  if (!res.acknowledged) return false;
+  if (!res.acknowledged) {
+    console.error("failed to update/insert user in database");
+    return false;
+  }
 
   response.cookies.set(COOKIE_NAME, sessionId, {
     httpOnly: true,
