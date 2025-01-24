@@ -3,6 +3,7 @@ import { userFromCookies } from "@/lib/cookies";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import Image from "next/image";
+import markAsPresent from "@/lib/markAsPresent";
 
 export default async function Home() {
   const cookieStore = await cookies();
@@ -33,7 +34,7 @@ export default async function Home() {
       ) : (
         <div>
           <p>Were you in class today?</p>
-          <button>Yes</button>
+          <button onClick={markAsPresent}>Yes</button>
           <button>No</button>
         </div>
       )}

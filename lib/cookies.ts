@@ -38,7 +38,7 @@ export async function setUserCookies(
       },
       $setOnInsert: {
         email: googleUser.email,
-        role: Role.Student,
+        role: Role.student,
         attendanceList: [],
       },
       // @ts-expect-error weird mongo linting?

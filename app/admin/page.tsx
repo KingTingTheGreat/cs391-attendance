@@ -8,12 +8,13 @@ export default async function AdminPage() {
   const cookieStore = await cookies();
   const user = await userFromCookies(cookieStore);
 
-  if (!user || user.role !== Role.Admin) {
+  if (!user || user.role !== Role.admin) {
     return redirect("/");
   }
 
   return (
     <div>
+      <h1 className="text-4xl font-bold">Admin Page</h1>
       <AdminPanel />
     </div>
   );
