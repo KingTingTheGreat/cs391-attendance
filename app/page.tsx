@@ -3,7 +3,7 @@ import { userFromCookies } from "@/lib/cookies";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import Image from "next/image";
-import markAsPresent from "@/lib/markAsPresent";
+import PresentButton from "@/components/present-button";
 
 export default async function Home() {
   const cookieStore = await cookies();
@@ -32,17 +32,7 @@ export default async function Home() {
       {presentToday ? (
         <p>You have been marked as present today</p>
       ) : (
-        <div>
-          <p>Were you in class today?</p>
-          <button
-            onClick={() =>
-              markAsPresent().then((res) => alert("marked as present" + res))
-            }
-          >
-            Yes
-          </button>
-          <button>No</button>
-        </div>
+        <PresentButton />
       )}
       <Image
         src={user.picture}
