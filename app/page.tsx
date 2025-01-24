@@ -34,7 +34,13 @@ export default async function Home() {
       ) : (
         <div>
           <p>Were you in class today?</p>
-          <button onClick={markAsPresent}>Yes</button>
+          <button
+            onClick={() =>
+              markAsPresent().then((res) => alert("marked as present" + res))
+            }
+          >
+            Yes
+          </button>
           <button>No</button>
         </div>
       )}
