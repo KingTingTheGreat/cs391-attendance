@@ -1,4 +1,5 @@
-import userFromCookies from "@/lib/userFromCookies";
+import AdminPanel from "@/components/admin-panel";
+import { userFromCookies } from "@/lib/cookies";
 import { Role } from "@/types";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -13,7 +14,7 @@ export default async function AdminPage() {
 
   return (
     <div>
-      <h1>Admin Page</h1>
+      <AdminPanel />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use server";
 import { cookies } from "next/headers";
-import userFromCookies from "./userFromCookies";
+import { userFromCookies } from "./cookies";
 
 function currentESTTime(): string {
   const date = new Date();
