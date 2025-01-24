@@ -27,6 +27,7 @@ export function getAttendanceList(users: UserProps[]): string[][] {
   const rows = users.map((user) => {
     let i = 0;
     return [
+      user.name,
       user.email,
       ...dates.map((d) => {
         if (!user.attendanceList) return "absent";
@@ -43,5 +44,5 @@ export function getAttendanceList(users: UserProps[]): string[][] {
 
   console.log(rows);
 
-  return [["Name", ...dates], ...rows];
+  return [["Name", "Email", ...dates], ...rows];
 }
