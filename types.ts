@@ -1,7 +1,7 @@
 export enum Role {
   Student = "student",
-  Admin = "admin",
   Staff = "staff",
+  Admin = "admin",
 }
 
 export enum Class {
