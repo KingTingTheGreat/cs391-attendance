@@ -2,7 +2,7 @@ import { Role, UserProps } from "@/types";
 
 function formatDate(date: Date): string {
   const year = date.getFullYear();
-  const month = date.getMonth(); // 0-based month
+  const month = date.getMonth() + 1;
   const day = date.getDate();
 
   return `${year}-${month}-${day}`;
