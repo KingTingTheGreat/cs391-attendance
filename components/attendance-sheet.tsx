@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 export default function AttendanceSheet({ users }: { users: UserProps[] }) {
   const attendanceList = getAttendanceList(users);
   const router = useRouter();
-  console.log(attendanceList);
 
   return (
     <div>
