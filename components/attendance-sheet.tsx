@@ -31,7 +31,7 @@ export default function AttendanceSheet({ users }: { users: UserProps[] }) {
                         ? "inherit"
                         : status === "present"
                           ? "lightgreen"
-                          : "red",
+                          : "pink",
                   }}
                 >
                   {status}
