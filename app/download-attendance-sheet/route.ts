@@ -31,12 +31,10 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     })
     .replaceAll("/", "-")
     .split(", ")[0];
-  console.log(date);
   const headers = new Headers();
-  headers.set("Content-Disposition", `attachment; filename=cs391-${date}.csv`);
+  headers.set("Content-Disposition", `attachment; filename=cs391_${date}.csv`);
   headers.set("Content-Type", "text/plain");
 
-  // Return the file with the content "hello"
   return new NextResponse(
     attendanceListToCSV(getAttendanceList(await allUsers())),
     {

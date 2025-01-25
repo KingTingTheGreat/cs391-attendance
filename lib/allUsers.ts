@@ -3,7 +3,6 @@ import getCollection, { USERS_COLLECTION } from "@/db";
 import { UserProps } from "@/types";
 
 export async function allUsers(): Promise<UserProps[]> {
-  console.log("retrieving all users");
   const usersCollection = await getCollection(USERS_COLLECTION);
 
   const users = await usersCollection.find().toArray();

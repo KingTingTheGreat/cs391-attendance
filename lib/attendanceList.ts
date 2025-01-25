@@ -42,7 +42,5 @@ export function getAttendanceList(users: UserProps[]): string[][] {
     ];
   });
 
-  console.log(rows);
-
   return [["Name", "Email", ...dates], ...rows];
 }
