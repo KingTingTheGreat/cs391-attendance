@@ -6,6 +6,7 @@ import exchangeGoogleCode from "./google/exchangeCode";
 import getGoogleUser from "./google/getUserData";
 import { randomBytes } from "crypto";
 import { NextResponse } from "next/server";
+import { RequestCookies } from "next/dist/compiled/@edge-runtime/cookies";
 
 const COOKIE_NAME = "cs391-attendance-cookie";
 
@@ -67,7 +68,7 @@ export async function setUserCookies(
 }
 
 export async function userFromCookies(
-  cookieStore: ReadonlyRequestCookies,
+  cookieStore: ReadonlyRequestCookies | RequestCookies,
 ): Promise<UserProps | null> {
   const sessionId = cookieStore.get(COOKIE_NAME)?.value;
   if (!sessionId) return null;
