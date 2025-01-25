@@ -29,10 +29,10 @@ export default function AttendanceSheet({ users }: { users: UserProps[] }) {
         </thead>
         <tbody>
           {attendanceList.slice(1).map((data) => (
-            <tr key={data[0]}>
+            <tr key={data[1]}>
               {data.map((status, i) => (
                 <td
-                  key={status}
+                  key={data[1] + status + i}
                   className="text-center border-2 p-2"
                   style={{
                     backgroundColor:
@@ -50,7 +50,6 @@ export default function AttendanceSheet({ users }: { users: UserProps[] }) {
           ))}
         </tbody>
       </table>
-      {}
     </div>
   );
 }
