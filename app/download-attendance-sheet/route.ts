@@ -31,8 +31,13 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     })
     .replaceAll("/", "-")
     .split(", ")[0];
+  // add indicator to filename if from dev server
+  const indicator = process.env.ENVIRONMENT === "dev" ? "_dev" : "";
   const headers = new Headers();
-  headers.set("Content-Disposition", `attachment; filename=cs391_${date}.csv`);
+  headers.set(
+    "Content-Disposition",
+    `attachment; filename=cs391_${date}${indicator}.csv`,
+  );
   headers.set("Content-Type", "text/plain");
 
   return new NextResponse(
