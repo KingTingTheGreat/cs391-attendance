@@ -1,3 +1,4 @@
+"use server";
 import googleSignInLink from "@/lib/googleSignInLink";
 import { userFromCookies } from "@/lib/cookies";
 import { cookies } from "next/headers";
