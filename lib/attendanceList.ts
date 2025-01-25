@@ -1,11 +1,11 @@
 import { Role, UserProps } from "@/types";
 
 export function formatDate(date: Date): string {
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-
-  return `${year}-${month}-${day}`;
+  return date
+    .toLocaleString("en-us", {
+      timeZone: "America/New_York",
+    })
+    .split(", ")[0];
 }
 
 export function getAttendanceList(users: UserProps[]): string[][] {
@@ -14,15 +14,15 @@ export function getAttendanceList(users: UserProps[]): string[][] {
     .filter((user) => user.role === Role.student)
     .sort((a, b) => a.email.toLowerCase().localeCompare(b.email.toLowerCase()));
 
-  const uniqueDates = new Set<string>();
+  const uniqueDates: { [key: string]: Date } = {};
   for (const user of users) {
     if (!user.attendanceList) continue;
     for (const att of user.attendanceList) {
-      uniqueDates.add(formatDate(att.date));
+      uniqueDates[formatDate(att.date)] = att.date;
     }
   }
-  const dates = Array.from(uniqueDates);
-  dates.sort();
+  const dates = Object.keys(uniqueDates);
+  dates.sort((a, b) => uniqueDates[a].getTime() - uniqueDates[b].getTime());
 
   const rows = users.map((user) => {
     let i = 0;
