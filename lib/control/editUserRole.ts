@@ -13,6 +13,7 @@ export async function EditUserRole(
 
   if (!user || user.role !== Role.admin)
     return "unauthorized. please sign in again.";
+  if (user.email === email) return "you cannot change your own role.";
 
   const usersCollection = await getCollection(USERS_COLLECTION);
   const res = await usersCollection.updateOne(
