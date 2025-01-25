@@ -1,5 +1,5 @@
 import { allUsers } from "@/lib/allUsers";
-import { getAttendanceList } from "@/lib/attendanceList";
+import { formatDate, getAttendanceList } from "@/lib/attendanceList";
 import { userFromCookies } from "@/lib/cookies";
 import { Role } from "@/types";
 import { NextRequest, NextResponse } from "next/server";
@@ -25,12 +25,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     return NextResponse.redirect(req.nextUrl.origin);
   }
 
-  const date = new Date()
-    .toLocaleString("en-us", {
-      timeZone: "America/New_York",
-    })
-    .replaceAll("/", "-")
-    .split(", ")[0];
+  const date = formatDate(new Date()).replaceAll("/", "-");
   // add indicator to filename if from dev server
   const indicator = process.env.ENVIRONMENT === "dev" ? "_dev" : "";
   const headers = new Headers();
