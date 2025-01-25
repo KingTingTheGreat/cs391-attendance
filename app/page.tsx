@@ -30,11 +30,7 @@ export default async function Home() {
       <h1 className="text-4xl font-bold">CS391 Attendance</h1>
       <p>You are signed in</p>
       <p>Hi {user.name}!</p>
-      {presentToday ? (
-        <p>You have been marked as present today</p>
-      ) : (
-        <PresentButton />
-      )}
+      <PresentButton presentInput={presentToday} />
       <Image
         src={user.picture}
         alt="profile picture"
