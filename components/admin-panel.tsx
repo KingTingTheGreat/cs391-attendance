@@ -18,9 +18,9 @@ export default function AdminPanel() {
 
   return (
     <>
-      <button onClick={deleteAllStudents}>Delete All Students</button>
       <EditRole users={users} />
       <AttendanceSheet users={users} />
+      <button onClick={deleteAllStudents}>Delete All Students</button>
     </>
   );
 }
