@@ -22,7 +22,7 @@ function attendanceListToCSV(attendanceList: string[][]): string {
 export async function GET(req: NextRequest): Promise<NextResponse> {
   const user = await userFromCookies(req.cookies);
   if (!user || !allowedRoles.includes(user.role)) {
-    return NextResponse.redirect("/");
+    return NextResponse.redirect(req.nextUrl.origin);
   }
 
   const date = new Date()
