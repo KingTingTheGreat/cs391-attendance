@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 import Link from "next/link";
 import Image from "next/image";
 import PresentButton from "@/components/present-button";
+import { formatDate } from "@/lib/attendanceList";
 
 export default async function Home() {
   const cookieStore = await cookies();
@@ -23,7 +24,8 @@ export default async function Home() {
   const presentToday =
     user.attendanceList &&
     user.attendanceList.length > 0 &&
-    user.attendanceList[user.attendanceList.length - 1].date == new Date();
+    formatDate(user.attendanceList[user.attendanceList.length - 1].date) ===
+      formatDate(new Date());
 
   return (
     <div>
