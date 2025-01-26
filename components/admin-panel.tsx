@@ -1,13 +1,13 @@
 "use client";
 import { allUsers } from "@/lib/allUsers";
 import { deleteAllStudents } from "@/lib/control/deleteAllStudents";
-import { UserProps } from "@/types";
+import { Role, UserProps } from "@/types";
 import { useEffect, useState } from "react";
 import EditRole from "./edit-role";
 import Loading from "./loading";
 import MuiAttendanceSheet from "./mui-attendance-sheet";
 
-export default function AdminPanel() {
+export default function AdminPanel({ role }: { role: Role }) {
   const [users, setUsers] = useState<UserProps[] | null>(null);
 
   useEffect(() => {
@@ -18,11 +18,13 @@ export default function AdminPanel() {
 
   return (
     <>
-      <EditRole users={users} />
+      {role === Role.admin && <EditRole users={users} />}
       <div className="flex flex-col items-center p-8">
         <MuiAttendanceSheet users={users} />
       </div>
-      <button onClick={deleteAllStudents}>Delete All Students</button>
+      {role === Role.admin && (
+        <button onClick={deleteAllStudents}>Delete All Students</button>
+      )}
     </>
   );
 }

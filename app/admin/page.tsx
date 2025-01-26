@@ -1,23 +1,28 @@
 import AdminPanel from "@/components/admin-panel";
 import { userFromCookies } from "@/lib/cookies";
-import { Role } from "@/types";
+import { Role, UserProps } from "@/types";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 export default async function AdminPage() {
+  let user: UserProps | null = null;
   if (process.env.ENVIRONMENT !== "dev") {
     const cookieStore = await cookies();
-    const user = await userFromCookies(cookieStore);
+    user = await userFromCookies(cookieStore);
 
-    if (!user || user.role !== Role.admin) {
+    if (!user) {
       return redirect("/");
+    } else if (user.role !== Role.staff && user.role !== Role.admin) {
+      // allow staff and admin to see this page
+      redirect("/");
     }
   }
 
+  // admin role in dev environment
   return (
     <div>
       <h1 className="text-4xl font-bold">Admin Page</h1>
-      <AdminPanel />
+      <AdminPanel role={user ? user.role : Role.admin} />
     </div>
   );
 }
