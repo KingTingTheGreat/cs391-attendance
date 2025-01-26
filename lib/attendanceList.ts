@@ -11,6 +11,14 @@ export function formatDate(date: Date): string {
     .split(", ")[0];
 }
 
+export function formatTime(date: Date): string {
+  const timeParts = date
+    .toLocaleString("en-us", { timeZone: "America/New_York" })
+    .split(", ")[1]
+    .split(":");
+  return timeParts[0] + ":" + timeParts[1] + timeParts[2].slice(2);
+}
+
 export function getAttendanceList(users: UserProps[]): string[][] {
   // filter for students only
   users = users.filter((user) => user.role === Role.student);
@@ -32,8 +40,9 @@ export function getAttendanceList(users: UserProps[]): string[][] {
       ...dates.map((d) => {
         if (i >= user.attendanceList.length) return AttendanceStatus.absent;
         if (formatDate(user.attendanceList[i].date) === d) {
+          const t = formatTime(user.attendanceList[i].date);
           i++;
-          return AttendanceStatus.present;
+          return t;
         } else {
           return AttendanceStatus.absent;
         }

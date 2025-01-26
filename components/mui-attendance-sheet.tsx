@@ -29,7 +29,8 @@ export default function MuiAttendanceSheet({ users }: { users: UserProps[] }) {
           rows={data.slice(1)}
           getRowId={(row) => row[1]}
           getCellClassName={(cell) => {
-            return cell.value === AttendanceStatus.present
+            // assumes students names and emails will not contain a colon
+            return cell.value.includes(":")
               ? "bg-green-200"
               : cell.value === AttendanceStatus.absent
                 ? "bg-red-200"
