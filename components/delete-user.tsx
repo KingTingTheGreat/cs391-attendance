@@ -1,10 +1,12 @@
 "use client";
 import { deleteUser } from "@/lib/control/deleteUser";
-import { Role, UserProps } from "@/types";
+import { Role } from "@/types";
 import { Button, MenuItem, Modal, Select } from "@mui/material";
 import { useState } from "react";
+import { useUsersContext } from "@/components/users-context";
 
-export default function DeleteUser({ users }: { users: UserProps[] }) {
+export default function DeleteUser() {
+  const { users, setUsers } = useUsersContext();
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -56,8 +58,11 @@ export default function DeleteUser({ users }: { users: UserProps[] }) {
             <Button
               variant="contained"
               onClick={() =>
-                deleteUser(email).then((msg) => {
-                  setErrorMessage(msg);
+                deleteUser(email).then((res) => {
+                  if (res.success) {
+                    setUsers(users.filter((user) => user.email !== email));
+                  }
+                  setErrorMessage(res.message);
                   setOpen(false);
                 })
               }

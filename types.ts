@@ -37,3 +37,8 @@ export type GoogleUserProps = {
   picture: string;
   hd: string;
 };
+
+export type ServerFuncRes = {
+  success: boolean;
+  message: string;
+};

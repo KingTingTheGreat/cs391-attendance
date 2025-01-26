@@ -1,10 +1,12 @@
 "use client";
 import { EditUserRole } from "@/lib/control/editUserRole";
-import { Role, UserProps } from "@/types";
+import { Role } from "@/types";
 import { Button, MenuItem, Select } from "@mui/material";
 import { useState } from "react";
+import { useUsersContext } from "@/components/users-context";
 
-export default function EditRole({ users }: { users: UserProps[] }) {
+export default function EditRole() {
+  const { users, setUsers } = useUsersContext();
   const [selectedEmail, setSelectedEmail] = useState<string>("");
   const [newRole, setNewRole] = useState<Role | string>("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -52,9 +54,18 @@ export default function EditRole({ users }: { users: UserProps[] }) {
         sx={{ margin: "0.25rem" }}
         onClick={() => {
           if (selectedEmail && newRole) {
-            EditUserRole(selectedEmail, newRole as Role).then((msg) =>
-              setErrorMessage(msg),
-            );
+            EditUserRole(selectedEmail, newRole as Role).then((res) => {
+              if (res.success) {
+                setUsers(
+                  users.map((user) =>
+                    user.email === selectedEmail
+                      ? { ...user, role: newRole as Role }
+                      : user,
+                  ),
+                );
+              }
+              setErrorMessage(res.message);
+            });
           }
         }}
       >

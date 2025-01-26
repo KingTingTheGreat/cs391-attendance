@@ -2,12 +2,11 @@
 import { formatDate } from "@/lib/attendanceList";
 import DownloadIcon from "@mui/icons-material/Download";
 import { Button } from "@mui/material";
+import { useUsersContext } from "@/components/users-context";
 
-export default function DownloadSheet({
-  attendanceList,
-}: {
-  attendanceList: string[][];
-}) {
+export default function DownloadSheet() {
+  const { attendanceList } = useUsersContext();
+
   return (
     <Button
       sx={{
