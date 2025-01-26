@@ -1,0 +1,36 @@
+"use client";
+import { deleteAllStudents } from "@/lib/control/deleteAllStudents";
+import { Button, Modal } from "@mui/material";
+import { useState } from "react";
+
+export default function DeleteAllStudents() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div>
+      <Button onClick={() => setOpen(true)} variant="contained">
+        Delete All Students
+      </Button>
+      <Modal open={open} onClose={() => setOpen(false)}>
+        <div
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
+		    w-80 h-44 bg-white rounded-3xl flex flex-col items-center justify-center"
+        >
+          <p className="text-xl p-1 m-2 text-center">
+            Are you sure you want to delete all students? This action is{" "}
+            <span className="text-[#F00] font-semibold">permanent</span> and{" "}
+            <span className="text-[#F00] font-semibold">irreverisble</span>.
+          </p>
+          <div className="w-[60%] flex justify-between">
+            <Button variant="outlined" onClick={() => setOpen(false)}>
+              No
+            </Button>
+            <Button variant="contained" onClick={deleteAllStudents}>
+              Yes
+            </Button>
+          </div>
+        </div>
+      </Modal>
+    </div>
+  );
+}
