@@ -1,22 +1,12 @@
-import { getAttendanceList } from "@/lib/attendanceList";
-import { UserProps } from "@/types";
-import { useRouter } from "next/navigation";
+import { getAttendanceList, NumLong } from "@/lib/attendanceList";
+import { AttendanceStatus, UserProps } from "@/types";
 
 export default function AttendanceSheet({ users }: { users: UserProps[] }) {
   const attendanceList = getAttendanceList(users);
-  const router = useRouter();
 
   return (
     <div>
       <h2>Attendance Sheet</h2>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          router.push(`/download-attendance-sheet?t=${new Date().getTime()}`);
-        }}
-      >
-        <button type="submit">Download</button>
-      </form>
       <table className="p-2 border-2 m-2">
         <thead>
           <tr>
@@ -36,9 +26,9 @@ export default function AttendanceSheet({ users }: { users: UserProps[] }) {
                   className="text-center border-2 p-2"
                   style={{
                     backgroundColor:
-                      i < 2
+                      i < NumLong
                         ? "inherit"
-                        : status === "present"
+                        : status === AttendanceStatus.present
                           ? "lightgreen"
                           : "pink",
                   }}

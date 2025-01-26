@@ -5,12 +5,12 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 export default async function AdminPage() {
-  const cookieStore = await cookies();
-  const user = await userFromCookies(cookieStore);
-
-  if (!user || user.role !== Role.admin) {
-    return redirect("/");
-  }
+  // const cookieStore = await cookies();
+  // const user = await userFromCookies(cookieStore);
+  //
+  // if (!user || user.role !== Role.admin) {
+  //   return redirect("/");
+  // }
 
   return (
     <div>

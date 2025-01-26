@@ -1,4 +1,7 @@
-import { Role, UserProps } from "@/types";
+import { AttendanceStatus, Role, UserProps } from "@/types";
+
+// number of headers that are not dates
+export const NumLong = 2;
 
 export function formatDate(date: Date): string {
   return date
@@ -9,14 +12,11 @@ export function formatDate(date: Date): string {
 }
 
 export function getAttendanceList(users: UserProps[]): string[][] {
-  // filter for students and sort alphabetically
-  users = users
-    .filter((user) => user.role === Role.student)
-    .sort((a, b) => a.email.toLowerCase().localeCompare(b.email.toLowerCase()));
+  // filter for students only
+  users = users.filter((user) => user.role === Role.student);
 
   const uniqueDates: { [key: string]: Date } = {};
   for (const user of users) {
-    if (!user.attendanceList) continue;
     for (const att of user.attendanceList) {
       uniqueDates[formatDate(att.date)] = att.date;
     }
@@ -30,13 +30,12 @@ export function getAttendanceList(users: UserProps[]): string[][] {
       user.name,
       user.email,
       ...dates.map((d) => {
-        if (!user.attendanceList) return "absent";
-        if (i >= user.attendanceList.length) return "absent";
+        if (i >= user.attendanceList.length) return AttendanceStatus.absent;
         if (formatDate(user.attendanceList[i].date) === d) {
           i++;
-          return "present";
+          return AttendanceStatus.present;
         } else {
-          return "absent";
+          return AttendanceStatus.absent;
         }
       }),
     ];

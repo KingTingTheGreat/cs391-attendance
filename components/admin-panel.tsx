@@ -5,7 +5,7 @@ import { UserProps } from "@/types";
 import { useEffect, useState } from "react";
 import EditRole from "./edit-role";
 import Loading from "./loading";
-import AttendanceSheet from "./attendance-sheet";
+import MuiAttendanceSheet from "./mui-attendance-sheet";
 
 export default function AdminPanel() {
   const [users, setUsers] = useState<UserProps[] | null>(null);
@@ -19,7 +19,9 @@ export default function AdminPanel() {
   return (
     <>
       <EditRole users={users} />
-      <AttendanceSheet users={users} />
+      <div className="flex flex-col items-center p-8">
+        <MuiAttendanceSheet users={users} />
+      </div>
       <button onClick={deleteAllStudents}>Delete All Students</button>
     </>
   );

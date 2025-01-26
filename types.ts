@@ -8,6 +8,11 @@ export enum Class {
   Lecture = "lecture",
 }
 
+export enum AttendanceStatus {
+  present = "present",
+  absent = "absent",
+}
+
 export type AttendanceProps = {
   class: Class;
   date: Date;
@@ -19,7 +24,7 @@ export type UserProps = {
   picture: string;
   role: Role;
   sessionIdList?: string[];
-  attendanceList?: AttendanceProps[];
+  attendanceList: AttendanceProps[];
 };
 
 export type GoogleUserProps = {
