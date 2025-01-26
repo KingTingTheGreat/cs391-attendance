@@ -25,11 +25,14 @@ export default function EditRole({ users }: { users: UserProps[] }) {
       </select>
       <select onChange={(e) => setNewRole((e.target.value as Role) || null)}>
         <option></option>
-        {Object.keys(Role).map((role) => (
-          <option key={role} value={role}>
-            {role}
-          </option>
-        ))}
+        {Object.keys(Role).map(
+          (role) =>
+            role !== Role.admin && (
+              <option key={role} value={role}>
+                {role}
+              </option>
+            ),
+        )}
       </select>
 
       <button
