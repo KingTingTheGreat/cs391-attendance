@@ -7,7 +7,7 @@ import { useState } from "react";
 export default function EditRole({ users }: { users: UserProps[] }) {
   const [selectedEmail, setSelectedEmail] = useState<string>("");
   const [newRole, setNewRole] = useState<Role | string>("");
-  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   return (
     <div className="p-2 m-2 w-fit">
@@ -53,14 +53,14 @@ export default function EditRole({ users }: { users: UserProps[] }) {
         onClick={() => {
           if (selectedEmail && newRole) {
             EditUserRole(selectedEmail, newRole as Role).then((msg) =>
-              setErrorMessage(msg as string),
+              setErrorMessage(msg),
             );
           }
         }}
       >
         Edit Role
       </Button>
-      <p>{errorMessage}</p>
+      <p className="text-center">{errorMessage}</p>
     </div>
   );
 }

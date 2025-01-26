@@ -7,7 +7,7 @@ import getCollection, { USERS_COLLECTION } from "@/db";
 export async function EditUserRole(
   email: string,
   newRole: Role,
-): Promise<string | null> {
+): Promise<string> {
   const cookieStore = await cookies();
   const user = await userFromCookies(cookieStore);
 
@@ -20,9 +20,8 @@ export async function EditUserRole(
     { email },
     { $set: { role: newRole } },
   );
-  if (!res.acknowledged) {
-    return "something went wrong. please try again.";
-  }
+  if (res.modifiedCount === 0)
+    return "could not update user. please try again later.";
 
-  return null;
+  return "successfully updated user";
 }

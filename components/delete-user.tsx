@@ -7,7 +7,8 @@ import { useState } from "react";
 export default function DeleteUser({ users }: { users: UserProps[] }) {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
-  console.log(users);
+  const [errorMessage, setErrorMessage] = useState("");
+
   return (
     <div className="p-2 m-2 w-fit">
       <h3 className="text-2xl font-semibold text-center w-full">
@@ -35,6 +36,7 @@ export default function DeleteUser({ users }: { users: UserProps[] }) {
       >
         Delete User
       </Button>
+      <p className="text-center">{errorMessage}</p>
       <Modal open={open} onClose={() => setOpen(false)}>
         <div
           className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
@@ -51,7 +53,15 @@ export default function DeleteUser({ users }: { users: UserProps[] }) {
             <Button variant="outlined" onClick={() => setOpen(false)}>
               No
             </Button>
-            <Button variant="contained" onClick={() => deleteUser(email)}>
+            <Button
+              variant="contained"
+              onClick={() =>
+                deleteUser(email).then((msg) => {
+                  setErrorMessage(msg);
+                  setOpen(false);
+                })
+              }
+            >
               Yes
             </Button>
           </div>
