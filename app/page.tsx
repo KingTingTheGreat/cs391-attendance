@@ -22,7 +22,6 @@ export default async function Home() {
 
   return (
     <div>
-      <h1 className="text-4xl font-bold">CS391 Attendance</h1>
       <p>You are signed in</p>
       <p>Hi {user.name}!</p>
       <PresentButton user={user} />

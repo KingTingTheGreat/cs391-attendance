@@ -13,7 +13,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <header className="font-bold text-4xl p-4">CS391 Attendance</header>
+        {children}
+      </body>
     </html>
   );
 }

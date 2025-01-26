@@ -20,8 +20,8 @@ export default async function AdminPage() {
 
   // admin role in dev environment
   return (
-    <div className="p-8">
-      <h1 className="text-4xl font-bold">Admin Page</h1>
+    <div className="px-8 py-2 w-full">
+      <h1 className="text-4xl font-bold text-center">Admin Page</h1>
       <AdminPanel role={user ? user.role : Role.admin} />
     </div>
   );

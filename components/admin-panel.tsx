@@ -19,12 +19,20 @@ export default function AdminPanel({ role }: { role: Role }) {
 
   return (
     <>
-      {role === Role.admin && <EditRole users={users} />}
-      {role === Role.admin && <DeleteUser users={users} />}
+      {role === Role.admin && (
+        <div className="flex justify-center">
+          <EditRole users={users} />
+          <DeleteUser users={users} />
+        </div>
+      )}
       <div className="flex flex-col items-center p-8">
         <MuiAttendanceSheet users={users} />
       </div>
-      {role === Role.admin && <DeleteAllStudents />}
+      {role === Role.admin && (
+        <div className="flex justify-center">
+          <DeleteAllStudents />
+        </div>
+      )}
     </>
   );
 }
