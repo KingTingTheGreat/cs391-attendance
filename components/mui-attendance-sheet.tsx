@@ -11,7 +11,7 @@ export default function MuiAttendanceSheet({ users }: { users: UserProps[] }) {
   const columns: GridColDef[] = data[0].map((col, i) => ({
     field: `${i}`,
     headerName: col,
-    width: i < NumLong ? 150 : 90,
+    width: i < NumLong ? 150 : 115,
   }));
 
   return (
