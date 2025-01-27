@@ -16,7 +16,6 @@ export default async function markAsPresent(): Promise<boolean> {
     console.error("no user");
     return false;
   } else if (
-    user.attendanceList &&
     user.attendanceList.length > 0 &&
     formatDate(user.attendanceList[user.attendanceList.length - 1].date) ===
       formatDate(today)

@@ -2,9 +2,8 @@
 import { userFromCookies } from "@/lib/cookies";
 import { cookies } from "next/headers";
 import Link from "next/link";
-import Image from "next/image";
-import PresentButton from "@/components/student/present-button";
 import SignIn from "@/components/sign-in";
+import StudentProfile from "@/components/student/student-profile";
 
 export default async function Home({
   searchParams,
@@ -20,19 +19,13 @@ export default async function Home({
   }
 
   return (
-    <div>
-      <p>Hi {user.name}!</p>
-      <PresentButton user={user} />
-      <Image
-        src={user.picture}
-        alt="profile picture"
-        width={100}
-        height={100}
-        className="rounded-full"
-      />
-      <Link href="/sign-out" prefetch={false}>
-        Sign Out
-      </Link>
+    <div className="flex justify-center">
+      <div className="p-1 m-2 flex flex-col items-center text-xl max-w-[90vw] text-center">
+        <StudentProfile user={user} />
+        <Link href="/sign-out" prefetch={false}>
+          Sign Out
+        </Link>
+      </div>
     </div>
   );
 }
