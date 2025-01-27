@@ -10,10 +10,13 @@ const nextConfig: NextConfig = {
         port: "",
         pathname: "/a/**",
       },
+      {
+        protocol: "https",
+        hostname: "upload.wikimedia.org",
+        port: "",
+        pathname: "/wikipedia/en/**",
+      },
     ],
-  },
-  experimental: {
-    reactCompiler: true,
   },
 };
 

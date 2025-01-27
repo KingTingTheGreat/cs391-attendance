@@ -1,10 +1,10 @@
 "use server";
-import { Role, ServerFuncRes, UserProps } from "@/types";
+import { Role, ServerFuncRes } from "@/types";
 import { userFromCookies } from "../cookies";
 import { cookies } from "next/headers";
 import getCollection, { USERS_COLLECTION } from "@/db";
 import { formatDate } from "../util/format";
-import { DEFAULT_ROLE, ENV, MOCK } from "../env";
+import { ENV, MOCK } from "../env";
 
 const allowedRoles = [Role.staff, Role.admin];
 
@@ -12,16 +12,10 @@ export async function markStudentAbsent(
   email: string,
   date: Date,
 ): Promise<ServerFuncRes> {
-  let user: UserProps | null = null;
+  const cookieStore = await cookies();
+  const user = await userFromCookies(cookieStore);
 
-  if (ENV !== "dev" || DEFAULT_ROLE === undefined) {
-    const cookieStore = await cookies();
-    user = await userFromCookies(cookieStore);
-
-    if (!user || !allowedRoles.includes(user.role)) {
-      return { success: false, message: "unauthorized. please sign in again." };
-    }
-  } else if (!allowedRoles.includes(DEFAULT_ROLE)) {
+  if (!user || !allowedRoles.includes(user.role)) {
     return { success: false, message: "unauthorized. please sign in again." };
   }
 

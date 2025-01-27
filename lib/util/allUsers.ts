@@ -5,22 +5,16 @@ import { mockStudents } from "../mockStudents";
 import { cookies } from "next/headers";
 import { userFromCookies } from "../cookies";
 import { redirect } from "next/navigation";
-import { DEFAULT_ROLE, ENV, MOCK } from "../env";
+import { ENV, MOCK } from "../env";
 
 const allowedRoles = [Role.staff, Role.admin];
 
 export async function allUsers(): Promise<UserProps[]> {
-  let user: UserProps | null = null;
+  const cookieStore = await cookies();
+  const user = await userFromCookies(cookieStore);
 
-  if (ENV !== "dev" || DEFAULT_ROLE === undefined) {
-    const cookieStore = await cookies();
-    user = await userFromCookies(cookieStore);
-
-    if (!user || !allowedRoles.includes(user.role)) {
-      // only allow staff and admin to access this data
-      return redirect("/");
-    }
-  } else if (!allowedRoles.includes(DEFAULT_ROLE)) {
+  if (!user || !allowedRoles.includes(user.role)) {
+    // only allow staff and admin to access this data
     return redirect("/");
   }
 
