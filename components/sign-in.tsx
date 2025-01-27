@@ -5,10 +5,7 @@ export default function SignIn({ errorMessage }: { errorMessage?: string }) {
   return (
     <div className="flex justify-center">
       <div className="p-1 m-2 flex flex-col items-center text-xl max-w-[90vw] text-center">
-        <p>
-          Who are you? Please sign in so we know who you are and can mark your
-          attendance.
-        </p>
+        <p>Who are you? Please sign in so we can mark your attendance.</p>
         <Link
           href={googleSignInLink()}
           className="rounded-lg px-4 py-2 m-2 border-2 hover:bg-zinc-50"
