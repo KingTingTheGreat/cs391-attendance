@@ -2,8 +2,8 @@
 import { cookies } from "next/headers";
 import { userFromCookies } from "../cookies";
 import getCollection, { USERS_COLLECTION } from "@/db";
-import { Class } from "@/types";
-import { formatDate } from "../util/format";
+import { Class, DayEnum } from "@/types";
+import { formatDate, formatDay } from "../util/format";
 import { generateCode } from "../generateCode";
 import {
   CLASS_COORDS,
@@ -14,7 +14,7 @@ import {
 } from "../env";
 import { getDistance } from "geolib";
 
-const classDays = ["tuesday", "thursday"];
+const classDays = [DayEnum.tuesday, DayEnum.thursday];
 
 export default async function markAsPresent(
   code: string,
@@ -24,14 +24,8 @@ export default async function markAsPresent(
   console.log("mark as present");
   const today = new Date();
   if (!DISABLE_DAY_CHECKING) {
-    const todayDay = today
-      .toLocaleString("en-us", {
-        weekday: "long",
-        timeZone: "America/New_York",
-      })
-      .toLowerCase();
-    if (!classDays.includes(todayDay)) {
-      console.error("studenting claiming to be present on", todayDay);
+    if (!classDays.includes(formatDay(today))) {
+      console.error("studenting claiming to be present on", formatDay(today));
       return "why are you here? there's no class today";
     }
   }

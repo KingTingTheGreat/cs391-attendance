@@ -42,3 +42,13 @@ export type ServerFuncRes = {
   success: boolean;
   message: string;
 };
+
+export enum DayEnum {
+  monday = "monday",
+  tuesday = "tuesday",
+  wednesday = "wednesday",
+  thursday = "thursday",
+  friday = "friday",
+  saturday = "saturday",
+  sunday = "sunday",
+}
