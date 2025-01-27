@@ -24,9 +24,6 @@ export default function RootLayout({
         </head>
       )}
       <body>
-        <header className="font-bold text-4xl p-4 text-center md:text-left">
-          CS391 Attendance
-        </header>
         <CSPostHogProvider>{children}</CSPostHogProvider>
       </body>
     </html>

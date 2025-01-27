@@ -1,4 +1,5 @@
 import AdminPanel from "@/components/control/admin-panel";
+import Header from "@/components/header";
 import { userFromCookies } from "@/lib/cookies";
 import { DEFAULT_ROLE, ENV } from "@/lib/env";
 import { Role, UserProps } from "@/types";
@@ -22,11 +23,14 @@ export default async function AdminPage() {
     return redirect("/");
   }
 
-  // admin role in dev environment
+  // use default role in dev environment
   return (
-    <div className="px-8 py-2 w-full">
-      <h1 className="text-4xl font-bold text-center">Admin Page</h1>
-      <AdminPanel role={user ? user.role : DEFAULT_ROLE} />
-    </div>
+    <>
+      <Header role={user ? user.role : DEFAULT_ROLE} />
+      <div className="px-8 py-2 w-full">
+        <h1 className="text-4xl font-bold text-center">Admin Page</h1>
+        <AdminPanel role={user ? user.role : DEFAULT_ROLE} />
+      </div>
+    </>
   );
 }

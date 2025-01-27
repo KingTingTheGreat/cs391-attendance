@@ -2,8 +2,9 @@
 import { userFromCookies } from "@/lib/cookies";
 import { cookies } from "next/headers";
 import Link from "next/link";
-import SignIn from "@/components/sign-in";
+import SignInPage from "@/components/sign-in-page";
 import StudentProfile from "@/components/student/student-profile";
+import Header from "@/components/header";
 
 export default async function Home({
   searchParams,
@@ -15,17 +16,20 @@ export default async function Home({
 
   if (!user) {
     const qParams = await searchParams;
-    return <SignIn errorMessage={qParams.message} />;
+    return <SignInPage errorMessage={qParams.message} />;
   }
 
   return (
-    <div className="flex justify-center">
-      <div className="p-1 m-2 flex flex-col items-center text-xl max-w-[90vw] text-center">
-        <StudentProfile userInput={user} />
-        <Link href="/sign-out" prefetch={false} className="hover:underline">
-          Sign Out
-        </Link>
+    <>
+      <Header role={user.role} />
+      <div className="flex justify-center">
+        <div className="p-1 m-2 flex flex-col items-center text-xl max-w-[90vw] text-center">
+          <StudentProfile userInput={user} />
+          <Link href="/sign-out" prefetch={false} className="hover:underline">
+            Sign Out
+          </Link>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
