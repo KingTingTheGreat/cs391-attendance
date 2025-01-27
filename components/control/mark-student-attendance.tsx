@@ -41,7 +41,7 @@ export default function MarkStudentAttendance() {
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en">
         <DateTimePicker
           value={dayjsDate}
-          sx={{ margin: "0.25rem", width: "200px" }}
+          sx={{ margin: "0.25rem", width: "225px" }}
           onChange={(newDayjsDate) => {
             if (newDayjsDate) setDayjsDate(newDayjsDate);
           }}
