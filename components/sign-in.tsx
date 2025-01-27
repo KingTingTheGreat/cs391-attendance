@@ -14,7 +14,7 @@ export default function SignIn({ errorMessage }: { errorMessage?: string }) {
         </Link>
         {errorMessage && (
           <p>
-            ERROR: <span style={{ color: "#F00" }}>{errorMessage}</span>
+            ERROR: <span className="text-[#F00]">{errorMessage}</span>
           </p>
         )}
       </div>
