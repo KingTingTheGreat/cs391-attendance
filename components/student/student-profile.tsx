@@ -2,11 +2,17 @@
 import markAsPresent from "@/lib/student/markAsPresent";
 import Image from "next/image";
 import { useState, useTransition } from "react";
-import { UserProps } from "@/types";
+import { Class, UserProps } from "@/types";
 import { formatDate } from "@/lib/util/format";
 import { Button } from "@mui/material";
 
-export default function StudentProfile({ user }: { user: UserProps }) {
+export default function StudentProfile({
+  userInput,
+}: {
+  userInput: UserProps;
+}) {
+  const [user, setUser] = useState(userInput);
+  const [errorMessage, setErrorMessage] = useState("");
   const [present, setPresent] = useState(
     user.attendanceList.length > 0 &&
       formatDate(user.attendanceList[user.attendanceList.length - 1].date) ===
@@ -18,7 +24,23 @@ export default function StudentProfile({ user }: { user: UserProps }) {
     <form
       action={() => {
         startTransition(() => {
-          markAsPresent().then((res) => setPresent(res));
+          markAsPresent().then((res) => {
+            if (res) {
+              setUser({
+                ...user,
+                attendanceList: [
+                  ...user.attendanceList,
+                  {
+                    class: Class.Lecture,
+                    date: new Date(),
+                  },
+                ],
+              });
+            } else {
+              setErrorMessage("something weng wrong. please try again.");
+            }
+            setPresent(res);
+          });
         });
       }}
     >
@@ -49,6 +71,15 @@ export default function StudentProfile({ user }: { user: UserProps }) {
         />
       </div>
       {interactive}
+      <p className="p-2 text-[#F00]">{errorMessage}</p>
+      <div className="p-2 m-2">
+        <h4 className="text-center font-semibold">
+          Dates you&apos;ve been marked as present:
+        </h4>
+        {user.attendanceList.map((att) => (
+          <p key={formatDate(att.date)}>{formatDate(att.date)}</p>
+        ))}
+      </div>
     </div>
   );
 }
