@@ -24,11 +24,13 @@ export default function EditRole() {
         sx={{ minWidth: 150, width: "fit-content", margin: "0.25rem" }}
       >
         <MenuItem value=""></MenuItem>
-        {users.map((user) => (
-          <MenuItem key={user.email} value={user.email}>
-            {user.email}
-          </MenuItem>
-        ))}
+        {users
+          .filter((user) => user.role !== Role.admin)
+          .map((user) => (
+            <MenuItem key={user.email} value={user.email}>
+              {user.email}
+            </MenuItem>
+          ))}
       </Select>
       <Select
         onChange={(e) =>
