@@ -28,7 +28,9 @@ export default function StudentProfile({ user }: { user: UserProps }) {
     </form>
   ) : (
     <div className="text-center p-4 bg-green-100 text-green-700 rounded-md">
-      You have been marked present for today!
+      {isPending
+        ? "Marking you as present..."
+        : "You have been marked present for today!"}
     </div>
   );
 
