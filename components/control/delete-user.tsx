@@ -12,7 +12,7 @@ export default function DeleteUser() {
   const [resMsg, setResMsg] = useState("");
 
   return (
-    <div className="p-2 m-2 w-fit">
+    <div className="p-2 m-2 w-fit flex flex-col lg:block">
       <h3 className="text-2xl font-semibold text-center w-full">
         Delete a User
       </h3>
