@@ -9,7 +9,7 @@ export default function EditRole() {
   const { users, setUsers } = useUsersContext();
   const [selectedEmail, setSelectedEmail] = useState<string>("");
   const [newRole, setNewRole] = useState<Role | string>("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [resMsg, setResMsg] = useState("");
 
   return (
     <div className="p-2 m-2 w-fit">
@@ -63,14 +63,14 @@ export default function EditRole() {
                   ),
                 );
               }
-              setErrorMessage(res.message);
+              setResMsg(res.message);
             });
           }
         }}
       >
         Edit Role
       </Button>
-      <p className="text-center">{errorMessage}</p>
+      <p className="text-center">{resMsg}</p>
     </div>
   );
 }

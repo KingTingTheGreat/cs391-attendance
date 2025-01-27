@@ -9,7 +9,7 @@ export default function DeleteUser() {
   const { users, setUsers } = useUsersContext();
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [resMsg, setResMsg] = useState("");
 
   return (
     <div className="p-2 m-2 w-fit">
@@ -38,7 +38,7 @@ export default function DeleteUser() {
       >
         Delete User
       </Button>
-      <p className="text-center">{errorMessage}</p>
+      <p className="text-center">{resMsg}</p>
       <Modal open={open} onClose={() => setOpen(false)}>
         <div
           className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
@@ -62,7 +62,7 @@ export default function DeleteUser() {
                   if (res.success) {
                     setUsers(users.filter((user) => user.email !== email));
                   }
-                  setErrorMessage(res.message);
+                  setResMsg(res.message);
                   setOpen(false);
                 })
               }

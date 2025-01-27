@@ -13,7 +13,7 @@ export default function MarkStudentPresent() {
   const { users, setUsers } = useUsersContext();
   const [dayjsDate, setDayjsDate] = useState<Dayjs>(dayjs(new Date()));
   const [selectedEmail, setSelectedEmail] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [resMsg, setResMsg] = useState("");
 
   return (
     <div className="p-2 m-2 w-fit">
@@ -69,13 +69,13 @@ export default function MarkStudentPresent() {
                 ),
               );
             }
-            setErrorMessage(res.message);
+            setResMsg(res.message);
           })
         }
       >
         Update
       </Button>
-      <p className="text-center">{errorMessage}</p>
+      <p className="text-center">{resMsg}</p>
     </div>
   );
 }
