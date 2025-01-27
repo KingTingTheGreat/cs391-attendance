@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
       req.nextUrl.origin +
         "/?message=" +
         encodeURIComponent(
-          "something went wrong, on our end. please sign in again and notify the instructor.",
+          "something went wrong on our end. please sign in again and notify the instructor.",
         ),
     );
   }
