@@ -22,7 +22,7 @@ export default async function Home({
     <div className="flex justify-center">
       <div className="p-1 m-2 flex flex-col items-center text-xl max-w-[90vw] text-center">
         <StudentProfile user={user} />
-        <Link href="/sign-out" prefetch={false}>
+        <Link href="/sign-out" prefetch={false} className="hover:underline">
           Sign Out
         </Link>
       </div>

@@ -1,7 +1,7 @@
 "use client";
 import markAsPresent from "@/lib/student/markAsPresent";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { UserProps } from "@/types";
 import { formatDate } from "@/lib/util/format";
 import { Button } from "@mui/material";
@@ -12,10 +12,17 @@ export default function StudentProfile({ user }: { user: UserProps }) {
       formatDate(user.attendanceList[user.attendanceList.length - 1].date) ===
         formatDate(new Date()),
   );
+  const [isPending, startTransition] = useTransition();
 
   const interactive = !present ? (
-    <form action={() => markAsPresent().then((res) => setPresent(res))}>
-      <Button type="submit" variant="contained">
+    <form
+      action={() => {
+        startTransition(() => {
+          markAsPresent().then((res) => setPresent(res));
+        });
+      }}
+    >
+      <Button type="submit" variant="contained" disabled={isPending}>
         Click to indicate you&apos;re in class
       </Button>
     </form>
