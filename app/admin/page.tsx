@@ -14,7 +14,7 @@ export default async function AdminPage() {
       return redirect("/");
     } else if (user.role !== Role.staff && user.role !== Role.admin) {
       // allow staff and admin to see this page
-      redirect("/");
+      return redirect("/");
     }
   }
 
