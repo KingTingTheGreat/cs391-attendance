@@ -6,7 +6,7 @@ import EditRole from "./edit-role";
 import DeleteAllStudents from "./delete-all-students";
 import DeleteUser from "./delete-user";
 import { UsersContextProvider } from "./users-context";
-import MarkStudentPresent from "./mark-student-present";
+import MarkStudentAttendance from "./mark-student-attendance";
 import Loading from "../loading";
 import MuiAttendanceSheet from "../attendance/mui-attendance-sheet";
 
@@ -28,7 +28,7 @@ export default function AdminPanel({ role }: { role: Role }) {
             <DeleteUser />
           </>
         )}
-        <MarkStudentPresent />
+        <MarkStudentAttendance />
       </div>
 
       <div className="flex flex-col items-center p-8">
