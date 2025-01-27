@@ -3,6 +3,7 @@ import { Class, Role, ServerFuncRes } from "@/types";
 import { userFromCookies } from "../cookies";
 import { cookies } from "next/headers";
 import getCollection, { USERS_COLLECTION } from "@/db";
+import { formatDate } from "../util/format";
 
 export async function markStudentPresent(
   email: string,
@@ -42,6 +43,6 @@ export async function markStudentPresent(
 
   return {
     success: true,
-    message: `successfully marked ${email} as present`,
+    message: `successfully marked ${email} as present on ${formatDate(date)}`,
   };
 }
