@@ -5,8 +5,16 @@ import getCollection, { USERS_COLLECTION } from "@/db";
 import { Class } from "@/types";
 import { formatDate } from "../util/format";
 import { generateCode } from "../generateCode";
-import { CLASS_COORDS, ENV, MAX_ALLOWED_DISTANCE, MOCK } from "../env";
+import {
+  CLASS_COORDS,
+  DISABLE_DAY_CHECKING,
+  ENV,
+  MAX_ALLOWED_DISTANCE,
+  MOCK,
+} from "../env";
 import { getDistance } from "geolib";
+
+const classDays = ["tuesday", "thursday"];
 
 export default async function markAsPresent(
   code: string,
@@ -14,10 +22,22 @@ export default async function markAsPresent(
   latitude?: number,
 ): Promise<string | null> {
   console.log("mark as present");
+  const today = new Date();
+  if (!DISABLE_DAY_CHECKING) {
+    const todayDay = today
+      .toLocaleString("en-us", {
+        weekday: "long",
+        timeZone: "America/New_York",
+      })
+      .toLowerCase();
+    if (!classDays.includes(todayDay)) {
+      console.error("studenting claiming to be present on", todayDay);
+      return "why are you here? there's no class today";
+    }
+  }
+
   const cookieStore = await cookies();
   const user = await userFromCookies(cookieStore);
-
-  const today = new Date();
   if (!user) {
     console.error("no user");
     return "something went wrong. please sign in again.";

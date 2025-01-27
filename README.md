@@ -19,3 +19,4 @@ The following environment variables are optional and will only affect the dev en
 - MOCK
 - DEFAULT_ROLE
 - ENABLE_SIGN_ON
+- DISABLE_DAY_CHECKING
