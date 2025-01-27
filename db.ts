@@ -1,13 +1,12 @@
 import { Collection, Db, MongoClient } from "mongodb";
+import { ENV } from "./lib/env";
 
 const MONGO_URI = process.env.MONGO_URI as string;
 if (!MONGO_URI) {
   throw new Error("MONGO_URI environment variable is undefined");
 }
 
-const ENVIRONMENT = process.env.ENVIRONMENT || "dev";
-
-const DB_NAME = "cs391-attendance-" + ENVIRONMENT;
+const DB_NAME = "cs391-attendance-" + ENV || "dev";
 export const USERS_COLLECTION = "users-collection";
 
 let client: MongoClient | null = null;

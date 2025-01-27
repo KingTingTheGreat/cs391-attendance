@@ -13,6 +13,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <script src="https://unpkg.com/react-scan/dist/auto.global.js" async />
+      </head>
       <body>
         <header className="font-bold text-4xl p-4 text-center md:text-left">
           CS391 Attendance

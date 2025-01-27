@@ -1,21 +1,26 @@
 import { userFromCookies } from "@/lib/cookies";
+import { ENV } from "@/lib/env";
 import { generateCode } from "@/lib/generateCode";
 import { Role, UserProps } from "@/types";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
+const allowedRoles = [Role.staff, Role.admin];
+
 export default async function CodePage() {
   let user: UserProps | null = null;
-  if (process.env.ENVIRONMENT !== "dev") {
+  const role = process.env.DEFAULT as Role;
+
+  if (ENV !== "dev" || role === undefined) {
     const cookieStore = await cookies();
     user = await userFromCookies(cookieStore);
 
-    if (!user) {
-      return redirect("/");
-    } else if (user.role !== Role.staff && user.role !== Role.admin) {
-      // allow staff and admin to see this page
+    if (!user || !allowedRoles.includes(user.role)) {
+      // only allow staff and admin to see this page
       return redirect("/");
     }
+  } else if (!allowedRoles.includes(role)) {
+    return redirect("/");
   }
 
   return (

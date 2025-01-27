@@ -2,14 +2,21 @@
 import { deleteAllStudents } from "@/lib/control/deleteAllStudents";
 import { Button, Modal } from "@mui/material";
 import { useState } from "react";
+import { useUsersContext } from "./users-context";
+import { Role } from "@/types";
 
 export default function DeleteAllStudents() {
   const [open, setOpen] = useState(false);
   const [resMsg, setResMsg] = useState("");
+  const { setUsers } = useUsersContext();
 
   return (
     <div className="w-fit p-2 m-2 flex flex-col items-center">
-      <Button onClick={() => setOpen(true)} variant="contained">
+      <Button
+        onClick={() => setOpen(true)}
+        variant="contained"
+        sx={{ margin: "0.25rem" }}
+      >
         Delete All Students
       </Button>
       <p className="text-center">{resMsg}</p>
@@ -30,8 +37,13 @@ export default function DeleteAllStudents() {
             <Button
               variant="contained"
               onClick={() =>
-                deleteAllStudents().then((msg) => {
-                  setResMsg(msg);
+                deleteAllStudents().then((res) => {
+                  if (res.success) {
+                    setUsers((users) =>
+                      users.filter((user) => user.role !== Role.student),
+                    );
+                  }
+                  setResMsg(res.message);
                   setOpen(false);
                 })
               }
