@@ -7,7 +7,7 @@ import getGoogleUser from "./google/getUserData";
 import { randomBytes } from "crypto";
 import { NextResponse } from "next/server";
 import { RequestCookies } from "next/dist/compiled/@edge-runtime/cookies";
-import { DEFAULT_ROLE, ENV, MOCK } from "./env";
+import { DEFAULT_ROLE, ENABLE_SIGN_ON, ENV, MOCK } from "./env";
 
 const COOKIE_NAME = "cs391-attendance-cookie";
 
@@ -73,7 +73,7 @@ export async function setUserCookies(
 export async function userFromCookies(
   cookieStore: ReadonlyRequestCookies | RequestCookies,
 ): Promise<UserProps | null> {
-  if (ENV === "dev" && MOCK) {
+  if (ENV === "dev" && MOCK && !ENABLE_SIGN_ON) {
     const role = DEFAULT_ROLE || Role.student;
     const name = "dev-" + role;
     return {
