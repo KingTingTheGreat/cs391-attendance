@@ -38,5 +38,5 @@ export default async function markAsPresent(): Promise<boolean> {
     },
   );
 
-  return res.acknowledged;
+  return res.modifiedCount === 1;
 }
