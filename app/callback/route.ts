@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
   if (error || !code) {
     return NextResponse.redirect(
       req.nextUrl.origin +
-        "/error?message=" +
+        "/?message=" +
         encodeURIComponent(
           "something went wrong, perhaps you did not grant access. please sign in again.",
         ),
@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
   if (!success) {
     return NextResponse.redirect(
       req.nextUrl.origin +
-        "/error?message=" +
+        "/?message=" +
         encodeURIComponent(
           "something went wrong, on our end. please sign in again and notify the instructor.",
         ),

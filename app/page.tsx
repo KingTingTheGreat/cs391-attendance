@@ -1,27 +1,26 @@
 "use server";
-import googleSignInLink from "@/lib/google/googleSignInLink";
 import { userFromCookies } from "@/lib/cookies";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import Image from "next/image";
 import PresentButton from "@/components/student/present-button";
+import SignIn from "@/components/sign-in";
 
-export default async function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ message: string }>;
+}) {
   const cookieStore = await cookies();
   const user = await userFromCookies(cookieStore);
 
   if (!user) {
-    return (
-      <div>
-        <p>You are not signed in</p>
-        <Link href={googleSignInLink()}>Sign In with Google</Link>
-      </div>
-    );
+    const qParams = await searchParams;
+    return <SignIn errorMessage={qParams.message} />;
   }
 
   return (
     <div>
-      <p>You are signed in</p>
       <p>Hi {user.name}!</p>
       <PresentButton user={user} />
       <Image

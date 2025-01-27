@@ -14,7 +14,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <header className="font-bold text-4xl p-4">CS391 Attendance</header>
+        <header className="font-bold text-4xl p-4 text-center md:text-left">
+          CS391 Attendance
+        </header>
         {children}
       </body>
     </html>
