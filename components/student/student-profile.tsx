@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useState, useTransition } from "react";
 import { Class, UserProps } from "@/types";
 import { formatDate } from "@/lib/util/format";
-import { Button } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 
 export default function StudentProfile({
   userInput,
@@ -12,6 +12,7 @@ export default function StudentProfile({
   userInput: UserProps;
 }) {
   const [user, setUser] = useState(userInput);
+  const [code, setCode] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [present, setPresent] = useState(
     user.attendanceList.length > 0 &&
@@ -24,8 +25,8 @@ export default function StudentProfile({
     <form
       action={() => {
         startTransition(() => {
-          markAsPresent().then((res) => {
-            if (res) {
+          markAsPresent(code).then((errMsg) => {
+            if (errMsg === null) {
               setUser({
                 ...user,
                 attendanceList: [
@@ -36,23 +37,38 @@ export default function StudentProfile({
                   },
                 ],
               });
+              setPresent(true);
+              setErrorMessage("");
             } else {
-              setErrorMessage("something weng wrong. please try again.");
+              setErrorMessage(errMsg);
             }
-            setPresent(res);
           });
         });
       }}
+      className="flex flex-col w-72"
     >
-      <Button type="submit" variant="contained" disabled={isPending}>
-        Click to indicate you&apos;re in class
+      <TextField
+        type="text"
+        value={code}
+        placeholder="Today's Code"
+        variant="outlined"
+        sx={{ margin: "0.1rem" }}
+        onChange={(e) => setCode(e.target.value)}
+      />
+      <Button
+        type="submit"
+        variant="contained"
+        disabled={isPending}
+        sx={{ margin: "0.1rem" }}
+      >
+        {isPending
+          ? "Marking you as present..."
+          : "Click to indicate you're in class"}
       </Button>
     </form>
   ) : (
     <div className="text-center p-4 bg-green-100 text-green-700 rounded-md">
-      {isPending
-        ? "Marking you as present..."
-        : "You have been marked present for today!"}
+      You have been marked present for today!
     </div>
   );
 
@@ -70,8 +86,8 @@ export default function StudentProfile({
           className="rounded-full"
         />
       </div>
-      {interactive}
-      <p className="p-2 text-[#F00]">{errorMessage}</p>
+      <div className="flex justify-center">{interactive}</div>
+      <p className="p-2 text-lg text-[#F00]">{errorMessage}</p>
       <div className="p-2 m-2">
         <h4 className="text-center font-semibold">
           Dates you&apos;ve been marked as present:
