@@ -1,4 +1,4 @@
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridOverlay } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
 import { NumLong } from "@/lib/util/attendanceList";
 import { AttendanceStatus } from "@/types";
@@ -41,6 +41,13 @@ export default function MuiAttendanceSheet() {
           initialState={{ pagination: { paginationModel } }}
           pageSizeOptions={[10, 25, 50, 100, { value: -1, label: "All" }]}
           sx={{ border: 0, height: "100%" }}
+          slots={{
+            noRowsOverlay: () => (
+              <GridOverlay>
+                <div>No Students</div>
+              </GridOverlay>
+            ),
+          }}
         />
       </Paper>
     </>
