@@ -6,7 +6,7 @@ export default function SignIn({ errorMessage }: { errorMessage?: string }) {
     <div className="flex justify-center">
       <div className="p-1 m-2 flex flex-col items-center text-xl max-w-[90vw] text-center">
         <p>
-          Who are you? Please sign in so we know who you are and mark your
+          Who are you? Please sign in so we know who you are and can mark your
           attendance.
         </p>
         <Link
