@@ -47,7 +47,6 @@ export default function EditRole() {
             ),
         )}
       </Select>
-
       <Button
         disabled={!(selectedEmail && newRole)}
         variant="contained"
