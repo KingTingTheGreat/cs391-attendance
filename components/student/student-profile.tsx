@@ -1,7 +1,7 @@
 "use client";
 import markAsPresent from "@/lib/student/markAsPresent";
 import Image from "next/image";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { Class, UserProps } from "@/types";
 import { formatDate } from "@/lib/util/format";
 import { Button, TextField } from "@mui/material";
@@ -20,12 +20,29 @@ export default function StudentProfile({
         formatDate(new Date()),
   );
   const [isPending, startTransition] = useTransition();
+  const [longitude, setLongitude] = useState<number | undefined>(undefined);
+  const [latitude, setLatitude] = useState<number | undefined>(undefined);
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          console.log(pos);
+          setLongitude(pos.coords.longitude);
+          setLatitude(pos.coords.latitude);
+        },
+        () => console.error("require geolocation permissions"),
+      );
+    } else {
+      console.log("Geolocation not supported");
+    }
+  }, []);
 
   const interactive = !present ? (
     <form
       action={() => {
         startTransition(() => {
-          markAsPresent(code).then((errMsg) => {
+          markAsPresent(code, longitude, latitude).then((errMsg) => {
             if (errMsg === null) {
               setUser({
                 ...user,
