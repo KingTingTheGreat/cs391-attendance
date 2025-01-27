@@ -13,7 +13,6 @@ export default async function Home() {
   if (!user) {
     return (
       <div>
-        <h1 className="text-4xl font-bold">CS391 Attendance</h1>
         <p>You are not signed in</p>
         <Link href={googleSignInLink()}>Sign In with Google</Link>
       </div>
@@ -32,6 +31,9 @@ export default async function Home() {
         height={100}
         className="rounded-full"
       />
+      <Link href="/sign-out" prefetch={false}>
+        Sign Out
+      </Link>
     </div>
   );
 }

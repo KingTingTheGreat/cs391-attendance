@@ -90,3 +90,33 @@ export async function userFromCookies(
     attendanceList: data.attendanceList as AttendanceProps[],
   };
 }
+
+export async function clearUserCookie(
+  response: NextResponse,
+  cookieStore: ReadonlyRequestCookies | RequestCookies,
+) {
+  const sessionId = cookieStore.get(COOKIE_NAME)?.value;
+
+  if (sessionId) {
+    // find user
+    const usersCollection = await getCollection(USERS_COLLECTION);
+    await usersCollection.updateOne(
+      { sessionIdList: { $elemMatch: { $eq: sessionId } } },
+      {
+        // @ts-expect-error weird mongo linting?
+        $pull: {
+          sessionIdList: {
+            $eq: sessionId,
+          },
+        },
+      },
+    );
+  }
+
+  response.cookies.set(COOKIE_NAME, "", {
+    httpOnly: true,
+    path: "/",
+  });
+
+  return true;
+}
