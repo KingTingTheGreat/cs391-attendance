@@ -1,4 +1,4 @@
-import AdminPanel from "@/components/admin-panel";
+import AdminPanel from "@/components/control/admin-panel";
 import { userFromCookies } from "@/lib/cookies";
 import { Role, UserProps } from "@/types";
 import { cookies } from "next/headers";

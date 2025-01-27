@@ -1,7 +1,7 @@
 "use client";
 import markAsPresent from "@/lib/student/markAsPresent";
 import { useState } from "react";
-import Loading from "./loading";
+import Loading from "../loading";
 import { UserProps } from "@/types";
 import { formatDate } from "@/lib/util/format";
 

@@ -4,7 +4,7 @@ import { userFromCookies } from "@/lib/cookies";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import Image from "next/image";
-import PresentButton from "@/components/present-button";
+import PresentButton from "@/components/student/present-button";
 
 export default async function Home() {
   const cookieStore = await cookies();

@@ -3,7 +3,7 @@ import { deleteUser } from "@/lib/control/deleteUser";
 import { Role } from "@/types";
 import { Button, MenuItem, Modal, Select } from "@mui/material";
 import { useState } from "react";
-import { useUsersContext } from "@/components/users-context";
+import { useUsersContext } from "@/components/control/users-context";
 
 export default function DeleteUser() {
   const { users, setUsers } = useUsersContext();

@@ -3,12 +3,12 @@ import { allUsers } from "@/lib/util/allUsers";
 import { Role, UserProps } from "@/types";
 import { useEffect, useState } from "react";
 import EditRole from "./edit-role";
-import Loading from "./loading";
-import MuiAttendanceSheet from "./mui-attendance-sheet";
 import DeleteAllStudents from "./delete-all-students";
 import DeleteUser from "./delete-user";
 import { UsersContextProvider } from "./users-context";
 import MarkStudentPresent from "./mark-student-present";
+import Loading from "../loading";
+import MuiAttendanceSheet from "../attendance/mui-attendance-sheet";
 
 export default function AdminPanel({ role }: { role: Role }) {
   const [users, setUsers] = useState<UserProps[] | null>(null);
