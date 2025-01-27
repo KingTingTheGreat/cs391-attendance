@@ -1,23 +1,8 @@
 import { AttendanceStatus, Role, UserProps } from "@/types";
+import { formatDate, formatTime } from "./format";
 
 // number of headers that are not dates
 export const NumLong = 2;
-
-export function formatDate(date: Date): string {
-  return date
-    .toLocaleString("en-us", {
-      timeZone: "America/New_York",
-    })
-    .split(", ")[0];
-}
-
-export function formatTime(date: Date): string {
-  const timeParts = date
-    .toLocaleString("en-us", { timeZone: "America/New_York" })
-    .split(", ")[1]
-    .split(":");
-  return timeParts[0] + ":" + timeParts[1] + timeParts[2].slice(2);
-}
 
 export function getAttendanceList(users: UserProps[]): string[][] {
   // filter for students only

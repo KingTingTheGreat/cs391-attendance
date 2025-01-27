@@ -1,5 +1,5 @@
 import { Class, Role, AttendanceProps, UserProps } from "@/types";
-import { formatDate } from "./attendanceList";
+import { formatDate } from "./util/format";
 
 function perc(): number {
   const range = 100 + 1;

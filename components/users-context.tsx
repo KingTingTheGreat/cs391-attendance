@@ -1,5 +1,5 @@
 "use client";
-import { getAttendanceList } from "@/lib/attendanceList";
+import { getAttendanceList } from "@/lib/util/attendanceList";
 import { UserProps } from "@/types";
 import {
   createContext,

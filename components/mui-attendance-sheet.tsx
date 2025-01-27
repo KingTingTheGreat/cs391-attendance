@@ -1,6 +1,6 @@
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
-import { NumLong } from "@/lib/attendanceList";
+import { NumLong } from "@/lib/util/attendanceList";
 import { AttendanceStatus } from "@/types";
 import DownloadSheet from "./download-sheet";
 import { useUsersContext } from "./users-context";

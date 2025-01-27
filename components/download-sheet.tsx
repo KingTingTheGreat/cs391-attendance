@@ -1,5 +1,5 @@
 "use client";
-import { formatDate } from "@/lib/attendanceList";
+import { formatDate } from "@/lib/util/format";
 import DownloadIcon from "@mui/icons-material/Download";
 import { Button } from "@mui/material";
 import { useUsersContext } from "@/components/users-context";

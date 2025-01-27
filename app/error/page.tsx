@@ -1,4 +1,4 @@
-import googleSignInLink from "@/lib/googleSignInLink";
+import googleSignInLink from "@/lib/google/googleSignInLink";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 

@@ -1,9 +1,9 @@
 "use client";
-import markAsPresent from "@/lib/markAsPresent";
+import markAsPresent from "@/lib/student/markAsPresent";
 import { useState } from "react";
 import Loading from "./loading";
 import { UserProps } from "@/types";
-import { formatDate } from "@/lib/attendanceList";
+import { formatDate } from "@/lib/util/format";
 
 export default function PresentButton({ user }: { user: UserProps }) {
   const [present, setPresent] = useState(

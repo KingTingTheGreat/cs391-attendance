@@ -1,5 +1,5 @@
 "use client";
-import { allUsers } from "@/lib/allUsers";
+import { allUsers } from "@/lib/util/allUsers";
 import { Role, UserProps } from "@/types";
 import { useEffect, useState } from "react";
 import EditRole from "./edit-role";

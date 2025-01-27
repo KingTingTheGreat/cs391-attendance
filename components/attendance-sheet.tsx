@@ -1,4 +1,4 @@
-import { getAttendanceList, NumLong } from "@/lib/attendanceList";
+import { getAttendanceList, NumLong } from "@/lib/util/attendanceList";
 import { AttendanceStatus, UserProps } from "@/types";
 
 export default function AttendanceSheet({ users }: { users: UserProps[] }) {

@@ -1,9 +1,9 @@
 "use server";
 import { cookies } from "next/headers";
+import { userFromCookies } from "../cookies";
 import getCollection, { USERS_COLLECTION } from "@/db";
 import { Class } from "@/types";
-import { userFromCookies } from "./cookies";
-import { formatDate } from "./util/format";
+import { formatDate } from "../util/format";
 
 export default async function markAsPresent(): Promise<boolean> {
   console.log("mark as present");
