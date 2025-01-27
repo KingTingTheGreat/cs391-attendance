@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ENV } from "@/lib/env";
+import { CSPostHogProvider } from "./providers";
 
 export const metadata: Metadata = {
   title: "CS391 Attendance",
@@ -26,7 +27,7 @@ export default function RootLayout({
         <header className="font-bold text-4xl p-4 text-center md:text-left">
           CS391 Attendance
         </header>
-        {children}
+        <CSPostHogProvider>{children}</CSPostHogProvider>
       </body>
     </html>
   );
