@@ -1,11 +1,10 @@
-import { clearUserCookie } from "@/lib/cookies";
-import { cookies } from "next/headers";
+import { clearUserCookie } from "@/lib/cookies/clearUserCookie";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   const res = NextResponse.redirect(req.nextUrl.origin, {
     status: 303,
   });
-  await clearUserCookie(res, await cookies());
+  await clearUserCookie(res);
   return res;
 }

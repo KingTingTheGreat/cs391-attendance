@@ -3,15 +3,15 @@ import getCollection, { USERS_COLLECTION } from "@/db";
 import { Role, UserProps } from "@/types";
 import { mockStudents } from "../mockStudents";
 import { cookies } from "next/headers";
-import { userFromCookies } from "../cookies";
 import { redirect } from "next/navigation";
 import { ENV, MOCK } from "../env";
+import { userFromCookie } from "../cookies/userFromCookie";
 
 const allowedRoles = [Role.staff, Role.admin];
 
 export async function allUsers(): Promise<UserProps[]> {
   const cookieStore = await cookies();
-  const user = await userFromCookies(cookieStore);
+  const user = await userFromCookie(cookieStore);
 
   if (!user || !allowedRoles.includes(user.role)) {
     // only allow staff and admin to access this data

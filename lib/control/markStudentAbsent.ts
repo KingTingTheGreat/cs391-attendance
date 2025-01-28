@@ -1,10 +1,10 @@
 "use server";
 import { Role, ServerFuncRes } from "@/types";
-import { userFromCookies } from "../cookies";
 import { cookies } from "next/headers";
 import getCollection, { USERS_COLLECTION } from "@/db";
 import { formatDate } from "../util/format";
 import { ENV, MOCK } from "../env";
+import { userFromCookie } from "../cookies/userFromCookie";
 
 const allowedRoles = [Role.staff, Role.admin];
 
@@ -17,7 +17,7 @@ export async function markStudentAbsent(
   }
 
   const cookieStore = await cookies();
-  const user = await userFromCookies(cookieStore);
+  const user = await userFromCookie(cookieStore);
 
   if (!user || !allowedRoles.includes(user.role)) {
     return { success: false, message: "unauthorized. please sign in again." };
