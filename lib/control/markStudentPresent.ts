@@ -10,8 +10,12 @@ const allowedRoles = [Role.staff, Role.admin];
 
 export async function markStudentPresent(
   email: string,
-  date: Date,
+  date: Date | null,
 ): Promise<ServerFuncRes> {
+  if (date === null || isNaN(date.getTime())) {
+    return { success: false, message: "invalid date" };
+  }
+
   const cookieStore = await cookies();
   const user = await userFromCookies(cookieStore);
 
