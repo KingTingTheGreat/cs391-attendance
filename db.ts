@@ -1,4 +1,4 @@
-import { Collection, Db, MongoClient } from "mongodb";
+import { ClientSession, Collection, Db, MongoClient } from "mongodb";
 import { ENV } from "./lib/env";
 
 const MONGO_URI = process.env.MONGO_URI as string;
@@ -28,4 +28,23 @@ export default async function getCollection(
   }
 
   return db.collection(collectionName);
+}
+
+export async function startCollectionSession(collectionName: string) {
+  if (!client) {
+    client = new MongoClient(MONGO_URI);
+    await client.connect();
+  }
+
+  const session = client.startSession();
+  const collection = client.db(DB_NAME).collection(collectionName);
+
+  return { session, collection };
+}
+
+export async function closeClientConnection(session?: ClientSession) {
+  if (session) {
+    session.endSession();
+  }
+  await client?.close();
 }

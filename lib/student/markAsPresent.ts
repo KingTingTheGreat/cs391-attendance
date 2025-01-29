@@ -1,6 +1,10 @@
 "use server";
 import { cookies } from "next/headers";
-import getCollection, { USERS_COLLECTION } from "@/db";
+import {
+  closeClientConnection,
+  startCollectionSession,
+  USERS_COLLECTION,
+} from "@/db";
 import { AttendanceProps, Class, DayEnum, Role } from "@/types";
 import { formatDate, formatDay } from "../util/format";
 import { generateCode } from "../generateCode";
@@ -13,7 +17,7 @@ import {
 } from "../env";
 import { getDistance } from "geolib";
 import { userFromCookie } from "../cookies/userFromCookie";
-import { setCacheCookie } from "../cookies/cache";
+import { setCacheCookie, userFromCacheCookie } from "../cookies/cache";
 
 const classDays = [DayEnum.tuesday, DayEnum.thursday];
 
@@ -24,22 +28,31 @@ export default async function markAsPresent(
 ): Promise<string | null> {
   console.log("mark as present");
   const today = new Date();
+  const formatToday = formatDate(today);
   if (!DISABLE_DAY_CHECKING) {
     if (!classDays.includes(formatDay(today))) {
-      console.error("studenting claiming to be present on", formatDay(today));
+      console.error(
+        "student claiming to be present on",
+        formatDay(today),
+        formatToday,
+      );
       return "why are you here? there's no class today";
     }
   }
 
   const cookieStore = await cookies();
-  const user = await userFromCookie(cookieStore);
+  let user = userFromCacheCookie(cookieStore);
+  if (!user) {
+    user = await userFromCookie(cookieStore);
+  }
   if (!user) {
     console.error("no user");
     return "something went wrong. please sign in again.";
   } else if (
+    // MAYBE DELETE THIS LATER
     user.attendanceList.length > 0 &&
     formatDate(user.attendanceList[user.attendanceList.length - 1].date) ===
-      formatDate(today)
+      formatToday
   ) {
     console.error("already marked as present");
     return "you have already been marked present for today";
@@ -59,7 +72,7 @@ export default async function markAsPresent(
       console.error(
         `student: ${user.email} is too far from class. they are ${d} meters away and max allowed distance is ${MAX_ALLOWED_DISTANCE} meters`,
       );
-      return "something went wrong on our end. please try again and notify the instructor.";
+      return `you are too far from class: ${d} meters`;
     }
   }
 
@@ -67,36 +80,70 @@ export default async function markAsPresent(
     return null;
   }
 
-  const usersCollections = await getCollection(USERS_COLLECTION);
-  const data = await usersCollections.findOneAndUpdate(
-    { email: user.email },
-    {
-      // @ts-expect-error weird mongo linting?
-      $push: {
-        attendanceList: {
-          class: Class.Lecture,
-          date: today,
+  const { session, collection: usersCollection } =
+    await startCollectionSession(USERS_COLLECTION);
+
+  try {
+    session.startTransaction();
+
+    let data = await usersCollection.findOne({ email: user.email });
+    if (!data) throw new Error(`user with email ${user.email} not found`);
+
+    const attendanceList = data.attendanceList as AttendanceProps[];
+    if (attendanceList.some((att) => formatDate(att.date) === formatToday)) {
+      throw new Error("you have already been marked present for today");
+    }
+
+    data = await usersCollection.findOneAndUpdate(
+      { email: user.email },
+      {
+        // @ts-expect-error weird mongo linting?
+        $push: {
+          attendanceList: {
+            $each: [
+              {
+                class: Class.Lecture,
+                date: today,
+              },
+            ],
+            $sort: { date: 1 },
+          },
         },
       },
-    },
-    {
-      returnDocument: "after",
-    },
-  );
-  if (!data) {
-    return "something went wrong on our end. please try again and notify the instructor.";
+      {
+        returnDocument: "after",
+      },
+    );
+    if (!data) {
+      throw new Error(
+        "something went wrong on our end. please try again and notify the instructor.",
+      );
+    }
+
+    await session.commitTransaction();
+    setCacheCookie(
+      {
+        name: data.name,
+        email: data.email,
+        picture: data.picture,
+        role: data.role as Role,
+        attendanceList: data.attendanceList as AttendanceProps[],
+      },
+      undefined,
+      cookieStore,
+    );
+  } catch (error) {
+    console.log("CAUGHT ERROR");
+    let message = "something went wrong. please try again later.";
+    if (error instanceof Error) {
+      console.error("error message:", error.message);
+      message = error.message;
+    }
+    await session.abortTransaction();
+    return message;
+  } finally {
+    await closeClientConnection(session);
   }
 
-  setCacheCookie(
-    {
-      name: data.name,
-      email: data.email,
-      picture: data.picture,
-      role: data.role as Role,
-      attendanceList: data.attendanceList as AttendanceProps[],
-    },
-    undefined,
-    cookieStore,
-  );
   return null;
 }
