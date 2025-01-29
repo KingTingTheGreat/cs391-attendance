@@ -6,8 +6,9 @@ import { AUTH_COOKIE } from "./cookies";
 import { AuthClaims, verifyJwt } from "../jwt";
 import getCollection, { USERS_COLLECTION } from "@/db";
 
-export async function userFromCookie(
+export async function userFromAuthCookie(
   cookieStore: ReadonlyRequestCookies | RequestCookies,
+  useCache?: boolean,
 ): Promise<UserProps | null> {
   if (ENV === "dev" && MOCK && !ENABLE_SIGN_ON) {
     const role = DEFAULT_ROLE || Role.student;
@@ -38,6 +39,10 @@ export async function userFromCookie(
   console.log("fro auth cookie. claims:", claims);
   if (!claims) {
     return null;
+  }
+
+  if (useCache) {
+    console.log("TRYING TO GET USER FROM CACHE");
   }
 
   console.log("GETTING USER FROM DB");

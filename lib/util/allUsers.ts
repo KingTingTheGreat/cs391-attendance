@@ -5,13 +5,13 @@ import { mockStudents } from "../mockStudents";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { ENV, MOCK } from "../env";
-import { userFromCookie } from "../cookies/userFromCookie";
+import { userFromAuthCookie } from "../cookies/userFromAuthCookie";
 
 const allowedRoles = [Role.staff, Role.admin];
 
 export async function allUsers(): Promise<UserProps[]> {
   const cookieStore = await cookies();
-  const user = await userFromCookie(cookieStore);
+  const user = await userFromAuthCookie(cookieStore);
 
   if (!user || !allowedRoles.includes(user.role)) {
     // only allow staff and admin to access this data

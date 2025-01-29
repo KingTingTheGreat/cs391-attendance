@@ -2,13 +2,12 @@ import { NextResponse } from "next/server";
 import exchangeGoogleCode from "../google/exchangeCode";
 import getGoogleUser from "../google/getUserData";
 import getCollection, { USERS_COLLECTION } from "@/db";
-import { AttendanceProps, Role } from "@/types";
+import { Role } from "@/types";
 import { createJwt } from "../jwt";
 import { AUTH_COOKIE } from "./cookies";
 import { ENV } from "../env";
-import { setCacheCookie } from "./cache";
 
-export async function setUserCookie(
+export async function setUserAuthCookie(
   googleCode: string,
   response: NextResponse,
 ): Promise<boolean> {
@@ -60,16 +59,7 @@ export async function setUserCookie(
     },
   );
 
-  setCacheCookie(
-    {
-      name: data.name,
-      email: data.email,
-      picture: data.picture,
-      role: data.role as Role,
-      attendanceList: data.attendanceList as AttendanceProps[],
-    },
-    response,
-  );
+  console.log("UPDATE CACHE");
 
   return true;
 }

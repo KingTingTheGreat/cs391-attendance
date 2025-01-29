@@ -3,8 +3,7 @@ import Link from "next/link";
 import SignInPage from "@/components/sign-in-page";
 import StudentProfile from "@/components/student/student-profile";
 import Header from "@/components/header";
-import { userFromCookie } from "@/lib/cookies/userFromCookie";
-import { userFromCacheCookie } from "@/lib/cookies/cache";
+import { userFromAuthCookie } from "@/lib/cookies/userFromAuthCookie";
 
 export default async function Home({
   searchParams,
@@ -12,11 +11,7 @@ export default async function Home({
   searchParams: Promise<{ message: string }>;
 }) {
   const cookieStore = await cookies();
-  let user = userFromCacheCookie(cookieStore);
-  if (!user) {
-    user = await userFromCookie(cookieStore);
-  }
-
+  const user = await userFromAuthCookie(cookieStore, true);
   if (!user) {
     const qParams = await searchParams;
     return <SignInPage errorMessage={qParams.message} />;
