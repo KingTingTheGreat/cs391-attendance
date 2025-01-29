@@ -13,3 +13,11 @@ export async function setToCache(user: UserProps) {
   // expiry in 60 seconds * 5 = 5 minutes
   await redis.set(user.email, user, { ex: 60 * 5 });
 }
+
+export async function deleteFromCache(email: string) {
+  await redis.del(email);
+}
+
+export async function clearCache() {
+  await redis.flushall();
+}

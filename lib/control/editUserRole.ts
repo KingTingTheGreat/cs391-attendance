@@ -4,6 +4,7 @@ import { Role, ServerFuncRes } from "@/types";
 import getCollection, { USERS_COLLECTION } from "@/db";
 import { ENV, MOCK } from "../env";
 import { userFromAuthCookie } from "../cookies/userFromAuthCookie";
+import { deleteFromCache } from "../cache/redis";
 
 const allowedRoles = [Role.admin];
 
@@ -37,6 +38,8 @@ export async function EditUserRole(
       success: false,
       message: "could not update user. please try again later.",
     };
+
+  await deleteFromCache(email);
 
   return {
     success: true,
