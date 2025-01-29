@@ -13,6 +13,7 @@ import {
 } from "../env";
 import { getDistance } from "geolib";
 import { userFromCookie } from "../cookies/userFromCookie";
+import { userFromCacheCookie } from "../cookies/cache";
 
 const classDays = [DayEnum.tuesday, DayEnum.thursday];
 
@@ -31,7 +32,10 @@ export default async function markAsPresent(
   }
 
   const cookieStore = await cookies();
-  const user = await userFromCookie(cookieStore);
+  let user = userFromCacheCookie(cookieStore);
+  if (!user) {
+    user = await userFromCookie(cookieStore);
+  }
   if (!user) {
     console.error("no user");
     return "something went wrong. please sign in again.";

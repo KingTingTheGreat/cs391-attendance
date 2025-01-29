@@ -1,12 +1,12 @@
-"use server";
 import { NextResponse } from "next/server";
 import exchangeGoogleCode from "../google/exchangeCode";
 import getGoogleUser from "../google/getUserData";
 import getCollection, { USERS_COLLECTION } from "@/db";
-import { Role } from "@/types";
+import { AttendanceProps, Role } from "@/types";
 import { createJwt } from "../jwt";
-import { COOKIE_NAME } from "./cookies";
+import { AUTH_COOKIE } from "./cookies";
 import { ENV } from "../env";
+import { setCacheCookie } from "./cache";
 
 export async function setUserCookie(
   googleCode: string,
@@ -21,7 +21,7 @@ export async function setUserCookie(
 
   // find user
   const usersCollection = await getCollection(USERS_COLLECTION);
-  const res = await usersCollection.updateOne(
+  const data = await usersCollection.findOneAndUpdate(
     { email: googleUser.email },
     {
       $set: {
@@ -38,16 +38,17 @@ export async function setUserCookie(
     },
     {
       upsert: true,
+      returnDocument: "after",
     },
   );
 
-  if (!res.acknowledged) {
+  if (!data) {
     console.error("failed to update/insert user in database");
     return false;
   }
 
   response.cookies.set(
-    COOKIE_NAME,
+    AUTH_COOKIE,
     createJwt({
       name: googleUser.name,
       email: googleUser.email,
@@ -57,6 +58,17 @@ export async function setUserCookie(
       secure: ENV === "prod",
       path: "/",
     },
+  );
+
+  setCacheCookie(
+    {
+      name: data.name,
+      email: data.email,
+      picture: data.picture,
+      role: data.role as Role,
+      attendanceList: data.attendanceList as AttendanceProps[],
+    },
+    response,
   );
 
   return true;

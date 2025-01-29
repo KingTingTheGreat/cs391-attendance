@@ -1,10 +1,9 @@
-"use server";
 import { AttendanceProps, Role, UserProps } from "@/types";
 import { RequestCookies } from "next/dist/compiled/@edge-runtime/cookies";
 import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 import { DEFAULT_ROLE, ENABLE_SIGN_ON, ENV, MOCK } from "../env";
-import { COOKIE_NAME } from "./cookies";
-import { verifyJwt } from "../jwt";
+import { AUTH_COOKIE } from "./cookies";
+import { AuthClaims, verifyJwt } from "../jwt";
 import getCollection, { USERS_COLLECTION } from "@/db";
 
 export async function userFromCookie(
@@ -23,7 +22,7 @@ export async function userFromCookie(
     };
   }
 
-  const jwt = cookieStore.get(COOKIE_NAME)?.value;
+  const jwt = cookieStore.get(AUTH_COOKIE)?.value;
   if (!jwt) return null;
 
   const res = verifyJwt(jwt);
@@ -35,8 +34,15 @@ export async function userFromCookie(
     return null;
   }
 
+  const claims = res.claims as AuthClaims;
+  console.log("fro auth cookie. claims:", claims);
+  if (!claims) {
+    return null;
+  }
+
+  console.log("GETTING USER FROM DB");
   const usersCollection = await getCollection(USERS_COLLECTION);
-  const data = await usersCollection.findOne({ email: res.claims.email });
+  const data = await usersCollection.findOne({ email: claims.email });
   if (!data) return null;
 
   return {
