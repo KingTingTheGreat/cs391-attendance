@@ -23,7 +23,6 @@ export type UserProps = {
   email: string;
   picture: string;
   role: Role;
-  sessionIdList?: string[];
   attendanceList: AttendanceProps[];
 };
 

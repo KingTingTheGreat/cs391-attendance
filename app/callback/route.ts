@@ -1,4 +1,4 @@
-import { setUserCookies } from "@/lib/cookies";
+import { setUserCookie } from "@/lib/cookies/setUserCookie";
 import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
   const res = NextResponse.redirect(req.nextUrl.origin, {
     status: 303,
   });
-  const success = await setUserCookies(code, res);
+  const success = await setUserCookie(code, res);
   if (!success) {
     return NextResponse.redirect(
       req.nextUrl.origin +

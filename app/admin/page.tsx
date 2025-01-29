@@ -1,6 +1,6 @@
 import AdminPanel from "@/components/control/admin-panel";
 import Header from "@/components/header";
-import { userFromCookies } from "@/lib/cookies";
+import { userFromCookie } from "@/lib/cookies/userFromCookie";
 import { Role } from "@/types";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -9,7 +9,7 @@ const allowedRoles = [Role.staff, Role.admin];
 
 export default async function AdminPage() {
   const cookieStore = await cookies();
-  const user = await userFromCookies(cookieStore);
+  const user = await userFromCookie(cookieStore);
 
   if (!user || !allowedRoles.includes(user.role)) {
     // only allow staff and admin to see this page

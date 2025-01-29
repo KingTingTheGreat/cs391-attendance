@@ -1,6 +1,5 @@
 "use server";
 import { cookies } from "next/headers";
-import { userFromCookies } from "../cookies";
 import getCollection, { USERS_COLLECTION } from "@/db";
 import { Class, DayEnum } from "@/types";
 import { formatDate, formatDay } from "../util/format";
@@ -13,6 +12,7 @@ import {
   MOCK,
 } from "../env";
 import { getDistance } from "geolib";
+import { userFromCookie } from "../cookies/userFromCookie";
 
 const classDays = [DayEnum.tuesday, DayEnum.thursday];
 
@@ -31,7 +31,7 @@ export default async function markAsPresent(
   }
 
   const cookieStore = await cookies();
-  const user = await userFromCookies(cookieStore);
+  const user = await userFromCookie(cookieStore);
   if (!user) {
     console.error("no user");
     return "something went wrong. please sign in again.";

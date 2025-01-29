@@ -1,19 +1,23 @@
 "use server";
 import { Class, Role, ServerFuncRes } from "@/types";
-import { userFromCookies } from "../cookies";
 import { cookies } from "next/headers";
 import getCollection, { USERS_COLLECTION } from "@/db";
 import { formatDate } from "../util/format";
 import { ENV, MOCK } from "../env";
+import { userFromCookie } from "../cookies/userFromCookie";
 
 const allowedRoles = [Role.staff, Role.admin];
 
 export async function markStudentPresent(
   email: string,
-  date: Date,
+  date: Date | null,
 ): Promise<ServerFuncRes> {
+  if (date === null || isNaN(date.getTime())) {
+    return { success: false, message: "invalid date" };
+  }
+
   const cookieStore = await cookies();
-  const user = await userFromCookies(cookieStore);
+  const user = await userFromCookie(cookieStore);
 
   if (!user || !allowedRoles.includes(user.role)) {
     return { success: false, message: "unauthorized. please sign in again." };
