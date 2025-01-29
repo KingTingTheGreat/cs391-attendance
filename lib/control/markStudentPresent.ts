@@ -29,10 +29,26 @@ export async function markStudentPresent(
       message: `successfully marked ${email} as present on ${formatDate(date)}`,
     };
   }
+
+  const startOfDay = new Date(date);
+  startOfDay.setHours(0, 0, 0, 0);
+  const endOfDay = new Date(date);
+  endOfDay.setHours(23, 59, 59, 999);
+
   const usersCollection = await getCollection(USERS_COLLECTION);
   const res = await usersCollection.updateOne(
     { email },
     {
+      // remove previous attendance marking for this date
+      // @ts-expect-error weird mongo linting?
+      $pull: {
+        attendanceList: {
+          date: {
+            $gte: startOfDay,
+            $lte: endOfDay,
+          },
+        },
+      },
       // @ts-expect-error weird mongo linting?
       $push: {
         attendanceList: {
@@ -42,16 +58,17 @@ export async function markStudentPresent(
               date,
             },
           ],
-          $sort: 1,
+          $sort: { date: 1 },
         },
       },
     },
   );
-  if (res.modifiedCount === 0)
+  if (res.modifiedCount === 0) {
     return {
       success: false,
-      message: "could not mark student as present. please try again later.",
+      message: `could not mark ${email} as present. please try again later`,
     };
+  }
 
   return {
     success: true,
