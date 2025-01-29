@@ -1,7 +1,7 @@
 "use server";
 import { cookies } from "next/headers";
 import getCollection, { USERS_COLLECTION } from "@/db";
-import { Class, DayEnum } from "@/types";
+import { AttendanceProps, Class, DayEnum, Role } from "@/types";
 import { formatDate, formatDay } from "../util/format";
 import { generateCode } from "../generateCode";
 import {
@@ -13,6 +13,7 @@ import {
 } from "../env";
 import { getDistance } from "geolib";
 import { userFromCookie } from "../cookies/userFromCookie";
+import { setCacheCookie } from "../cookies/cache";
 
 const classDays = [DayEnum.tuesday, DayEnum.thursday];
 
@@ -67,7 +68,7 @@ export default async function markAsPresent(
   }
 
   const usersCollections = await getCollection(USERS_COLLECTION);
-  const res = await usersCollections.updateOne(
+  const data = await usersCollections.findOneAndUpdate(
     { email: user.email },
     {
       // @ts-expect-error weird mongo linting?
@@ -78,9 +79,24 @@ export default async function markAsPresent(
         },
       },
     },
+    {
+      returnDocument: "after",
+    },
   );
+  if (!data) {
+    return "something went wrong on our end. please try again and notify the instructor.";
+  }
 
-  return res.modifiedCount === 1
-    ? null
-    : "something went wrong on our end. please try again and notify the instructor.";
+  setCacheCookie(
+    {
+      name: data.name,
+      email: data.email,
+      picture: data.picture,
+      role: data.role as Role,
+      attendanceList: data.attendanceList as AttendanceProps[],
+    },
+    undefined,
+    cookieStore,
+  );
+  return null;
 }

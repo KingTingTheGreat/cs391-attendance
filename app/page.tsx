@@ -1,10 +1,10 @@
-"use server";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import SignInPage from "@/components/sign-in-page";
 import StudentProfile from "@/components/student/student-profile";
 import Header from "@/components/header";
 import { userFromCookie } from "@/lib/cookies/userFromCookie";
+import { userFromCacheCookie } from "@/lib/cookies/cache";
 
 export default async function Home({
   searchParams,
@@ -12,7 +12,10 @@ export default async function Home({
   searchParams: Promise<{ message: string }>;
 }) {
   const cookieStore = await cookies();
-  const user = await userFromCookie(cookieStore);
+  let user = userFromCacheCookie(cookieStore);
+  if (!user) {
+    user = await userFromCookie(cookieStore);
+  }
 
   if (!user) {
     const qParams = await searchParams;

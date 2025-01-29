@@ -1,8 +1,14 @@
+import { UserProps } from "@/types";
 import { createSign, createVerify } from "crypto";
 
-export type JwtClaims = {
+export type AuthClaims = {
   name: string;
   email: string;
+  expiration?: Date;
+};
+
+export type CacheClaims = {
+  user: UserProps;
   expiration?: Date;
 };
 
@@ -30,9 +36,11 @@ function jwtSignature(data: string): string {
   return signature;
 }
 
-export function createJwt(claims: JwtClaims): string {
-  claims.expiration = new Date();
-  claims.expiration.setDate(claims.expiration.getDate() + 4); // expiration in days
+export function createJwt(claims: AuthClaims | CacheClaims): string {
+  if (claims.expiration === undefined) {
+    claims.expiration = new Date();
+    claims.expiration.setDate(claims.expiration.getDate() + 4); // expiration in days
+  }
 
   const data = btoa(JSON.stringify(claims));
   return `${jwtHeader}.${data}.${jwtSignature(data)}`;
@@ -40,7 +48,7 @@ export function createJwt(claims: JwtClaims): string {
 
 export type VerifyJwtRes = {
   verified: boolean;
-  claims?: JwtClaims;
+  claims?: AuthClaims | CacheClaims;
 };
 
 export function verifyJwt(jwt: string): VerifyJwtRes {
