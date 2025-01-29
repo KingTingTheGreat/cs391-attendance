@@ -6,6 +6,8 @@ import { Role } from "@/types";
 import { createJwt } from "../jwt";
 import { AUTH_COOKIE } from "./cookies";
 import { ENV } from "../env";
+import { setToCache } from "../cache/redis";
+import documentToUserProps from "../util/documentToUserProps";
 
 export async function setUserAuthCookie(
   googleCode: string,
@@ -59,7 +61,7 @@ export async function setUserAuthCookie(
     },
   );
 
-  console.log("UPDATE CACHE");
+  setToCache(documentToUserProps(data));
 
   return true;
 }
