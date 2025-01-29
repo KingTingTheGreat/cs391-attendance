@@ -10,5 +10,6 @@ export async function getFromCache(email: string): Promise<UserProps | null> {
 }
 
 export async function setToCache(user: UserProps) {
-  await redis.set(user.email, user);
+  // expiry in 60 seconds * 5 = 5 minutes
+  await redis.set(user.email, user, { ex: 60 * 5 });
 }
