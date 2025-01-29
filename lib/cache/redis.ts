@@ -11,8 +11,7 @@ export async function getFromCache(email: string): Promise<UserProps | null> {
 }
 
 export async function setToCache(user: UserProps) {
-  // expiry in 60 seconds * 5 = 5 minutes
-  await redis.set(`${user.email}-${ENV}`, user, { ex: 60 * 5 });
+  await redis.set(`${user.email}-${ENV}`, user);
 }
 
 export async function deleteFromCache(email: string) {
