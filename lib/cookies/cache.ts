@@ -23,7 +23,13 @@ export function setCacheCookie(
     });
   }
   if (cookieStore) {
-    cookieStore.set({ name: CACHE_COOKIE, value: jwt });
+    cookieStore.set({
+      name: CACHE_COOKIE,
+      value: jwt,
+      httpOnly: true,
+      secure: ENV === "prod",
+      path: "/",
+    });
   }
 
   return true;
