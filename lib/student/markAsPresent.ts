@@ -1,10 +1,6 @@
 "use server";
 import { cookies } from "next/headers";
-import {
-  closeClientConnection,
-  startCollectionSession,
-  USERS_COLLECTION,
-} from "@/db";
+import { startCollectionSession, USERS_COLLECTION } from "@/db";
 import { AttendanceProps, Class, DayEnum } from "@/types";
 import { formatDate, formatDay } from "../util/format";
 import { generateCode } from "../generateCode";
@@ -130,7 +126,7 @@ export default async function markAsPresent(
     await session.abortTransaction();
     return message;
   } finally {
-    await closeClientConnection(session);
+    await session.endSession();
   }
 
   return null;

@@ -1,4 +1,4 @@
-import { ClientSession, Collection, Db, MongoClient } from "mongodb";
+import { Collection, Db, MongoClient } from "mongodb";
 import { ENV } from "./lib/env";
 
 const MONGO_URI = process.env.MONGO_URI as string;
@@ -40,11 +40,4 @@ export async function startCollectionSession(collectionName: string) {
   const collection = client.db(DB_NAME).collection(collectionName);
 
   return { session, collection };
-}
-
-export async function closeClientConnection(session?: ClientSession) {
-  if (session) {
-    session.endSession();
-  }
-  await client?.close();
 }
