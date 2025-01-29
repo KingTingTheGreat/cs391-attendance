@@ -8,22 +8,24 @@ import { RequestCookies } from "next/dist/compiled/@edge-runtime/cookies";
 
 export function setCacheCookie(
   user: UserProps,
-  response: NextResponse,
+  response?: NextResponse,
+  cookieStore?: ReadonlyRequestCookies,
 ): boolean {
   const now = new Date();
-  now.setMinutes(now.getMinutes() + 15);
-  response.cookies.set(
-    CACHE_COOKIE,
-    createJwt({
-      user,
-      expiration: now, // 15 mins from now
-    }),
-    {
+  now.setMinutes(now.getMinutes() + 5);
+  const jwt = createJwt({ user, expiration: now });
+
+  if (response) {
+    response.cookies.set(CACHE_COOKIE, jwt, {
       httpOnly: true,
       secure: ENV === "prod",
       path: "/",
-    },
-  );
+    });
+  }
+  if (cookieStore) {
+    cookieStore.set({ name: CACHE_COOKIE, value: jwt });
+  }
+
   return true;
 }
 
