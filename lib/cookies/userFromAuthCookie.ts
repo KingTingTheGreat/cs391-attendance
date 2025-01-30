@@ -47,7 +47,7 @@ export async function userFromAuthCookie(
     console.log("GETTING USER FROM CACHE");
     const user = await getFromCache(claims.email);
     if (user) {
-      console.log("successfully got user from cache");
+      console.log("successfully got user from cache", user);
       return user;
     } else {
       console.log("failed to get user from cache");
@@ -60,6 +60,7 @@ export async function userFromAuthCookie(
   if (!data) return null;
 
   const user = documentToUserProps(data);
+  console.log("successfully got user from db", user);
   setToCache(user);
   return user;
 }
