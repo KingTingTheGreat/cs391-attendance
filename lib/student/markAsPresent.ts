@@ -1,11 +1,7 @@
 "use server";
 import { cookies } from "next/headers";
-import {
-  closeClientConnection,
-  startCollectionSession,
-  USERS_COLLECTION,
-} from "@/db";
-import { AttendanceProps, Class, DayEnum, Role } from "@/types";
+import { startCollectionSession, USERS_COLLECTION } from "@/db";
+import { AttendanceProps, Class, DayEnum } from "@/types";
 import { formatDate, formatDay } from "../util/format";
 import { generateCode } from "../generateCode";
 import {
@@ -16,8 +12,9 @@ import {
   MOCK,
 } from "../env";
 import { getDistance } from "geolib";
-import { userFromCookie } from "../cookies/userFromCookie";
-import { setCacheCookie, userFromCacheCookie } from "../cookies/cache";
+import { userFromAuthCookie } from "../cookies/userFromAuthCookie";
+import { setToCache } from "../cache/redis";
+import documentToUserProps from "../util/documentToUserProps";
 
 const classDays = [DayEnum.tuesday, DayEnum.thursday];
 
@@ -41,10 +38,7 @@ export default async function markAsPresent(
   }
 
   const cookieStore = await cookies();
-  let user = userFromCacheCookie(cookieStore);
-  if (!user) {
-    user = await userFromCookie(cookieStore);
-  }
+  const user = await userFromAuthCookie(cookieStore, true);
   if (!user) {
     console.error("no user");
     return "something went wrong. please sign in again.";
@@ -121,17 +115,7 @@ export default async function markAsPresent(
     }
 
     await session.commitTransaction();
-    setCacheCookie(
-      {
-        name: data.name,
-        email: data.email,
-        picture: data.picture,
-        role: data.role as Role,
-        attendanceList: data.attendanceList as AttendanceProps[],
-      },
-      undefined,
-      cookieStore,
-    );
+    setToCache(documentToUserProps(data));
   } catch (error) {
     console.log("CAUGHT ERROR");
     let message = "something went wrong. please try again later.";
@@ -142,7 +126,7 @@ export default async function markAsPresent(
     await session.abortTransaction();
     return message;
   } finally {
-    await closeClientConnection(session);
+    await session.endSession();
   }
 
   return null;

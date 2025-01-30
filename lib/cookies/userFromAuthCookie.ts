@@ -1,13 +1,16 @@
-import { AttendanceProps, Role, UserProps } from "@/types";
+import { Role, UserProps } from "@/types";
 import { RequestCookies } from "next/dist/compiled/@edge-runtime/cookies";
 import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 import { DEFAULT_ROLE, ENABLE_SIGN_ON, ENV, MOCK } from "../env";
 import { AUTH_COOKIE } from "./cookies";
 import { AuthClaims, verifyJwt } from "../jwt";
 import getCollection, { USERS_COLLECTION } from "@/db";
+import { getFromCache, setToCache } from "../cache/redis";
+import documentToUserProps from "../util/documentToUserProps";
 
-export async function userFromCookie(
+export async function userFromAuthCookie(
   cookieStore: ReadonlyRequestCookies | RequestCookies,
+  useCache?: boolean,
 ): Promise<UserProps | null> {
   if (ENV === "dev" && MOCK && !ENABLE_SIGN_ON) {
     const role = DEFAULT_ROLE || Role.student;
@@ -40,16 +43,23 @@ export async function userFromCookie(
     return null;
   }
 
+  if (useCache) {
+    console.log("GETTING USER FROM CACHE");
+    const user = await getFromCache(claims.email);
+    if (user) {
+      console.log("successfully got user from cache");
+      return user;
+    } else {
+      console.log("failed to get user from cache");
+    }
+  }
+
   console.log("GETTING USER FROM DB");
   const usersCollection = await getCollection(USERS_COLLECTION);
   const data = await usersCollection.findOne({ email: claims.email });
   if (!data) return null;
 
-  return {
-    name: data.name,
-    email: data.email,
-    picture: data.picture,
-    role: data.role as Role,
-    attendanceList: data.attendanceList as AttendanceProps[],
-  };
+  const user = documentToUserProps(data);
+  setToCache(user);
+  return user;
 }

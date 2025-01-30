@@ -5,6 +5,7 @@ import { useEffect, useState, useTransition } from "react";
 import { Class, UserProps } from "@/types";
 import { formatDate } from "@/lib/util/format";
 import { Button, TextField } from "@mui/material";
+import { addToAttendanceList } from "@/lib/util/addToAttendanceList";
 
 export default function StudentProfile({
   userInput,
@@ -46,13 +47,10 @@ export default function StudentProfile({
             if (errMsg === null) {
               setUser({
                 ...user,
-                attendanceList: [
-                  ...user.attendanceList,
-                  {
-                    class: Class.Lecture,
-                    date: new Date(),
-                  },
-                ],
+                attendanceList: addToAttendanceList(user.attendanceList, {
+                  class: Class.Lecture,
+                  date: new Date(),
+                }),
               });
               setPresent(true);
               setErrorMessage("");

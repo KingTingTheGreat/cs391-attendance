@@ -1,5 +1,5 @@
 import Header from "@/components/header";
-import { userFromCookie } from "@/lib/cookies/userFromCookie";
+import { userFromAuthCookie } from "@/lib/cookies/userFromAuthCookie";
 import { generateCode } from "@/lib/generateCode";
 import { Role } from "@/types";
 import { cookies } from "next/headers";
@@ -9,7 +9,7 @@ const allowedRoles = [Role.staff, Role.admin];
 
 export default async function CodePage() {
   const cookieStore = await cookies();
-  const user = await userFromCookie(cookieStore);
+  const user = await userFromAuthCookie(cookieStore);
 
   if (!user || !allowedRoles.includes(user.role)) {
     // only allow staff and admin to see this page

@@ -4,7 +4,9 @@ import { cookies } from "next/headers";
 import getCollection, { USERS_COLLECTION } from "@/db";
 import { formatDate } from "../util/format";
 import { ENV, MOCK } from "../env";
-import { userFromCookie } from "../cookies/userFromCookie";
+import { userFromAuthCookie } from "../cookies/userFromAuthCookie";
+import documentToUserProps from "../util/documentToUserProps";
+import { setToCache } from "../cache/redis";
 
 const allowedRoles = [Role.staff, Role.admin];
 
@@ -17,7 +19,7 @@ export async function markStudentAbsent(
   }
 
   const cookieStore = await cookies();
-  const user = await userFromCookie(cookieStore);
+  const user = await userFromAuthCookie(cookieStore);
 
   if (!user || !allowedRoles.includes(user.role)) {
     return { success: false, message: "unauthorized. please sign in again." };
@@ -36,7 +38,7 @@ export async function markStudentAbsent(
   endOfDay.setHours(23, 59, 59, 999);
 
   const usersCollection = await getCollection(USERS_COLLECTION);
-  const res = await usersCollection.updateOne(
+  const data = await usersCollection.findOneAndUpdate(
     { email },
     {
       // @ts-expect-error weird mongo linting?
@@ -49,12 +51,18 @@ export async function markStudentAbsent(
         },
       },
     },
+    {
+      returnDocument: "after",
+    },
   );
-  if (res.modifiedCount === 0)
+  if (!data) {
     return {
       success: false,
       message: "could not mark student as absent. please try again later.",
     };
+  }
+
+  setToCache(documentToUserProps(data));
 
   return {
     success: true,

@@ -1,10 +1,13 @@
 "use server";
-import { Class, Role, ServerFuncRes } from "@/types";
+import { AttendanceProps, Class, Role, ServerFuncRes } from "@/types";
 import { cookies } from "next/headers";
-import getCollection, { USERS_COLLECTION } from "@/db";
+import { startCollectionSession, USERS_COLLECTION } from "@/db";
 import { formatDate } from "../util/format";
 import { ENV, MOCK } from "../env";
-import { userFromCookie } from "../cookies/userFromCookie";
+import { userFromAuthCookie } from "../cookies/userFromAuthCookie";
+import documentToUserProps from "../util/documentToUserProps";
+import { setToCache } from "../cache/redis";
+import { addToAttendanceList } from "../util/addToAttendanceList";
 
 const allowedRoles = [Role.staff, Role.admin];
 
@@ -17,7 +20,7 @@ export async function markStudentPresent(
   }
 
   const cookieStore = await cookies();
-  const user = await userFromCookie(cookieStore);
+  const user = await userFromAuthCookie(cookieStore);
 
   if (!user || !allowedRoles.includes(user.role)) {
     return { success: false, message: "unauthorized. please sign in again." };
@@ -30,48 +33,58 @@ export async function markStudentPresent(
     };
   }
 
-  const startOfDay = new Date(date);
-  startOfDay.setHours(0, 0, 0, 0);
-  const endOfDay = new Date(date);
-  endOfDay.setHours(23, 59, 59, 999);
+  const { session, collection: usersCollection } =
+    await startCollectionSession(USERS_COLLECTION);
 
-  const usersCollection = await getCollection(USERS_COLLECTION);
-  const res = await usersCollection.updateOne(
-    { email },
-    {
-      // remove previous attendance marking for this date
-      // @ts-expect-error weird mongo linting?
-      $pull: {
-        attendanceList: {
-          date: {
-            $gte: startOfDay,
-            $lte: endOfDay,
-          },
+  try {
+    session.startTransaction();
+
+    let data = await usersCollection.findOne({ email });
+    if (!data) throw new Error(`user with email ${email} was not found`);
+
+    const attendanceList = data.attendanceList as AttendanceProps[];
+    addToAttendanceList(attendanceList, {
+      class: Class.Lecture,
+      date,
+    });
+
+    // const usersCollection = await getCollection(USERS_COLLECTION);
+    data = await usersCollection.findOneAndUpdate(
+      { email },
+      {
+        $set: {
+          attendanceList,
         },
       },
-      // @ts-expect-error weird mongo linting?
-      $push: {
-        attendanceList: {
-          $each: [
-            {
-              class: Class.Lecture,
-              date,
-            },
-          ],
-          $sort: { date: 1 },
-        },
+      {
+        returnDocument: "after",
       },
-    },
-  );
-  if (res.modifiedCount === 0) {
+    );
+    if (!data) {
+      throw new Error(
+        `could not mark ${email} as present. please try again later`,
+      );
+    }
+    await session.commitTransaction();
+
+    console.log("SUCCESSFULLY MARKED PRESENT");
+    setToCache(documentToUserProps(data));
+    return {
+      success: true,
+      message: `successfully marked ${email} as present on ${formatDate(date)}`,
+    };
+  } catch (error) {
+    console.log("CAUGHT ERROR");
+    let message = `could not mark ${email} as present. please try again later.`;
+    if (error instanceof Error) {
+      message = error.message;
+    }
+    await session.abortTransaction();
     return {
       success: false,
-      message: `could not mark ${email} as present. please try again later`,
+      message,
     };
+  } finally {
+    await session.endSession();
   }
-
-  return {
-    success: true,
-    message: `successfully marked ${email} as present on ${formatDate(date)}`,
-  };
 }

@@ -10,6 +10,7 @@ import { markStudentPresent } from "@/lib/control/markStudentPresent";
 import { Class, Role } from "@/types";
 import { markStudentAbsent } from "@/lib/control/markStudentAbsent";
 import { formatDate } from "@/lib/util/format";
+import { addToAttendanceList } from "@/lib/util/addToAttendanceList";
 
 export default function MarkStudentAttendance() {
   const { users, setUsers } = useUsersContext();
@@ -58,20 +59,18 @@ export default function MarkStudentAttendance() {
                 if (res.success) {
                   setUsers(
                     users.map((user) =>
-                      user.email !== selectedEmail
-                        ? user
-                        : {
+                      user.email === selectedEmail
+                        ? {
                             ...user,
-                            attendanceList: [
-                              ...user.attendanceList,
+                            attendanceList: addToAttendanceList(
+                              user.attendanceList,
                               {
                                 class: Class.Lecture,
                                 date: dayjsDate.toDate(),
                               },
-                            ].sort(
-                              (a, b) => a.date.getTime() - b.date.getTime(),
                             ),
-                          },
+                          }
+                        : user,
                     ),
                   );
                 }
