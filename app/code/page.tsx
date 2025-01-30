@@ -16,6 +16,8 @@ export default async function CodePage() {
     return redirect("/");
   }
 
+  console.log("code viewed by", user.name, user.email);
+
   return (
     <>
       <Header role={user.role} />
