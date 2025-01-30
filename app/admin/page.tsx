@@ -16,6 +16,8 @@ export default async function AdminPage() {
     return redirect("/");
   }
 
+  console.log("admin panel viewed by", user.name, user.email);
+
   // use default role in dev environment
   return (
     <>
