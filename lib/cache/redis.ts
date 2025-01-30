@@ -19,5 +19,17 @@ export async function deleteFromCache(email: string) {
 }
 
 export async function clearCache() {
-  await redis.flushall();
+  let cursor = 0;
+  const match = `*@bu.edu-${ENV}`;
+
+  while (true) {
+    const [newCursor, keys] = await redis.scan(cursor, { match });
+    if (keys.length > 0) {
+      await redis.del(...keys);
+    }
+    cursor = parseInt(newCursor);
+    if (cursor === 0) {
+      break;
+    }
+  }
 }
