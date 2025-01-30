@@ -61,7 +61,7 @@ export default async function markAsPresent(
   // only check student location if max allowed distance is not negative and they have granted permission
   if (MAX_ALLOWED_DISTANCE >= 0 && longitude && latitude) {
     const d = getDistance({ longitude, latitude }, CLASS_COORDS);
-    console.log("student is " + d + " meters away from class");
+    console.log(`${user.email} is ${d} meters away from class`);
     if (d > MAX_ALLOWED_DISTANCE) {
       console.error(
         `student: ${user.email} is too far from class. they are ${d} meters away and max allowed distance is ${MAX_ALLOWED_DISTANCE} meters`,
