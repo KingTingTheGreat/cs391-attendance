@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ENV } from "@/lib/env";
 import { CSPostHogProvider } from "./providers";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export const metadata: Metadata = {
   title: "CS391 Attendance",
@@ -24,7 +25,10 @@ export default function RootLayout({
         </head>
       )}
       <body>
-        <CSPostHogProvider>{children}</CSPostHogProvider>
+        <CSPostHogProvider>
+          {children}
+          <SpeedInsights />
+        </CSPostHogProvider>
       </body>
     </html>
   );
