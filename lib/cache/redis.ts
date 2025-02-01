@@ -5,17 +5,17 @@ import { ENV } from "../env";
 
 const redis = Redis.fromEnv();
 
-export async function getFromCache(email: string): Promise<UserProps | null> {
-  const result = await redis.get(`${email}-${ENV}`);
+export async function getFromCache(id: string): Promise<UserProps | null> {
+  const result = await redis.get(`${id}-${ENV}`);
   return parseUser(result as UserProps);
 }
 
-export async function setToCache(user: UserProps) {
+export async function setUserInCache(user: UserProps) {
   await redis.set(`${user.email}-${ENV}`, user);
 }
 
-export async function deleteFromCache(email: string) {
-  await redis.del(`${email}-${ENV}`);
+export async function deleteFromCache(id: string) {
+  await redis.del(`${id}-${ENV}`);
 }
 
 export async function clearCache() {

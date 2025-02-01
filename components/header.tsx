@@ -14,6 +14,9 @@ export default function Header({ role }: { role?: Role }) {
           <Link href="/code" className="p-2 m-2">
             Today&apos;s Code
           </Link>
+          <Link href="/temporary-code" className="p-2 m-2">
+            Temporary Code
+          </Link>
           <Link href="/admin" className="p-2 m-2">
             Admin Panel
           </Link>

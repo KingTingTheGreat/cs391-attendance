@@ -5,7 +5,7 @@ import { DEFAULT_ROLE, ENABLE_SIGN_ON, ENV, MOCK } from "../env";
 import { AUTH_COOKIE } from "./cookies";
 import { AuthClaims, verifyJwt } from "../jwt";
 import getCollection, { USERS_COLLECTION } from "@/db";
-import { getFromCache, setToCache } from "../cache/redis";
+import { getFromCache, setUserInCache } from "../cache/redis";
 import documentToUserProps from "../util/documentToUserProps";
 
 export async function userFromAuthCookie(
@@ -61,6 +61,6 @@ export async function userFromAuthCookie(
 
   const user = documentToUserProps(data);
   console.log("successfully got user from db", user);
-  setToCache(user);
+  setUserInCache(user);
   return user;
 }

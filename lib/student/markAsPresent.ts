@@ -13,7 +13,7 @@ import {
 } from "../env";
 import { getDistance } from "geolib";
 import { userFromAuthCookie } from "../cookies/userFromAuthCookie";
-import { setToCache } from "../cache/redis";
+import { setUserInCache } from "../cache/redis";
 import documentToUserProps from "../util/documentToUserProps";
 
 const classDays = [DayEnum.tuesday, DayEnum.thursday];
@@ -115,7 +115,7 @@ export default async function markAsPresent(
     }
 
     await session.commitTransaction();
-    setToCache(documentToUserProps(data));
+    setUserInCache(documentToUserProps(data));
   } catch (error) {
     console.log("CAUGHT ERROR");
     let message = "something went wrong. please try again later.";

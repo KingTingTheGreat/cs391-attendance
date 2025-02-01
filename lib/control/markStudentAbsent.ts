@@ -6,7 +6,7 @@ import { formatDate } from "../util/format";
 import { ENV, MOCK } from "../env";
 import { userFromAuthCookie } from "../cookies/userFromAuthCookie";
 import documentToUserProps from "../util/documentToUserProps";
-import { setToCache } from "../cache/redis";
+import { setUserInCache } from "../cache/redis";
 
 const allowedRoles = [Role.staff, Role.admin];
 
@@ -62,7 +62,7 @@ export async function markStudentAbsent(
     };
   }
 
-  setToCache(documentToUserProps(data));
+  setUserInCache(documentToUserProps(data));
 
   return {
     success: true,

@@ -6,7 +6,7 @@ import { Role } from "@/types";
 import { createJwt } from "../jwt";
 import { AUTH_COOKIE } from "./cookies";
 import { ENV } from "../env";
-import { setToCache } from "../cache/redis";
+import { setUserInCache } from "../cache/redis";
 import documentToUserProps from "../util/documentToUserProps";
 
 export async function setUserAuthCookie(
@@ -61,7 +61,7 @@ export async function setUserAuthCookie(
     },
   );
 
-  setToCache(documentToUserProps(data));
+  setUserInCache(documentToUserProps(data));
 
   return true;
 }
