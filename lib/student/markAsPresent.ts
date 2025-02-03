@@ -1,13 +1,15 @@
 "use server";
 import { cookies } from "next/headers";
 import { startCollectionSession, USERS_COLLECTION } from "@/db";
-import { AttendanceProps, Class, DayEnum } from "@/types";
+import { AttendanceProps, Class } from "@/types";
 import { formatDate, formatDay } from "../util/format";
 import { todayCode } from "../generateCode";
 import {
   CLASS_COORDS,
+  CLASS_DAYS,
   DISABLE_DAY_CHECKING,
   ENV,
+  LECTURE_DAYS,
   MAX_ALLOWED_DISTANCE,
   MOCK,
 } from "../env";
@@ -15,10 +17,6 @@ import { getDistance } from "geolib";
 import { userFromAuthCookie } from "../cookies/userFromAuthCookie";
 import { getFromCache, setUserInCache } from "../cache/redis";
 import documentToUserProps from "../util/documentToUserProps";
-
-// assume lecture days are different than discussion/lab days
-const lectureDays = [DayEnum.tuesday, DayEnum.thursday];
-const classDays = [DayEnum.monday, DayEnum.friday, ...lectureDays];
 
 export default async function markAsPresent(
   code: string,
@@ -29,7 +27,7 @@ export default async function markAsPresent(
   const today = new Date();
   const formatToday = formatDate(today);
   if (!DISABLE_DAY_CHECKING) {
-    if (!classDays.includes(formatDay(today))) {
+    if (!CLASS_DAYS.includes(formatDay(today))) {
       console.error(
         "student claiming to be present on",
         formatDay(today),
@@ -101,7 +99,7 @@ export default async function markAsPresent(
           attendanceList: {
             $each: [
               {
-                class: lectureDays.includes(formatDay(today))
+                class: LECTURE_DAYS.includes(formatDay(today))
                   ? Class.Lecture
                   : Class.Discussion,
                 date: today,

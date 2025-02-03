@@ -1,4 +1,4 @@
-import { Role } from "@/types";
+import { DayEnum, Role } from "@/types";
 
 export const ENV = process.env.ENVIRONMENT;
 export const DEFAULT_ROLE = process.env.DEFAULT_ROLE as Role;
@@ -17,3 +17,8 @@ export const MAX_ALLOWED_DISTANCE = Number(
 );
 console.log("class coords", CLASS_COORDS);
 console.log("max allowed distance", MAX_ALLOWED_DISTANCE);
+
+// assume lecture days are different than discussion/lab days
+export const LECTURE_DAYS = [DayEnum.tuesday, DayEnum.thursday];
+export const DISCUSSION_DAYS = [DayEnum.friday];
+export const CLASS_DAYS = [...LECTURE_DAYS, ...DISCUSSION_DAYS];
