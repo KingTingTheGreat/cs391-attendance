@@ -1,13 +1,17 @@
 import { DataGrid, GridColDef, GridOverlay } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
 import { NumLong } from "@/lib/util/attendanceList";
-import { AttendanceStatus } from "@/types";
+import { AttendanceStatus, Class } from "@/types";
 import DownloadSheet from "./download-sheet";
 import { useUsersContext } from "../control/users-context";
+import { useState } from "react";
+import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 const paginationModel = { page: 0, pageSize: 10 };
 
 export default function MuiAttendanceSheet() {
-  const { attendanceList } = useUsersContext();
+  const { lecAttList, discAttList } = useUsersContext();
+  const [classType, setClassType] = useState(Class.lecture);
+  const attendanceList = classType === Class.lecture ? lecAttList : discAttList;
 
   const columns: GridColDef[] = attendanceList[0].map((col, i) => ({
     field: `${i}`,
@@ -17,7 +21,26 @@ export default function MuiAttendanceSheet() {
 
   return (
     <>
-      <DownloadSheet />
+      <h2 className="font-bold text-3xl">
+        {classType === Class.lecture
+          ? "Lecture Attendance"
+          : "Discussion Attendance"}
+      </h2>
+      <div>
+        <ToggleButtonGroup
+          color="primary"
+          value={classType}
+          exclusive
+          onChange={(_, newCls) => setClassType(newCls as Class)}
+        >
+          {Object.keys(Class).map((cls) => (
+            <ToggleButton key={cls} value={cls}>
+              {cls}
+            </ToggleButton>
+          ))}
+        </ToggleButtonGroup>
+        <DownloadSheet classType={classType} />
+      </div>
       <Paper
         sx={{
           height: "fit-content",

@@ -69,8 +69,8 @@ export default function MarkStudentAttendance() {
                                 class: DISCUSSION_DAYS.includes(
                                   formatDay(dayjsDate.toDate()),
                                 )
-                                  ? Class.Discussion
-                                  : Class.Lecture,
+                                  ? Class.discussion
+                                  : Class.lecture,
                                 date: dayjsDate.toDate(),
                               },
                             ),

@@ -100,8 +100,8 @@ export default async function markAsPresent(
             $each: [
               {
                 class: LECTURE_DAYS.includes(formatDay(today))
-                  ? Class.Lecture
-                  : Class.Discussion,
+                  ? Class.lecture
+                  : Class.discussion,
                 date: today,
               },
             ],

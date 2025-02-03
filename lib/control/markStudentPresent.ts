@@ -45,8 +45,8 @@ export async function markStudentPresent(
     const attendanceList = data.attendanceList as AttendanceProps[];
     addToAttendanceList(attendanceList, {
       class: DISCUSSION_DAYS.includes(formatDay(date))
-        ? Class.Discussion
-        : Class.Lecture,
+        ? Class.discussion
+        : Class.lecture,
       date,
     });
 

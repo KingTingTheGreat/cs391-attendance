@@ -48,7 +48,7 @@ export default function StudentProfile({
               setUser({
                 ...user,
                 attendanceList: addToAttendanceList(user.attendanceList, {
-                  class: Class.Lecture,
+                  class: Class.lecture,
                   date: new Date(),
                 }),
               });

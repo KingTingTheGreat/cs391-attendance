@@ -49,7 +49,7 @@ function randStudent(classDates: Date[]): UserProps {
     if (p < 80) {
       attendanceList.push({
         date: d,
-        class: Class.Lecture,
+        class: Class.lecture,
       });
     }
   }

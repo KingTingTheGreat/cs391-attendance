@@ -1,6 +1,6 @@
 "use client";
 import { getAttendanceList } from "@/lib/util/attendanceList";
-import { UserProps } from "@/types";
+import { Class, UserProps } from "@/types";
 import {
   createContext,
   Dispatch,
@@ -15,7 +15,8 @@ const UsersContext = createContext<UsersContextType | null>(null);
 type UsersContextType = {
   users: UserProps[];
   setUsers: Dispatch<SetStateAction<UserProps[]>>;
-  attendanceList: string[][];
+  lecAttList: string[][];
+  discAttList: string[][];
 };
 
 export const UsersContextProvider = ({
@@ -26,14 +27,16 @@ export const UsersContextProvider = ({
   children: React.ReactNode;
 }) => {
   const [users, setUsers] = useState<UserProps[]>(usersInput);
-  const [attendanceList, setAttendanceList] = useState<string[][]>([[]]);
+  const [lecAttList, setLecAttList] = useState<string[][]>([[]]);
+  const [discAttList, setDiscAttList] = useState<string[][]>([[]]);
 
   useEffect(() => {
-    setAttendanceList(getAttendanceList(users));
+    setLecAttList(getAttendanceList(users, Class.lecture));
+    setDiscAttList(getAttendanceList(users, Class.discussion));
   }, [users]);
 
   return (
-    <UsersContext.Provider value={{ users, setUsers, attendanceList }}>
+    <UsersContext.Provider value={{ users, setUsers, lecAttList, discAttList }}>
       {children}
     </UsersContext.Provider>
   );

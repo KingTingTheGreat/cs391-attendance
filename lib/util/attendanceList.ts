@@ -1,16 +1,22 @@
-import { AttendanceStatus, Role, UserProps } from "@/types";
+import { AttendanceStatus, Class, Role, UserProps } from "@/types";
 import { formatDate, formatTime } from "./format";
 
 // number of headers that are not dates
 export const NumLong = 2;
 
-export function getAttendanceList(users: UserProps[]): string[][] {
+export function getAttendanceList(
+  users: UserProps[],
+  classType?: Class,
+): string[][] {
   // filter for students only
   users = users.filter((user) => user.role === Role.student);
 
   const uniqueDates: { [key: string]: Date } = {};
   for (const user of users) {
     for (const att of user.attendanceList) {
+      if (classType && att.class !== classType) {
+        continue;
+      }
       uniqueDates[formatDate(att.date)] = att.date;
     }
   }
