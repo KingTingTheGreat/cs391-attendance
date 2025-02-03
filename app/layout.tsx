@@ -3,6 +3,9 @@ import "./globals.css";
 import { ENV } from "@/lib/env";
 import { CSPostHogProvider } from "./providers";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Suspense } from "react";
+import { Role } from "@/types";
+import Header from "@/components/header";
 
 export const metadata: Metadata = {
   title: "CS391 Attendance",
@@ -26,8 +29,10 @@ export default function RootLayout({
       )}
       <body>
         <CSPostHogProvider>
-          {children}
-          <SpeedInsights />
+          <Suspense fallback={<Header role={Role.student} />}>
+            {children}
+            <SpeedInsights />
+          </Suspense>
         </CSPostHogProvider>
       </body>
     </html>
