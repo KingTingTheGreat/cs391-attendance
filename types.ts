@@ -6,6 +6,7 @@ export enum Role {
 
 export enum Class {
   Lecture = "lecture",
+  Discussion = "discussion",
 }
 
 export enum AttendanceStatus {
