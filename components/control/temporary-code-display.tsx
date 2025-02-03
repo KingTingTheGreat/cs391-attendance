@@ -43,9 +43,12 @@ export default function TemporaryCodeDisplay() {
                     );
                   }
                 }}
+                sx={{ margin: "0.5rem" }}
               />
             </LocalizationProvider>
             <Button
+              variant="outlined"
+              sx={{ maxWidth: "275px" }}
               onClick={() => {
                 generateTempCode(expSeconds).then((res) => {
                   if (!res) return;
