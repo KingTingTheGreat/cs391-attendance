@@ -9,8 +9,9 @@ import { Button, MenuItem, Select } from "@mui/material";
 import { markStudentPresent } from "@/lib/control/markStudentPresent";
 import { Class, Role } from "@/types";
 import { markStudentAbsent } from "@/lib/control/markStudentAbsent";
-import { formatDate } from "@/lib/util/format";
+import { formatDate, formatDay } from "@/lib/util/format";
 import { addToAttendanceList } from "@/lib/util/addToAttendanceList";
+import { DISCUSSION_DAYS } from "@/lib/env";
 
 export default function MarkStudentAttendance() {
   const { users, setUsers } = useUsersContext();
@@ -65,7 +66,11 @@ export default function MarkStudentAttendance() {
                             attendanceList: addToAttendanceList(
                               user.attendanceList,
                               {
-                                class: Class.Lecture,
+                                class: DISCUSSION_DAYS.includes(
+                                  formatDay(dayjsDate.toDate()),
+                                )
+                                  ? Class.Discussion
+                                  : Class.Lecture,
                                 date: dayjsDate.toDate(),
                               },
                             ),

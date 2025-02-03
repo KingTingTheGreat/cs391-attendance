@@ -2,8 +2,8 @@
 import { AttendanceProps, Class, Role, ServerFuncRes } from "@/types";
 import { cookies } from "next/headers";
 import { startCollectionSession, USERS_COLLECTION } from "@/db";
-import { formatDate } from "../util/format";
-import { ENV, MOCK } from "../env";
+import { formatDate, formatDay } from "../util/format";
+import { DISCUSSION_DAYS, ENV, MOCK } from "../env";
 import { userFromAuthCookie } from "../cookies/userFromAuthCookie";
 import documentToUserProps from "../util/documentToUserProps";
 import { setUserInCache } from "../cache/redis";
@@ -44,7 +44,9 @@ export async function markStudentPresent(
 
     const attendanceList = data.attendanceList as AttendanceProps[];
     addToAttendanceList(attendanceList, {
-      class: Class.Lecture,
+      class: DISCUSSION_DAYS.includes(formatDay(date))
+        ? Class.Discussion
+        : Class.Lecture,
       date,
     });
 
