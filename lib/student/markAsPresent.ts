@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { startCollectionSession, USERS_COLLECTION } from "@/db";
 import { AttendanceProps, Class, DayEnum } from "@/types";
 import { formatDate, formatDay } from "../util/format";
-import { generateCode } from "../generateCode";
+import { todayCode } from "../generateCode";
 import {
   CLASS_COORDS,
   DISABLE_DAY_CHECKING,
@@ -13,10 +13,12 @@ import {
 } from "../env";
 import { getDistance } from "geolib";
 import { userFromAuthCookie } from "../cookies/userFromAuthCookie";
-import { setUserInCache } from "../cache/redis";
+import { getFromCache, setUserInCache } from "../cache/redis";
 import documentToUserProps from "../util/documentToUserProps";
 
-const classDays = [DayEnum.tuesday, DayEnum.thursday];
+// assume lecture days are different than discussion/lab days
+const lectureDays = [DayEnum.tuesday, DayEnum.thursday];
+const classDays = [DayEnum.monday, DayEnum.friday, ...lectureDays];
 
 export default async function markAsPresent(
   code: string,
@@ -52,9 +54,12 @@ export default async function markAsPresent(
     return "you have already been marked present for today";
   }
 
-  if (code.toUpperCase() !== generateCode()) {
-    console.error("incorrect code: ", code.toUpperCase());
-    return "incorrect code";
+  if (code.toUpperCase() !== todayCode()) {
+    // check for temporary code
+    if (!(await getFromCache(code.toUpperCase()))) {
+      console.error("incorrect code: ", code.toUpperCase());
+      return "incorrect code";
+    }
   }
 
   console.log("long, lat: ", longitude, latitude);
@@ -96,7 +101,9 @@ export default async function markAsPresent(
           attendanceList: {
             $each: [
               {
-                class: Class.Lecture,
+                class: lectureDays.includes(formatDay(today))
+                  ? Class.Lecture
+                  : Class.Discussion,
                 date: today,
               },
             ],

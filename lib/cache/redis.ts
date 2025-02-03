@@ -5,13 +5,26 @@ import { ENV } from "../env";
 
 const redis = Redis.fromEnv();
 
-export async function getFromCache(id: string): Promise<UserProps | null> {
+export async function getUserFromCache(id: string): Promise<UserProps | null> {
   const result = await redis.get(`${id}-${ENV}`);
   return parseUser(result as UserProps);
 }
 
 export async function setUserInCache(user: UserProps) {
   await redis.set(`${user.email}-${ENV}`, user);
+}
+
+export async function setInCache(
+  key: string,
+  value: string,
+  expireIn?: number,
+) {
+  const opts = expireIn !== undefined ? { ex: expireIn } : {};
+  await redis.set(`${key}-${ENV}`, value, opts);
+}
+
+export async function getFromCache(key: string): Promise<string | null> {
+  return await redis.get(`${key}-${ENV}`);
 }
 
 export async function deleteFromCache(id: string) {

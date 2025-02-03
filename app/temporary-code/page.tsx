@@ -1,4 +1,4 @@
-import TemporaryCode from "@/components/control/temporary-code";
+import TemporaryCodeDisplay from "@/components/control/temporary-code-display";
 import Header from "@/components/header";
 import { userFromAuthCookie } from "@/lib/cookies/userFromAuthCookie";
 import { Role } from "@/types";
@@ -21,7 +21,7 @@ export default async function TempCodePage() {
     <>
       <Header role={user.role} />
       <div className="flex justify-center">
-        <TemporaryCode />
+        <TemporaryCodeDisplay />
       </div>
     </>
   );
