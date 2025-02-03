@@ -26,7 +26,7 @@ export default function MuiAttendanceSheet() {
           ? "Lecture Attendance"
           : "Discussion Attendance"}
       </h2>
-      <div>
+      <div className="p-1 m-0.5">
         <ToggleButtonGroup
           color="primary"
           value={classType}
