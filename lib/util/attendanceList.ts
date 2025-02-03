@@ -29,11 +29,16 @@ export function getAttendanceList(
       user.name,
       user.email,
       ...dates.map((d) => {
+        while (
+          i < user.attendanceList.length &&
+          user.attendanceList[i].class !== classType
+        ) {
+          i++;
+        }
         if (i >= user.attendanceList.length) return AttendanceStatus.absent;
         if (formatDate(user.attendanceList[i].date) === d) {
-          const t = formatTime(user.attendanceList[i].date);
           i++;
-          return t;
+          return formatTime(user.attendanceList[i - 1].date);
         } else {
           return AttendanceStatus.absent;
         }
