@@ -6,6 +6,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Suspense } from "react";
 import { Role } from "@/types";
 import Header from "@/components/header";
+import Loading from "@/components/loading";
 
 export const metadata: Metadata = {
   title: "CS391 Attendance",
@@ -29,7 +30,14 @@ export default function RootLayout({
       )}
       <body>
         <CSPostHogProvider>
-          <Suspense fallback={<Header role={Role.student} />}>
+          <Suspense
+            fallback={
+              <>
+                <Header role={Role.student} />
+                <Loading />
+              </>
+            }
+          >
             {children}
             <SpeedInsights />
           </Suspense>
