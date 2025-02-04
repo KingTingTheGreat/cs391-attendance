@@ -6,6 +6,8 @@ import { Class, UserProps } from "@/types";
 import { formatDate } from "@/lib/util/format";
 import { Button, TextField } from "@mui/material";
 import { addToAttendanceList } from "@/lib/util/addToAttendanceList";
+import { DayPicker } from "react-day-picker";
+import "react-day-picker/style.css";
 
 export default function StudentProfile({
   userInput,
@@ -103,13 +105,16 @@ export default function StudentProfile({
       </div>
       <div className="flex justify-center">{interactive}</div>
       <p className="p-2 text-lg text-[#F00]">{errorMessage}</p>
-      <div className="p-2 m-2">
-        <h4 className="text-center font-semibold">
+      <div className="p-2 m-2 flex flex-col items-center">
+        <h4 className="text-lg md:text-xl text-center font-semibold">
           Dates you&apos;ve been marked as present:
         </h4>
-        {user.attendanceList.map((att) => (
-          <p key={formatDate(att.date)}>{formatDate(att.date)}</p>
-        ))}
+        <DayPicker
+          mode="multiple"
+          className="m-2"
+          onSelect={() => {}}
+          selected={[...user.attendanceList.map((att) => att.date)]} // needed for rerender
+        />
       </div>
     </div>
   );
