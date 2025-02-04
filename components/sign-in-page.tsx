@@ -15,7 +15,7 @@ export default function SignInPage({
           <p>Who are you? Please sign in so we can mark your attendance.</p>
           <Link
             href={googleSignInLink()}
-            className="rounded-lg px-4 py-2 m-2 border-2 hover:bg-zinc-50"
+            className="rounded-lg px-4 py-2 m-6 border-2 hover:bg-zinc-50"
           >
             Sign In With Google
           </Link>
