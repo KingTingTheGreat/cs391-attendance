@@ -5,7 +5,7 @@ const allowedRoles = [Role.staff, Role.admin];
 
 export default function Header({ role }: { role?: Role }) {
   return (
-    <header className="pb-0 md:pb-4 p-4 flex flex-col lg:flex-row lg:justify-between items-center">
+    <header className="pb-0 md:pb-1 py-1 px-4 flex flex-col lg:flex-row lg:justify-between items-center">
       <Link href="/" className="text-3xl md:text-4xl font-bold text-center">
         CS391 Attendance
       </Link>
