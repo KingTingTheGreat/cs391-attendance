@@ -17,10 +17,9 @@ export default function StudentProfile({
   const [user, setUser] = useState(userInput);
   const [code, setCode] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const formatToday = formatDate(new Date());
   const [present, setPresent] = useState(
-    user.attendanceList.length > 0 &&
-      formatDate(user.attendanceList[user.attendanceList.length - 1].date) ===
-        formatDate(new Date()),
+    user.attendanceList.some((att) => formatDate(att.date) === formatToday),
   );
   const [isPending, startTransition] = useTransition();
   const [longitude, setLongitude] = useState<number | undefined>(undefined);
