@@ -90,7 +90,7 @@ export default function StudentProfile({
   );
 
   return (
-    <div className="p-8">
+    <div>
       <p className="text-2xl font-bold text-center mb-6">
         Hello there, {user.name}!
       </p>
