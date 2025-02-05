@@ -11,7 +11,7 @@ import { Roboto_Mono } from "next/font/google";
 
 export const metadata: Metadata = {
   title: "CS391 Attendance",
-  description: "attendance application for cs391",
+  description: "An attendance application for CS391 at Boston University.",
 };
 
 const robotoMono = Roboto_Mono({ subsets: ["latin"] });
