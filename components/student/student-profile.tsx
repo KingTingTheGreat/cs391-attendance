@@ -1,7 +1,7 @@
 "use client";
 import markAsPresent from "@/lib/student/markAsPresent";
 import Image from "next/image";
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { Class, UserProps } from "@/types";
 import { formatDate } from "@/lib/util/format";
 import { Button, TextField } from "@mui/material";
@@ -22,43 +22,38 @@ export default function StudentProfile({
     user.attendanceList.some((att) => formatDate(att.date) === formatToday),
   );
   const [isPending, startTransition] = useTransition();
-  const [longitude, setLongitude] = useState<number | undefined>(undefined);
-  const [latitude, setLatitude] = useState<number | undefined>(undefined);
 
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          console.log(pos);
-          setLongitude(pos.coords.longitude);
-          setLatitude(pos.coords.latitude);
-        },
-        () => console.error("require geolocation permissions"),
-      );
+  const processPresentRes = (errMsg: string | null) => {
+    if (errMsg === null) {
+      setUser({
+        ...user,
+        attendanceList: addToAttendanceList(user.attendanceList, {
+          class: Class.lecture,
+          date: new Date(),
+        }),
+      });
+      setPresent(true);
+      setErrorMessage("");
     } else {
-      console.log("Geolocation not supported");
+      setErrorMessage(errMsg);
     }
-  }, []);
+  };
 
   const interactive = !present ? (
     <form
       action={() => {
         startTransition(() => {
-          markAsPresent(code, longitude, latitude).then((errMsg) => {
-            if (errMsg === null) {
-              setUser({
-                ...user,
-                attendanceList: addToAttendanceList(user.attendanceList, {
-                  class: Class.lecture,
-                  date: new Date(),
-                }),
-              });
-              setPresent(true);
-              setErrorMessage("");
-            } else {
-              setErrorMessage(errMsg);
-            }
-          });
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((pos) => {
+              markAsPresent(
+                code,
+                pos.coords.longitude,
+                pos.coords.latitude,
+              ).then(processPresentRes);
+            });
+          } else {
+            markAsPresent(code).then(processPresentRes);
+          }
         });
       }}
       className="flex flex-col w-72"
