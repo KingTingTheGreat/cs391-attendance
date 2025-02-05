@@ -26,6 +26,10 @@ export default function RootLayout({
             src="https://unpkg.com/react-scan/dist/auto.global.js"
             async
           />
+          <style>
+            @import
+            url(&apos;https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap&apos;);
+          </style>
         </head>
       )}
       <body>
