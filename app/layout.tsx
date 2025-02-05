@@ -7,11 +7,14 @@ import { Suspense } from "react";
 import { Role } from "@/types";
 import Header from "@/components/header";
 import Loading from "@/components/loading";
+import { Roboto_Mono } from "next/font/google";
 
 export const metadata: Metadata = {
   title: "CS391 Attendance",
   description: "attendance application for cs391",
 };
+
+const robotoMono = Roboto_Mono({ subsets: ["latin"] });
 
 export default function RootLayout({
   children,
@@ -26,13 +29,9 @@ export default function RootLayout({
             src="https://unpkg.com/react-scan/dist/auto.global.js"
             async
           />
-          <style>
-            @import
-            url(&apos;https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap&apos;);
-          </style>
         </head>
       )}
-      <body>
+      <body className={robotoMono.className}>
         <CSPostHogProvider>
           <Suspense
             fallback={
