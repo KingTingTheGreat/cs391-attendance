@@ -1,5 +1,6 @@
 import CodeDisplay from "@/components/code-display";
 import Header from "@/components/header";
+import QRCodeDisplay from "@/components/qrcode-display";
 import { userFromAuthCookie } from "@/lib/cookies/userFromAuthCookie";
 import { todayCode } from "@/lib/generateCode";
 import { Role } from "@/types";
@@ -31,6 +32,7 @@ export default async function CodePage() {
               Use this code to confirm your attendance
             </p>
           </div>
+          <QRCodeDisplay />
         </div>
       </div>
     </>

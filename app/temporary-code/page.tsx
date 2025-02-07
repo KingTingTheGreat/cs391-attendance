@@ -1,5 +1,6 @@
 import TemporaryCodeDisplay from "@/components/control/temporary-code-display";
 import Header from "@/components/header";
+import QRCodeDisplay from "@/components/qrcode-display";
 import { userFromAuthCookie } from "@/lib/cookies/userFromAuthCookie";
 import { Role } from "@/types";
 import { cookies } from "next/headers";
@@ -20,8 +21,11 @@ export default async function TempCodePage() {
   return (
     <>
       <Header role={user.role} />
-      <div className="flex justify-center">
-        <TemporaryCodeDisplay />
+      <div className="p-1 m-2 flex flex-col items-center">
+        <div className="flex justify-center">
+          <TemporaryCodeDisplay />
+        </div>
+        <QRCodeDisplay />
       </div>
     </>
   );
