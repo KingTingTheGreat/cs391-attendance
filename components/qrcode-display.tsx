@@ -1,5 +1,6 @@
 "use client";
 import { Slider } from "@mui/material";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import QRCode from "react-qr-code";
 
@@ -8,12 +9,18 @@ export default function QRCodeDisplay() {
   const [size, setSize] = useState(256);
 
   useEffect(() => {
-    const currentDomain = window.location.hostname;
+    const currentDomain = window.location.origin;
     setDomain(currentDomain);
   }, []);
 
   return (
     <div className="flex flex-col items-center">
+      <p className="text-xl p-2 m-1">
+        Visit{" "}
+        <Link href={domain} className="underline">
+          {domain}
+        </Link>
+      </p>
       <Slider
         value={size}
         sx={{ width: "30vw" }}
