@@ -16,6 +16,8 @@ export default async function Home({
     const qParams = await searchParams;
     return <SignInPage errorMessage={qParams.message} />;
   }
+  // don't send pw info to frontend
+  user.pwInfo = undefined;
 
   return (
     <>
