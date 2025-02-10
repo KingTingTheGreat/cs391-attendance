@@ -26,6 +26,9 @@ export default async function Home({
           <Link href="/sign-out" prefetch={false} className="hover:underline">
             Sign Out
           </Link>
+          <Link href="/password" className="hover:underline">
+            Create/Edit Password
+          </Link>
         </div>
       </div>
     </>
