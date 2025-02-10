@@ -19,12 +19,18 @@ export type AttendanceProps = {
   date: Date;
 };
 
+export type PwInfo = {
+  pwHash: string;
+  salt: string;
+};
+
 export type UserProps = {
   name: string;
   email: string;
   picture: string;
   role: Role;
   attendanceList: AttendanceProps[];
+  pwInfo?: PwInfo;
 };
 
 export type GoogleUserProps = {
