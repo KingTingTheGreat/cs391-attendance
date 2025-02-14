@@ -5,7 +5,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { useUsersContext } from "./users-context";
-import { Button, MenuItem, Select } from "@mui/material";
+import { Autocomplete, Button, TextField } from "@mui/material";
 import { markStudentPresent } from "@/lib/control/markStudentPresent";
 import { Class, Role } from "@/types";
 import { markStudentAbsent } from "@/lib/control/markStudentAbsent";
@@ -24,22 +24,20 @@ export default function MarkStudentAttendance() {
       <h3 className="text-2xl font-semibold text-center w-full">
         Mark Student Attendance
       </h3>
-      <Select
-        onChange={(e) => {
-          setSelectedEmail(e.target.value as string);
+
+      <Autocomplete
+        disablePortal
+        options={users
+          .filter((user) => user.role !== Role.admin)
+          .map((user) => user.email)}
+        sx={{
+          width: `${(selectedEmail.length || 0) * 6 + 150}px`,
+          margin: "0.25rem",
         }}
+        renderInput={(params) => <TextField {...params} label="Email" />}
         value={selectedEmail}
-        sx={{ minWidth: 150, width: "fit-content", margin: "0.25rem" }}
-      >
-        <MenuItem value=""></MenuItem>
-        {users
-          .filter((user) => user.role === Role.student)
-          .map((user) => (
-            <MenuItem key={user.email} value={user.email}>
-              {user.email}
-            </MenuItem>
-          ))}
-      </Select>
+        onChange={(_, val) => setSelectedEmail(val as string)}
+      />
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en">
         <DateTimePicker
           value={dayjsDate}

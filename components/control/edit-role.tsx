@@ -1,7 +1,13 @@
 "use client";
 import { EditUserRole } from "@/lib/control/editUserRole";
 import { Role } from "@/types";
-import { Button, MenuItem, Select } from "@mui/material";
+import {
+  Autocomplete,
+  Button,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
 import { useState } from "react";
 import { useUsersContext } from "@/components/control/users-context";
 
@@ -16,22 +22,19 @@ export default function EditRole() {
       <h3 className="text-2xl font-semibold text-center w-full">
         Edit User Role
       </h3>
-      <Select
-        onChange={(e) => {
-          setSelectedEmail(e.target.value as string);
-        }}
-        value={selectedEmail}
-        sx={{ minWidth: 150, width: "fit-content", margin: "0.25rem" }}
-      >
-        <MenuItem value=""></MenuItem>
-        {users
+      <Autocomplete
+        disablePortal
+        options={users
           .filter((user) => user.role !== Role.admin)
-          .map((user) => (
-            <MenuItem key={user.email} value={user.email}>
-              {user.email}
-            </MenuItem>
-          ))}
-      </Select>
+          .map((user) => user.email)}
+        sx={{
+          width: `${(selectedEmail.length || 0) * 6 + 150}px`,
+          margin: "0.25rem",
+        }}
+        renderInput={(params) => <TextField {...params} label="Email" />}
+        value={selectedEmail}
+        onChange={(_, val) => setSelectedEmail(val as string)}
+      />
       <Select
         onChange={(e) =>
           setNewRole(e.target.value ? (e.target.value as Role) : "")

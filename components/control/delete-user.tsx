@@ -1,7 +1,7 @@
 "use client";
 import { deleteUser } from "@/lib/control/deleteUser";
 import { Role } from "@/types";
-import { Button, MenuItem, Modal, Select } from "@mui/material";
+import { Autocomplete, Button, Modal, TextField } from "@mui/material";
 import { useState } from "react";
 import { useUsersContext } from "@/components/control/users-context";
 
@@ -15,21 +15,20 @@ export default function DeleteUser() {
     <div className="p-2 m-2 w-fit flex flex-col lg:block">
       <h3 className="text-2xl font-semibold text-center w-full">
         Delete a User
-      </h3>
-      <Select
-        value={email}
-        onChange={(e) => setEmail(e.target.value as string)}
-        sx={{ minWidth: 150, width: "fit-content", margin: "0.25rem" }}
-      >
-        <MenuItem value=""></MenuItem>
-        {users
+      </h3>{" "}
+      <Autocomplete
+        disablePortal
+        options={users
           .filter((user) => user.role !== Role.admin)
-          .map((user) => (
-            <MenuItem key={user.email} value={user.email}>
-              {user.email}
-            </MenuItem>
-          ))}
-      </Select>
+          .map((user) => user.email)}
+        sx={{
+          width: `${(email.length || 0) * 6 + 150}px`,
+          margin: "0.25rem",
+        }}
+        renderInput={(params) => <TextField {...params} label="Email" />}
+        value={email}
+        onChange={(_, val) => setEmail(val as string)}
+      />
       <Button
         disabled={email.length === 0}
         onClick={() => setOpen(true)}
