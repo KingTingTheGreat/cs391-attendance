@@ -1,13 +1,7 @@
 "use client";
 import { EditUserRole } from "@/lib/control/editUserRole";
 import { Role } from "@/types";
-import {
-  Autocomplete,
-  Button,
-  MenuItem,
-  Select,
-  TextField,
-} from "@mui/material";
+import { Autocomplete, Button, TextField } from "@mui/material";
 import { useState } from "react";
 import { useUsersContext } from "@/components/control/users-context";
 
