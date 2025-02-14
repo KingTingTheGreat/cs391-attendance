@@ -35,23 +35,19 @@ export default function EditRole() {
         value={selectedEmail}
         onChange={(_, val) => setSelectedEmail(val as string)}
       />
-      <Select
-        onChange={(e) =>
-          setNewRole(e.target.value ? (e.target.value as Role) : "")
-        }
+      <Autocomplete
+        disablePortal
+        options={Object.keys(Role)
+          .filter((r) => r !== Role.admin)
+          .map((r) => r as string)}
+        sx={{
+          width: "150px",
+          margin: "0.25rem",
+        }}
+        renderInput={(params) => <TextField {...params} label="Role" />}
         value={newRole}
-        sx={{ width: 100, margin: "0.25rem" }}
-      >
-        <MenuItem value=""></MenuItem>
-        {Object.keys(Role).map(
-          (role) =>
-            role !== Role.admin && (
-              <MenuItem key={role} value={role}>
-                {role}
-              </MenuItem>
-            ),
-        )}
-      </Select>
+        onChange={(_, val) => setNewRole(val ? (val as Role) : "")}
+      />
       <Button
         disabled={!(selectedEmail && newRole)}
         variant="contained"
