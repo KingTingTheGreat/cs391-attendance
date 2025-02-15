@@ -21,7 +21,7 @@ export default function MuiAttendanceSheet() {
 
   return (
     <>
-      <h2 className="font-bold text-3xl">
+      <h2 className="font-bold text-3xl text-center">
         {classType === Class.lecture
           ? "Lecture Attendance"
           : "Discussion Attendance"}
