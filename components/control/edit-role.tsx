@@ -22,7 +22,7 @@ export default function EditRole() {
         setVal={setSelectedUser}
         filterFunc={(user) => user.role !== Role.admin}
       />
-      <div className="flex justify-between mt-2">
+      <div className="flex justify-between w-full m-[0.25rem] mt-2">
         <Autocomplete
           disablePortal
           options={Object.keys(Role)
@@ -30,7 +30,6 @@ export default function EditRole() {
             .map((r) => r as string)}
           sx={{
             width: "150px",
-            margin: "0.25rem",
           }}
           renderInput={(params) => <TextField {...params} label="Role" />}
           value={newRole}
@@ -39,7 +38,6 @@ export default function EditRole() {
         <Button
           disabled={!(selectedUser && newRole)}
           variant="contained"
-          sx={{ margin: "0.25rem" }}
           onClick={() => {
             if (selectedUser && newRole) {
               EditUserRole(selectedUser.email, newRole as Role).then((res) => {

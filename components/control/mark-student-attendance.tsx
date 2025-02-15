@@ -39,11 +39,11 @@ export default function MarkStudentAttendance() {
           }}
         />
       </LocalizationProvider>
-      <div className="flex justify-between">
+      <div className="flex justify-between w-full m-[0.25rem]">
         <Button
           disabled={!selectedUser}
           variant="contained"
-          sx={{ margin: "0.25rem", width: "40%", height: "56px" }}
+          sx={{ width: "40%", height: "56px" }}
           onClick={() => {
             if (!selectedUser) return;
             markStudentPresent(selectedUser.email, dayjsDate.toDate()).then(
@@ -80,7 +80,7 @@ export default function MarkStudentAttendance() {
         <Button
           disabled={!selectedUser}
           variant="outlined"
-          sx={{ margin: "0.25rem", width: "40%", height: "56px" }}
+          sx={{ width: "40%", height: "56px" }}
           onClick={() => {
             if (!selectedUser) return;
             markStudentAbsent(selectedUser.email, dayjsDate.toDate()).then(

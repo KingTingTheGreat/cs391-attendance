@@ -22,12 +22,12 @@ export default function DeleteUser() {
         setVal={setSelectedUser}
         filterFunc={(user) => user.role !== Role.admin}
       />
-      <div className="flex justify-between mt-2">
+      <div className="flex justify-between w-full m-[0.25rem] mt-2">
         <Button
           disabled={!selectedUser}
           onClick={() => setOpen(true)}
           variant="contained"
-          sx={{ margin: "0.25rem", height: "56px" }}
+          sx={{ height: "56px" }}
         >
           Delete User
         </Button>
