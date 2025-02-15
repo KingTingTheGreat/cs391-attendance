@@ -21,7 +21,7 @@ export default function AdminPanel({ role }: { role: Role }) {
 
   return (
     <UsersContextProvider usersInput={users}>
-      <div className="flex flex-col items-center sm:flex-row justify-center">
+      <div className="flex flex-col items-center sm:flex-row justify-center sm:items-start">
         {role === Role.admin && (
           <>
             <EditRole />
