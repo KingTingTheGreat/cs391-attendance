@@ -26,7 +26,7 @@ export default function MuiAttendanceSheet() {
           ? "Lecture Attendance"
           : "Discussion Attendance"}
       </h2>
-      <div className="p-1 m-0.5">
+      <div className="p-1 m-0.5 flex flex-col sm:flex-row justify-center">
         <ToggleButtonGroup
           color="primary"
           value={classType}
