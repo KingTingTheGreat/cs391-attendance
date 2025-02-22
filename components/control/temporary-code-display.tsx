@@ -35,7 +35,7 @@ export default function TemporaryCodeDisplay() {
                   seconds: 5,
                 }}
                 defaultValue={dayjs().minute(defaultMinutes).second(0)}
-                format="mm:ss"
+                format={`mm:ss (${expSeconds} sec)`}
                 onChange={(newDayjsDate) => {
                   if (newDayjsDate) {
                     setExpSeconds(
