@@ -1,4 +1,5 @@
 "use client";
+import Cookie from "js-cookie";
 import { Button } from "@mui/material";
 import CodeDisplay from "../code-display";
 import { useState } from "react";
@@ -6,13 +7,18 @@ import { generateTempCode } from "@/lib/control/generateTempCode";
 import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import { PREV_EXP_SEC_COOKIE } from "@/lib/cookies/cookies";
 
-const defaultMinutes = 5;
+// 5 min default
+const defaultSeconds = 5 * 60;
 
-export default function TemporaryCodeDisplay() {
+export default function TemporaryCodeDisplay({
+  prevSeconds,
+}: {
+  prevSeconds?: number;
+}) {
   const [tempCode, setTempCode] = useState<string | null>(null);
-  // default to 5 minutes
-  const [expSeconds, setExpSeconds] = useState(defaultMinutes * 60);
+  const [expSeconds, setExpSeconds] = useState(prevSeconds || defaultSeconds);
 
   return (
     <div className="p-1 m-2 flex flex-col items-center text-xl max-w-[90vw] text-center">
@@ -34,13 +40,18 @@ export default function TemporaryCodeDisplay() {
                   minutes: 1,
                   seconds: 5,
                 }}
-                defaultValue={dayjs().minute(defaultMinutes).second(0)}
+                defaultValue={dayjs()
+                  .minute(0)
+                  .second(prevSeconds || defaultSeconds)}
                 format={`mm:ss (${expSeconds} sec)`}
                 onChange={(newDayjsDate) => {
                   if (newDayjsDate) {
-                    setExpSeconds(
-                      newDayjsDate.minute() * 60 + newDayjsDate.second(),
-                    );
+                    const newExpSec =
+                      newDayjsDate.minute() * 60 + newDayjsDate.second();
+                    setExpSeconds(newExpSec);
+                    Cookie.set(PREV_EXP_SEC_COOKIE, newExpSec.toString(), {
+                      path: "/",
+                    });
                   }
                 }}
                 sx={{ margin: "0.5rem" }}
