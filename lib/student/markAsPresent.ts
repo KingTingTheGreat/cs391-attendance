@@ -37,12 +37,9 @@ export default async function markAsPresent(
   if (!user) {
     console.error("no user");
     throw new Error("something went wrong. please sign in again.");
-  } else if (
-    // MAYBE DELETE THIS LATER
-    user.attendanceList.length > 0 &&
-    formatDate(user.attendanceList[user.attendanceList.length - 1].date) ===
-      formatToday
-  ) {
+  }
+
+  if (user.attendanceList.some((att) => formatDate(att.date) === formatToday)) {
     console.error("already marked as present");
     throw new Error("you have already been marked present today");
   }
