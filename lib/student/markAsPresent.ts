@@ -5,23 +5,18 @@ import { AttendanceProps, Class } from "@/types";
 import { formatDate, formatDay } from "../util/format";
 import { todayCode } from "../generateCode";
 import {
-  CLASS_COORDS,
   CLASS_DAYS,
   DISABLE_DAY_CHECKING,
   ENV,
   LECTURE_DAYS,
-  MAX_ALLOWED_DISTANCE,
   MOCK,
 } from "../env";
-import { getDistance } from "geolib";
 import { userFromAuthCookie } from "../cookies/userFromAuthCookie";
 import { getFromCache, setUserInCache } from "../cache/redis";
 import documentToUserProps from "../util/documentToUserProps";
 
 export default async function markAsPresent(
   code: string,
-  longitude?: number,
-  latitude?: number,
 ): Promise<AttendanceProps> {
   console.log("mark as present");
   const today = new Date();
@@ -57,19 +52,6 @@ export default async function markAsPresent(
     if (!(await getFromCache(code.toUpperCase()))) {
       console.error("incorrect code: ", code.toUpperCase());
       throw new Error("incorrect code");
-    }
-  }
-
-  console.log("long, lat: ", longitude, latitude);
-  // only check student location if max allowed distance is not negative and they have granted permission
-  if (MAX_ALLOWED_DISTANCE >= 0 && longitude && latitude) {
-    const d = getDistance({ longitude, latitude }, CLASS_COORDS);
-    console.log(`${user.email} is ${d} meters away from class`);
-    if (d > MAX_ALLOWED_DISTANCE) {
-      console.error(
-        `student: ${user.email} is too far from class. they are ${d} meters away and max allowed distance is ${MAX_ALLOWED_DISTANCE} meters`,
-      );
-      throw new Error(`you are too far from class: ${d} meters`);
     }
   }
 
