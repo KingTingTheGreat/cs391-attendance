@@ -1,7 +1,6 @@
-import { useState, useTransition } from "react";
+import { useActionState, useState } from "react";
 import markAsPresent from "@/lib/student/markAsPresent";
 import { Button, TextField } from "@mui/material";
-import { Class } from "@/types";
 import { formatDate } from "@/lib/util/format";
 import { addToAttendanceList } from "@/lib/util/addToAttendanceList";
 import { useStudentContext } from "./StudentContext";
@@ -9,50 +8,29 @@ import { useStudentContext } from "./StudentContext";
 export default function AttendanceForm() {
   const { user, setUser } = useStudentContext();
   const [code, setCode] = useState("");
-  const [isPending, startTransition] = useTransition();
-  const [errorMessage, setErrorMessage] = useState("");
   const today = formatDate(new Date());
   const [present, setPresent] = useState(
     user.attendanceList.some((att) => formatDate(att.date) === today),
   );
-
-  const processPresentRes = (errMsg: string | null) => {
-    if (errMsg === null) {
+  const [error, submitAction, isPending] = useActionState(async () => {
+    try {
+      const newAtt = await markAsPresent(code);
       setUser({
         ...user,
-        attendanceList: addToAttendanceList(user.attendanceList, {
-          class: Class.lecture,
-          date: new Date(),
-        }),
+        attendanceList: addToAttendanceList(user.attendanceList, newAtt),
       });
       setPresent(true);
-      setErrorMessage("");
-    } else {
-      setErrorMessage(errMsg);
+
+      return null;
+    } catch (e) {
+      return e as Error;
     }
-  };
+  }, null);
 
   return (
     <div className="flex flex-col items-center">
       {!present ? (
-        <form
-          action={() => {
-            startTransition(() => {
-              if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition((pos) => {
-                  markAsPresent(
-                    code,
-                    pos.coords.longitude,
-                    pos.coords.latitude,
-                  ).then(processPresentRes);
-                });
-              } else {
-                markAsPresent(code).then(processPresentRes);
-              }
-            });
-          }}
-          className="flex flex-col w-72"
-        >
+        <form action={submitAction} className="flex flex-col w-72">
           <TextField
             type="text"
             value={code}
@@ -77,7 +55,7 @@ export default function AttendanceForm() {
           You have been marked present for today!
         </div>
       )}
-      <p className="p-2 text-lg text-[#F00]">{errorMessage}</p>
+      <p className="p-2 text-lg text-[#F00]">{error && error.message}</p>
     </div>
   );
 }
