@@ -14,13 +14,12 @@ import { formatSeconds } from "@/lib/util/format";
 // 5 min default
 const defaultSeconds = 5 * 60;
 
-export default function TemporaryCodeDisplay({
-  prevSeconds,
-}: {
-  prevSeconds?: number;
-}) {
+export default function TemporaryCodeDisplay() {
   const [tempCode, setTempCode] = useState<string | null>(null);
-  const [expSeconds, setExpSeconds] = useState(prevSeconds || defaultSeconds);
+  const prevSeconds = Number(Cookie.get(PREV_EXP_SEC_COOKIE));
+  const [expSeconds, setExpSeconds] = useState(
+    isNaN(prevSeconds) ? defaultSeconds : prevSeconds,
+  );
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [isActive, setIsActive] = useState(false);
   const [repeat, setRepeat] = useState(false);

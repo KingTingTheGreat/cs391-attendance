@@ -1,4 +1,6 @@
+"use client";
 import { DataGrid, GridColDef, GridOverlay } from "@mui/x-data-grid";
+import Cookie from "js-cookie";
 import Paper from "@mui/material/Paper";
 import { NumLong } from "@/lib/util/attendanceList";
 import { AttendanceStatus, Class } from "@/types";
@@ -6,11 +8,16 @@ import { useUsersContext } from "../control/UsersContext";
 import { useState } from "react";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import DownloadSheet from "./DownloadSheet";
+import { PREV_CLASS_TYPE_COOKIE } from "@/lib/cookies/cookies";
 const paginationModel = { page: 0, pageSize: 10 };
 
 export default function AttendanceSheet() {
   const { lecAttList, discAttList } = useUsersContext();
-  const [classType, setClassType] = useState(Class.lecture);
+  const prevClassType = Cookie.get(PREV_CLASS_TYPE_COOKIE);
+  const [classType, setClassType] = useState(
+    prevClassType ? (prevClassType as Class) : Class.lecture,
+  );
+  console.log("classType", classType);
   const attendanceList = classType === Class.lecture ? lecAttList : discAttList;
 
   const columns: GridColDef[] = attendanceList[0].map((col, i) => ({
@@ -31,7 +38,10 @@ export default function AttendanceSheet() {
           color="primary"
           value={classType}
           exclusive
-          onChange={(_, newCls) => setClassType(newCls as Class)}
+          onChange={(_, newCls) => {
+            setClassType(newCls as Class);
+            Cookie.set(PREV_CLASS_TYPE_COOKIE, newCls);
+          }}
         >
           {Object.keys(Class).map((cls) => (
             <ToggleButton key={cls} value={cls}>
