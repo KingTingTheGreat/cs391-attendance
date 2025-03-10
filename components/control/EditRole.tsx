@@ -3,8 +3,8 @@ import { EditUserRole } from "@/lib/control/editUserRole";
 import { Role, UserProps } from "@/types";
 import { Autocomplete, Button, TextField } from "@mui/material";
 import { useState } from "react";
-import { useUsersContext } from "@/components/control/users-context";
-import UserSelect from "./user-select";
+import { useUsersContext } from "@/components/control/UsersContext";
+import UserSelect from "./UserSelect";
 
 export default function EditRole() {
   const { users, setUsers } = useUsersContext();

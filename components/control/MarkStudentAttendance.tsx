@@ -4,7 +4,7 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
-import { useUsersContext } from "./users-context";
+import { useUsersContext } from "./UsersContext";
 import { Button } from "@mui/material";
 import { markStudentPresent } from "@/lib/control/markStudentPresent";
 import { Class, Role, UserProps } from "@/types";
@@ -12,7 +12,7 @@ import { markStudentAbsent } from "@/lib/control/markStudentAbsent";
 import { formatDate, formatDay } from "@/lib/util/format";
 import { addToAttendanceList } from "@/lib/util/addToAttendanceList";
 import { DISCUSSION_DAYS } from "@/lib/env";
-import UserSelect from "./user-select";
+import UserSelect from "./UserSelect";
 
 export default function MarkStudentAttendance() {
   const { users, setUsers } = useUsersContext();

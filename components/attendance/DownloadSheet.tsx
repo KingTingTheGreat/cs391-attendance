@@ -2,7 +2,7 @@
 import { formatDate } from "@/lib/util/format";
 import DownloadIcon from "@mui/icons-material/Download";
 import { Button } from "@mui/material";
-import { useUsersContext } from "@/components/control/users-context";
+import { useUsersContext } from "@/components/control/UsersContext";
 import { Class } from "@/types";
 
 export default function DownloadSheet({ classType }: { classType: Class }) {

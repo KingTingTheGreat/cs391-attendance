@@ -1,6 +1,6 @@
 import { UserProps } from "@/types";
 import { Dispatch, SetStateAction } from "react";
-import { useUsersContext } from "./users-context";
+import { useUsersContext } from "./UsersContext";
 import { Autocomplete, TextField } from "@mui/material";
 
 export default function UserSelect({

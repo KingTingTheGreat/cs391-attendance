@@ -2,11 +2,11 @@
 import { allUsers } from "@/lib/util/allUsers";
 import { Role, UserProps } from "@/types";
 import { useEffect, useState } from "react";
-import EditRole from "./edit-role";
-import DeleteAllStudents from "./delete-all-students";
-import DeleteUser from "./delete-user";
-import { UsersContextProvider } from "./users-context";
-import MarkStudentAttendance from "./mark-student-attendance";
+import EditRole from "./EditRole";
+import DeleteAllStudents from "./DeleteAllStudents";
+import DeleteUser from "./DeleteUser";
+import { UsersContextProvider } from "./UsersContext";
+import MarkStudentAttendance from "./MarkStudentAttendance";
 import Loading from "../Loading";
 import AttendanceSheet from "../attendance/AttendanceSheet";
 

@@ -1,4 +1,4 @@
-import TemporaryCodeDisplay from "@/components/control/temporary-code-display";
+import TemporaryCodeDisplay from "@/components/control/TemporaryCodeDisplay";
 import Header from "@/components/Header";
 import QRCodeDisplay from "@/components/QRCodeDisplay";
 import { prevExpSecFromCookie } from "@/lib/cookies/prevExpSecFromCookie";

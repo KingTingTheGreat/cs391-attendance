@@ -2,7 +2,7 @@ import { DataGrid, GridColDef, GridOverlay } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
 import { NumLong } from "@/lib/util/attendanceList";
 import { AttendanceStatus, Class } from "@/types";
-import { useUsersContext } from "../control/users-context";
+import { useUsersContext } from "../control/UsersContext";
 import { useState } from "react";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import DownloadSheet from "./DownloadSheet";

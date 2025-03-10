@@ -2,7 +2,7 @@
 import { deleteAllStudents } from "@/lib/control/deleteAllStudents";
 import { Button, Modal } from "@mui/material";
 import { useState } from "react";
-import { useUsersContext } from "./users-context";
+import { useUsersContext } from "./UsersContext";
 import { Role } from "@/types";
 
 export default function DeleteAllStudents() {
