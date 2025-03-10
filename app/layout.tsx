@@ -6,8 +6,8 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Suspense } from "react";
 import { Role } from "@/types";
 import Header from "@/components/Header";
-import Loading from "@/components/Loading";
 import { Roboto_Mono } from "next/font/google";
+import { CircularProgress } from "@mui/material";
 
 export const metadata: Metadata = {
   title: "CS391 Attendance",
@@ -37,7 +37,9 @@ export default function RootLayout({
             fallback={
               <>
                 <Header role={Role.student} />
-                <Loading />
+                <div className="flex justify-center items-center w-full p-20">
+                  <CircularProgress color="primary" size={100} />
+                </div>
               </>
             }
           >

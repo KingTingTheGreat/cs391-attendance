@@ -7,8 +7,8 @@ import DeleteAllStudents from "./DeleteAllStudents";
 import DeleteUser from "./DeleteUser";
 import { UsersContextProvider } from "./UsersContext";
 import MarkStudentAttendance from "./MarkStudentAttendance";
-import Loading from "../Loading";
 import AttendanceSheet from "../attendance/AttendanceSheet";
+import { CircularProgress } from "@mui/material";
 
 export default function AdminPanel({ role }: { role: Role }) {
   const [users, setUsers] = useState<UserProps[] | null>(null);
@@ -17,7 +17,12 @@ export default function AdminPanel({ role }: { role: Role }) {
     allUsers().then((data) => setUsers(data));
   }, []);
 
-  if (users === null) return <Loading />;
+  if (users === null)
+    return (
+      <div className="flex justify-center items-center w-full p-20">
+        <CircularProgress color="primary" size={100} />
+      </div>
+    );
 
   return (
     <UsersContextProvider usersInput={users}>
