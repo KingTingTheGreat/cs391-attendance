@@ -4,6 +4,7 @@ import SignInPage from "@/components/sign-in-page";
 import StudentProfile from "@/components/student/student-profile";
 import Header from "@/components/header";
 import { userFromAuthCookie } from "@/lib/cookies/userFromAuthCookie";
+import { StudentContextProvider } from "@/components/student/StudentContext";
 
 export default async function Home({
   searchParams,
@@ -18,16 +19,16 @@ export default async function Home({
   }
 
   return (
-    <>
+    <StudentContextProvider inputUser={user}>
       <Header role={user.role} />
       <div className="flex justify-center">
         <div className="p-1 m-2 flex flex-col items-center text-xl max-w-[90vw] text-center">
-          <StudentProfile userInput={user} />
+          <StudentProfile />
           <Link href="/sign-out" prefetch={false} className="hover:underline">
             Sign Out
           </Link>
         </div>
       </div>
-    </>
+    </StudentContextProvider>
   );
 }

@@ -1,17 +1,13 @@
-import { Dispatch, SetStateAction, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import markAsPresent from "@/lib/student/markAsPresent";
 import { Button, TextField } from "@mui/material";
-import { Class, UserProps } from "@/types";
+import { Class } from "@/types";
 import { formatDate } from "@/lib/util/format";
 import { addToAttendanceList } from "@/lib/util/addToAttendanceList";
+import { useStudentContext } from "./StudentContext";
 
-export default function AttendanceForm({
-  user,
-  setUser,
-}: {
-  user: UserProps;
-  setUser: Dispatch<SetStateAction<UserProps>>;
-}) {
+export default function AttendanceForm() {
+  const { user, setUser } = useStudentContext();
   const [code, setCode] = useState("");
   const [isPending, startTransition] = useTransition();
   const [errorMessage, setErrorMessage] = useState("");

@@ -1,11 +1,13 @@
 "use client";
 import { formatDate, formatTime } from "@/lib/util/format";
-import { AttendanceProps, UserProps } from "@/types";
+import { AttendanceProps } from "@/types";
 import { Modal } from "@mui/material";
 import { useState } from "react";
 import { DayPicker } from "react-day-picker";
+import { useStudentContext } from "./StudentContext";
 
-export default function AttendanceCalendar({ user }: { user: UserProps }) {
+export default function AttendanceCalendar() {
+  const { user } = useStudentContext();
   const [selAtt, setSelAtt] = useState<AttendanceProps | null>(null);
 
   return (

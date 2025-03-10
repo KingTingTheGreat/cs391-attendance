@@ -1,17 +1,12 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
-import { UserProps } from "@/types";
 import "react-day-picker/style.css";
 import AttendanceCalendar from "./AttendanceCalendar";
 import AttendanceForm from "./AttendanceForm";
+import { useStudentContext } from "./StudentContext";
 
-export default function StudentProfile({
-  userInput,
-}: {
-  userInput: UserProps;
-}) {
-  const [user, setUser] = useState(userInput);
+export default function StudentProfile() {
+  const { user } = useStudentContext();
 
   return (
     <div>
@@ -27,8 +22,8 @@ export default function StudentProfile({
           className="rounded-full"
         />
       </div>
-      <AttendanceForm user={user} setUser={setUser} />
-      <AttendanceCalendar user={user} />
+      <AttendanceForm />
+      <AttendanceCalendar />
     </div>
   );
 }
