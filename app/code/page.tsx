@@ -1,6 +1,6 @@
-import CodeDisplay from "@/components/code-display";
-import Header from "@/components/header";
-import QRCodeDisplay from "@/components/qrcode-display";
+import CodeDisplay from "@/components/CodeDisplay";
+import Header from "@/components/Header";
+import QRCodeDisplay from "@/components/QRCodeDisplay";
 import { userFromAuthCookie } from "@/lib/cookies/userFromAuthCookie";
 import { todayCode } from "@/lib/generateCode";
 import { Role } from "@/types";

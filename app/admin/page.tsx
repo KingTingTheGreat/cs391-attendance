@@ -1,5 +1,5 @@
 import AdminPanel from "@/components/control/admin-panel";
-import Header from "@/components/header";
+import Header from "@/components/Header";
 import { userFromAuthCookie } from "@/lib/cookies/userFromAuthCookie";
 import { Role } from "@/types";
 import { cookies } from "next/headers";

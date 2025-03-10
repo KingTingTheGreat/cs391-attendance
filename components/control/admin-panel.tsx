@@ -7,8 +7,8 @@ import DeleteAllStudents from "./delete-all-students";
 import DeleteUser from "./delete-user";
 import { UsersContextProvider } from "./users-context";
 import MarkStudentAttendance from "./mark-student-attendance";
-import Loading from "../loading";
-import MuiAttendanceSheet from "../attendance/mui-attendance-sheet";
+import Loading from "../Loading";
+import AttendanceSheet from "../attendance/AttendanceSheet";
 
 export default function AdminPanel({ role }: { role: Role }) {
   const [users, setUsers] = useState<UserProps[] | null>(null);
@@ -32,7 +32,7 @@ export default function AdminPanel({ role }: { role: Role }) {
       </div>
 
       <div className="flex flex-col items-center p-8">
-        <MuiAttendanceSheet />
+        <AttendanceSheet />
       </div>
       {role === Role.admin && (
         <div className="flex justify-center">

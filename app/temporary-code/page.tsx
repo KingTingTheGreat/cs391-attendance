@@ -1,6 +1,6 @@
 import TemporaryCodeDisplay from "@/components/control/temporary-code-display";
-import Header from "@/components/header";
-import QRCodeDisplay from "@/components/qrcode-display";
+import Header from "@/components/Header";
+import QRCodeDisplay from "@/components/QRCodeDisplay";
 import { prevExpSecFromCookie } from "@/lib/cookies/prevExpSecFromCookie";
 import { userFromAuthCookie } from "@/lib/cookies/userFromAuthCookie";
 import { Role } from "@/types";

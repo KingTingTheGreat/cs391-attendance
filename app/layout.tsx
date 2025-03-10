@@ -5,8 +5,8 @@ import { CSPostHogProvider } from "./providers";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Suspense } from "react";
 import { Role } from "@/types";
-import Header from "@/components/header";
-import Loading from "@/components/loading";
+import Header from "@/components/Header";
+import Loading from "@/components/Loading";
 import { Roboto_Mono } from "next/font/google";
 
 export const metadata: Metadata = {

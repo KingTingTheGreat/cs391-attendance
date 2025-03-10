@@ -2,7 +2,7 @@
 import Cookie from "js-cookie";
 import { Button, FormControlLabel, Switch } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
-import CodeDisplay from "../code-display";
+import CodeDisplay from "../CodeDisplay";
 import { useEffect, useState } from "react";
 import { generateTempCode } from "@/lib/control/generateTempCode";
 import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers";

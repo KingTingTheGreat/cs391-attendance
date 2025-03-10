@@ -1,8 +1,8 @@
 import { cookies } from "next/headers";
 import Link from "next/link";
-import SignInPage from "@/components/sign-in-page";
+import SignInPage from "@/components/SignInPage";
 import StudentProfile from "@/components/student/student-profile";
-import Header from "@/components/header";
+import Header from "@/components/Header";
 import { userFromAuthCookie } from "@/lib/cookies/userFromAuthCookie";
 import { StudentContextProvider } from "@/components/student/StudentContext";
 

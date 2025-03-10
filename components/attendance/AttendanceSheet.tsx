@@ -2,13 +2,13 @@ import { DataGrid, GridColDef, GridOverlay } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
 import { NumLong } from "@/lib/util/attendanceList";
 import { AttendanceStatus, Class } from "@/types";
-import DownloadSheet from "./download-sheet";
 import { useUsersContext } from "../control/users-context";
 import { useState } from "react";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
+import DownloadSheet from "./DownloadSheet";
 const paginationModel = { page: 0, pageSize: 10 };
 
-export default function MuiAttendanceSheet() {
+export default function AttendanceSheet() {
   const { lecAttList, discAttList } = useUsersContext();
   const [classType, setClassType] = useState(Class.lecture);
   const attendanceList = classType === Class.lecture ? lecAttList : discAttList;
