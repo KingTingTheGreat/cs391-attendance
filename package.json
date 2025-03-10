@@ -20,7 +20,7 @@
     "argon2": "^0.41.1",
     "babel-plugin-react-compiler": "^19.0.0-beta-27714ef-20250124",
     "dayjs": "^1.11.13",
-    "geolib": "^3.3.4",
+    "js-cookie": "^3.0.5",
     "mongodb": "^6.12.0",
     "next": "15.1.6",
     "posthog-js": "^1.210.2",
@@ -32,6 +32,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4.0.0",
+    "@types/js-cookie": "^3.0.6",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
