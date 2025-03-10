@@ -2,12 +2,12 @@
 import markAsPresent from "@/lib/student/markAsPresent";
 import Image from "next/image";
 import { useState, useTransition } from "react";
-import { AttendanceProps, Class, UserProps } from "@/types";
-import { formatDate, formatTime } from "@/lib/util/format";
-import { Button, Modal, TextField } from "@mui/material";
+import { Class, UserProps } from "@/types";
+import { formatDate } from "@/lib/util/format";
+import { Button, TextField } from "@mui/material";
 import { addToAttendanceList } from "@/lib/util/addToAttendanceList";
-import { DayPicker } from "react-day-picker";
 import "react-day-picker/style.css";
+import AttendanceCalendar from "./AttendanceCalendar";
 
 export default function StudentProfile({
   userInput,
@@ -22,7 +22,6 @@ export default function StudentProfile({
     user.attendanceList.some((att) => formatDate(att.date) === formatToday),
   );
   const [isPending, startTransition] = useTransition();
-  const [selAtt, setSelAtt] = useState<AttendanceProps | null>(null);
 
   const processPresentRes = (errMsg: string | null) => {
     if (errMsg === null) {
@@ -100,44 +99,7 @@ export default function StudentProfile({
       </div>
       <div className="flex justify-center">{interactive}</div>
       <p className="p-2 text-lg text-[#F00]">{errorMessage}</p>
-      <div className="p-2 m-2 flex flex-col items-center">
-        <h4 className="text-lg md:text-xl text-center font-semibold">
-          Dates you&apos;ve been marked as present:
-        </h4>
-        <DayPicker
-          mode="multiple"
-          className="m-2"
-          onSelect={(_, d) => {
-            const formattedDate = formatDate(d);
-            const i = user.attendanceList.findIndex(
-              (att) => formatDate(att.date) === formattedDate,
-            );
-            if (i !== -1) {
-              setSelAtt(user.attendanceList[i]);
-            }
-          }}
-          selected={[...user.attendanceList.map((att) => att.date)]} // needed for rerender
-        />
-      </div>
-      <Modal open={selAtt !== null} onClose={() => setSelAtt(null)}>
-        <div
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
-		    w-80 h-44 bg-white rounded-3xl flex flex-col items-center justify-center text-center"
-        >
-          <div className="w-[80%]">
-            {selAtt === null ? (
-              <p>Something weng wrong. Please select a different date.</p>
-            ) : (
-              <p>
-                Marked present at{" "}
-                <span className="text-blue-700">{formatTime(selAtt.date)}</span>
-                {" on "}
-                <span className="text-blue-700">{formatDate(selAtt.date)}</span>
-              </p>
-            )}
-          </div>
-        </div>
-      </Modal>
+      <AttendanceCalendar user={user} />
     </div>
   );
 }
