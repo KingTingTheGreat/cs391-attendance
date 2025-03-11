@@ -1,4 +1,6 @@
 "use client";
+import { PREV_QRCODE_SIZE_COOKIE } from "@/lib/cookies/cookies";
+import Cookie from "js-cookie";
 import { Slider } from "@mui/material";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -6,7 +8,8 @@ import QRCode from "react-qr-code";
 
 export default function QRCodeDisplay() {
   const [domain, setDomain] = useState("");
-  const [size, setSize] = useState(256);
+  const prevSize = Number(Cookie.get(PREV_QRCODE_SIZE_COOKIE));
+  const [size, setSize] = useState(isNaN(prevSize) ? 256 : prevSize);
 
   useEffect(() => {
     const currentDomain = window.location.origin;
@@ -29,6 +32,7 @@ export default function QRCodeDisplay() {
         max={1024}
         onChange={(_, val) => {
           setSize(val as number);
+          Cookie.set(PREV_QRCODE_SIZE_COOKIE, val.toString());
         }}
       />
       <div className="flex justify-center p-2 m-2">

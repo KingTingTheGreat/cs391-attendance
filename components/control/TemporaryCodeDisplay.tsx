@@ -102,9 +102,7 @@ export default function TemporaryCodeDisplay() {
                     const newExpSec =
                       newDayjsDate.minute() * 60 + newDayjsDate.second();
                     setExpSeconds(newExpSec);
-                    Cookie.set(PREV_EXP_SEC_COOKIE, newExpSec.toString(), {
-                      path: "/",
-                    });
+                    Cookie.set(PREV_EXP_SEC_COOKIE, newExpSec.toString());
                   }
                 }}
                 sx={{ margin: "0.5rem" }}
