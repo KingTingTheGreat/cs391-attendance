@@ -8,7 +8,7 @@ import { UsersContextProvider } from "./UsersContext";
 import MarkStudentAttendance from "./MarkStudentAttendance";
 import AttendanceSheet from "../attendance/AttendanceSheet";
 import { CircularProgress } from "@mui/material";
-import { getAllUsers } from "@/lib/util/allUsers";
+import { getAllUsers } from "@/lib/util/getAllUsers";
 
 export default function AdminPanel({ role }: { role: Role }) {
   const [users, setUsers] = useState<UserProps[] | null>(null);

@@ -25,7 +25,7 @@ export async function getAllUsers(): Promise<UserProps[]> {
   const usersCollection = await getCollection(USERS_COLLECTION);
   const users = await usersCollection.find().toArray();
 
-  return users
+  const u = users
     .map((user) => ({
       name: user.name,
       email: user.email,
@@ -34,4 +34,9 @@ export async function getAllUsers(): Promise<UserProps[]> {
       attendanceList: user.attendanceList,
     }))
     .sort((a, b) => a.email - b.email);
+  for (let i = 0; i < 10; i++) {
+    console.log(i, u[i].email);
+  }
+
+  return u;
 }
