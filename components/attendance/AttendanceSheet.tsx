@@ -1,5 +1,10 @@
 "use client";
-import { DataGrid, GridColDef, GridOverlay } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridColDef,
+  GridOverlay,
+  GridToolbar,
+} from "@mui/x-data-grid";
 import Cookie from "js-cookie";
 import Paper from "@mui/material/Paper";
 import { AttendanceStatus, Class } from "@/types";
@@ -84,10 +89,13 @@ export default function AttendanceSheet() {
                 : "bg-inherit";
           }}
           columns={columns}
-          initialState={{ pagination: { paginationModel } }}
+          initialState={{
+            pagination: { paginationModel },
+          }}
           pageSizeOptions={[...pageSizeOpts, { value: -1, label: "All" }]}
           sx={{ border: 0, height: "100%" }}
           slots={{
+            toolbar: GridToolbar,
             noRowsOverlay: () => (
               <GridOverlay>
                 <div>No Students</div>
