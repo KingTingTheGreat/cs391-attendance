@@ -9,7 +9,9 @@ import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import DownloadSheet from "./DownloadSheet";
 import { PREV_CLASS_TYPE_COOKIE } from "@/lib/cookies/cookies";
 import { headers } from "@/lib/util/getAttendanceList";
-const paginationModel = { page: 0, pageSize: 10 };
+
+const pageSizeOpts = [25, 50, 100];
+const paginationModel = { page: 0, pageSize: pageSizeOpts[0] };
 
 export default function AttendanceSheet() {
   const { attList } = useUsersContext();
@@ -83,7 +85,7 @@ export default function AttendanceSheet() {
           }}
           columns={columns}
           initialState={{ pagination: { paginationModel } }}
-          pageSizeOptions={[25, 50, 100, { value: -1, label: "All" }]}
+          pageSizeOptions={[...pageSizeOpts, { value: -1, label: "All" }]}
           sx={{ border: 0, height: "100%" }}
           slots={{
             noRowsOverlay: () => (
