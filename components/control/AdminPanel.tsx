@@ -1,5 +1,4 @@
 "use client";
-import { allUsers } from "@/lib/util/allUsers";
 import { Role, UserProps } from "@/types";
 import { useEffect, useState } from "react";
 import EditRole from "./EditRole";
@@ -9,12 +8,13 @@ import { UsersContextProvider } from "./UsersContext";
 import MarkStudentAttendance from "./MarkStudentAttendance";
 import AttendanceSheet from "../attendance/AttendanceSheet";
 import { CircularProgress } from "@mui/material";
+import { getAllUsers } from "@/lib/util/allUsers";
 
 export default function AdminPanel({ role }: { role: Role }) {
   const [users, setUsers] = useState<UserProps[] | null>(null);
 
   useEffect(() => {
-    allUsers().then((data) => setUsers(data));
+    getAllUsers().then((data) => setUsers(data));
   }, []);
 
   if (users === null)

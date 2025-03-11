@@ -9,7 +9,7 @@ import { userFromAuthCookie } from "../cookies/userFromAuthCookie";
 
 const allowedRoles = [Role.staff, Role.admin];
 
-export async function allUsers(): Promise<UserProps[]> {
+export async function getAllUsers(): Promise<UserProps[]> {
   const cookieStore = await cookies();
   const user = await userFromAuthCookie(cookieStore);
 
@@ -25,11 +25,13 @@ export async function allUsers(): Promise<UserProps[]> {
   const usersCollection = await getCollection(USERS_COLLECTION);
   const users = await usersCollection.find().toArray();
 
-  return users.map((user) => ({
-    name: user.name,
-    email: user.email,
-    picture: user.picture,
-    role: user.role,
-    attendanceList: user.attendanceList,
-  }));
+  return users
+    .map((user) => ({
+      name: user.name,
+      email: user.email,
+      picture: user.picture,
+      role: user.role,
+      attendanceList: user.attendanceList,
+    }))
+    .sort((a, b) => a.email - b.email);
 }
