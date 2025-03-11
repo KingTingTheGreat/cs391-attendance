@@ -2,13 +2,13 @@
 import { DataGrid, GridColDef, GridOverlay } from "@mui/x-data-grid";
 import Cookie from "js-cookie";
 import Paper from "@mui/material/Paper";
-import { NumLong } from "@/lib/util/attendanceList";
 import { AttendanceStatus, Class } from "@/types";
 import { useUsersContext } from "../control/UsersContext";
 import { useState } from "react";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import DownloadSheet from "./DownloadSheet";
 import { PREV_CLASS_TYPE_COOKIE } from "@/lib/cookies/cookies";
+import { headers } from "@/lib/util/getAttendanceList";
 const paginationModel = { page: 0, pageSize: 10 };
 
 export default function AttendanceSheet() {
@@ -23,7 +23,18 @@ export default function AttendanceSheet() {
   const columns: GridColDef[] = attendanceList[0].map((col, i) => ({
     field: `${i}`,
     headerName: col,
-    width: i < NumLong ? 150 : 115,
+    width: (function () {
+      switch (col) {
+        case headers[0]:
+          return 150;
+        case headers[1]:
+          return 150;
+        case headers[2]:
+          return 75;
+        default:
+          return 100;
+      }
+    })(),
   }));
 
   return (
@@ -72,7 +83,7 @@ export default function AttendanceSheet() {
           }}
           columns={columns}
           initialState={{ pagination: { paginationModel } }}
-          pageSizeOptions={[10, 25, 50, 100, { value: -1, label: "All" }]}
+          pageSizeOptions={[25, 50, 100, { value: -1, label: "All" }]}
           sx={{ border: 0, height: "100%" }}
           slots={{
             noRowsOverlay: () => (
