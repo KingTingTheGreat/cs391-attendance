@@ -16,3 +16,5 @@ The following environment variables are optional and will only affect the dev en
 - DEFAULT_ROLE
 - ENABLE_SIGN_ON
 - DISABLE_DAY_CHECKING
+
+![image](https://github.com/user-attachments/assets/bcc0d481-e904-45e5-837e-ec51a6c42c39)
