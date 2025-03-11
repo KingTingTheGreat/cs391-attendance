@@ -3,6 +3,8 @@ import {
   DataGrid,
   GridColDef,
   GridOverlay,
+  GridSortDirection,
+  GridSortModel,
   GridToolbar,
 } from "@mui/x-data-grid";
 import Cookie from "js-cookie";
@@ -11,12 +13,29 @@ import { AttendanceStatus, Class } from "@/types";
 import { useUsersContext } from "../control/UsersContext";
 import { useState } from "react";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
-import DownloadSheet from "./DownloadSheet";
-import { PREV_CLASS_TYPE_COOKIE } from "@/lib/cookies/cookies";
+import {
+  PREV_ATTENDANCE_SORT_COOKIE,
+  PREV_CLASS_TYPE_COOKIE,
+} from "@/lib/cookies/cookies";
 import { headers } from "@/lib/util/getAttendanceList";
 
 const pageSizeOpts = [25, 50, 100];
 const paginationModel = { page: 0, pageSize: pageSizeOpts[0] };
+// default to field at index 0 (name)
+const defaultSortModel = [{ field: "0", sort: "asc" as GridSortDirection }];
+
+function headerWidth(h: string) {
+  switch (h) {
+    case headers[0]:
+      return 150;
+    case headers[1]:
+      return 150;
+    case headers[2]:
+      return 75;
+    default:
+      return 100;
+  }
+}
 
 export default function AttendanceSheet() {
   const { attList } = useUsersContext();
@@ -24,24 +43,18 @@ export default function AttendanceSheet() {
   const [classType, setClassType] = useState(
     prevClassType ? (prevClassType as Class) : Class.lecture,
   );
-  console.log("classType", classType);
+  const prevSortModel = JSON.parse(
+    Cookie.get(PREV_ATTENDANCE_SORT_COOKIE) || "[]",
+  ) as GridSortModel;
+  const [sortModel, setSortModel] = useState<GridSortModel>(
+    prevSortModel || defaultSortModel,
+  );
   const attendanceList = attList[classType];
 
   const columns: GridColDef[] = attendanceList[0].map((col, i) => ({
     field: `${i}`,
     headerName: col,
-    width: (function () {
-      switch (col) {
-        case headers[0]:
-          return 150;
-        case headers[1]:
-          return 150;
-        case headers[2]:
-          return 75;
-        default:
-          return 100;
-      }
-    })(),
+    width: headerWidth(col),
   }));
 
   return (
@@ -67,7 +80,6 @@ export default function AttendanceSheet() {
             </ToggleButton>
           ))}
         </ToggleButtonGroup>
-        <DownloadSheet classType={classType} />
       </div>
       <Paper
         sx={{
@@ -91,6 +103,17 @@ export default function AttendanceSheet() {
           columns={columns}
           initialState={{
             pagination: { paginationModel },
+            sorting: {
+              sortModel,
+            },
+          }}
+          sortModel={sortModel}
+          onSortModelChange={(newSortModel) => {
+            setSortModel(newSortModel);
+            Cookie.set(
+              PREV_ATTENDANCE_SORT_COOKIE,
+              JSON.stringify(newSortModel),
+            );
           }}
           pageSizeOptions={[...pageSizeOpts, { value: -1, label: "All" }]}
           sx={{ border: 0, height: "100%" }}
