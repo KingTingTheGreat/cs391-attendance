@@ -6,8 +6,8 @@ import { useUsersContext } from "@/components/control/UsersContext";
 import { Class } from "@/types";
 
 export default function DownloadSheet({ classType }: { classType: Class }) {
-  const { lecAttList, discAttList } = useUsersContext();
-  const attendanceList = classType === Class.lecture ? lecAttList : discAttList;
+  const { attList } = useUsersContext();
+  const attendanceList = attList[classType];
 
   return (
     <Button

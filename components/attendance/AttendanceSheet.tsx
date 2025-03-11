@@ -12,13 +12,13 @@ import { headers } from "@/lib/util/getAttendanceList";
 const paginationModel = { page: 0, pageSize: 10 };
 
 export default function AttendanceSheet() {
-  const { lecAttList, discAttList } = useUsersContext();
+  const { attList } = useUsersContext();
   const prevClassType = Cookie.get(PREV_CLASS_TYPE_COOKIE);
   const [classType, setClassType] = useState(
     prevClassType ? (prevClassType as Class) : Class.lecture,
   );
   console.log("classType", classType);
-  const attendanceList = classType === Class.lecture ? lecAttList : discAttList;
+  const attendanceList = attList[classType];
 
   const columns: GridColDef[] = attendanceList[0].map((col, i) => ({
     field: `${i}`,
