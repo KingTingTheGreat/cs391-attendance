@@ -2,7 +2,7 @@
 import { deleteUser } from "@/lib/control/deleteUser";
 import { Role, UserProps } from "@/types";
 import { Button, Modal } from "@mui/material";
-import { useState } from "react";
+import { useActionState, useState } from "react";
 import { useUsersContext } from "@/components/control/UsersContext";
 import UserSelect from "./UserSelect";
 
@@ -11,6 +11,22 @@ export default function DeleteUser() {
   const [open, setOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<UserProps | null>(null);
   const [resMsg, setResMsg] = useState("");
+
+  const [error, submitAction, isPending] = useActionState(async () => {
+    try {
+      if (!selectedUser) throw new Error("no user selected");
+      setResMsg(await deleteUser(selectedUser.email));
+      setUsers(users.filter((user) => user.email !== selectedUser.email));
+      setSelectedUser(null);
+
+      return null;
+    } catch (e) {
+      setResMsg("");
+      return e as Error;
+    } finally {
+      setOpen(false);
+    }
+  }, null);
 
   return (
     <div className="p-2 m-2 w-fit flex flex-col lg:block w-xs mx-3">
@@ -21,10 +37,11 @@ export default function DeleteUser() {
         val={selectedUser}
         setVal={setSelectedUser}
         filterFunc={(user) => user.role !== Role.admin}
+        disabled={isPending}
       />
       <div className="flex justify-between w-full m-[0.25rem] mt-2">
         <Button
-          disabled={!selectedUser}
+          disabled={!selectedUser || isPending}
           onClick={() => setOpen(true)}
           variant="contained"
           sx={{ height: "56px" }}
@@ -32,11 +49,13 @@ export default function DeleteUser() {
           Delete User
         </Button>
       </div>
+      <p className="text-center text-[#F00]">{error && error.message}</p>
       <p className="text-center">{resMsg}</p>
       <Modal open={open} onClose={() => setOpen(false)}>
-        <div
+        <form
+          action={submitAction}
           className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
-		    w-80 h-52 bg-white rounded-3xl flex flex-col items-center justify-center"
+		    w-80 h-56 bg-white rounded-3xl flex flex-col items-center justify-center border-2"
         >
           {selectedUser && (
             <>
@@ -50,31 +69,20 @@ export default function DeleteUser() {
                 <span className="text-[#F00] font-semibold">irreverisble</span>.
               </h5>
               <div className="w-[60%] flex justify-between">
-                <Button variant="outlined" onClick={() => setOpen(false)}>
+                <Button
+                  variant="outlined"
+                  onClick={() => setOpen(false)}
+                  disabled={isPending}
+                >
                   No
                 </Button>
-                <Button
-                  variant="contained"
-                  onClick={() =>
-                    deleteUser(selectedUser.email).then((res) => {
-                      if (res.success) {
-                        setUsers(
-                          users.filter(
-                            (user) => user.email !== selectedUser.email,
-                          ),
-                        );
-                      }
-                      setResMsg(res.message);
-                      setOpen(false);
-                    })
-                  }
-                >
-                  Yes
+                <Button variant="contained" disabled={isPending} type="submit">
+                  {!isPending ? "Yes" : "Deleting..."}
                 </Button>
               </div>
             </>
           )}
-        </div>
+        </form>
       </Modal>
     </div>
   );

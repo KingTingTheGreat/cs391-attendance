@@ -1,6 +1,6 @@
 "use server";
 import { cookies } from "next/headers";
-import { Role, ServerFuncRes } from "@/types";
+import { Role } from "@/types";
 import getCollection, { USERS_COLLECTION } from "@/db";
 import { ENV, MOCK } from "../env";
 import { userFromAuthCookie } from "../cookies/userFromAuthCookie";
@@ -8,18 +8,19 @@ import { deleteFromCache } from "../cache/redis";
 
 const allowedRoles = [Role.admin];
 
-export async function deleteUser(email: string): Promise<ServerFuncRes> {
+export async function deleteUser(email: string): Promise<string> {
   const cookieStore = await cookies();
   const user = await userFromAuthCookie(cookieStore);
 
   if (!user || !allowedRoles.includes(user.role)) {
-    return { success: false, message: "unauthorized. please sign in again." };
+    throw new Error("unauthorized. please sign in again.");
   } else if (user.email === email) {
-    return { success: false, message: "you cannot delete yourself" };
+    throw new Error("you cannot delete yourself");
   }
 
   if (ENV === "dev" && MOCK) {
-    return { success: true, message: `successfully deleted ${email}` };
+    console.log("successful delete");
+    return `successfully deleted ${email}`;
   }
 
   const usersCollection = await getCollection(USERS_COLLECTION);
@@ -28,12 +29,9 @@ export async function deleteUser(email: string): Promise<ServerFuncRes> {
     role: { $ne: Role.admin }, // cannot delete admin users
   });
   if (res.deletedCount === 0)
-    return {
-      success: false,
-      message: "could not delete user. please try again later.",
-    };
+    throw new Error("could not delete user. try again later.");
 
   await deleteFromCache(email);
 
-  return { success: true, message: `successfully deleted ${email}` };
+  return `successfully deleted ${email}`;
 }
