@@ -43,6 +43,7 @@ export default function EditRole() {
         val={selectedUser}
         setVal={setSelectedUser}
         filterFunc={(user) => user.role !== Role.admin}
+        disabled={isPending}
       />
       <div className="flex justify-between w-full m-[0.25rem] mt-2">
         <Autocomplete
@@ -63,7 +64,7 @@ export default function EditRole() {
           variant="contained"
           type="submit"
         >
-          Edit Role
+          {!isPending ? "Edit Role" : "Editing..."}
         </Button>
       </div>
       <p className="text-center text-[#F00]">{error && error.message}</p>
