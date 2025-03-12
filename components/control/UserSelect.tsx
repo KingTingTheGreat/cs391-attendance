@@ -7,15 +7,18 @@ export default function UserSelect({
   val,
   setVal,
   filterFunc,
+  disabled,
 }: {
   val: UserProps | null;
   setVal: Dispatch<SetStateAction<UserProps | null>>;
   filterFunc: (user: UserProps) => boolean;
+  disabled?: boolean;
 }) {
   const { users } = useUsersContext();
 
   return (
     <Autocomplete
+      disabled={disabled}
       value={val}
       onChange={(_, newValue) => setVal(newValue)}
       options={users.filter(filterFunc)}
