@@ -33,7 +33,7 @@ export default function EditRole() {
 
   return (
     <form
-      className="p-2 m-2 w-fit flex flex-col lg:block w-xs mx-3"
+      className="p-2 m-2 w-fit flex flex-col lg:block mx-3"
       action={submitAction}
     >
       <h3 className="text-2xl font-semibold text-center w-full m-3">

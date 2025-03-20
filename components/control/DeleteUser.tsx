@@ -29,7 +29,7 @@ export default function DeleteUser() {
   }, null);
 
   return (
-    <div className="p-2 m-2 w-fit flex flex-col lg:block w-xs mx-3">
+    <div className="p-2 m-2 w-fit flex flex-col lg:block mx-3">
       <h3 className="text-2xl font-semibold text-center w-full m-3">
         Delete a User
       </h3>
