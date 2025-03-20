@@ -1,5 +1,5 @@
 "use server";
-import { AttendanceProps, Class, Role, ServerFuncRes } from "@/types";
+import { AttendanceProps, Class, Role } from "@/types";
 import { cookies } from "next/headers";
 import { startCollectionSession, USERS_COLLECTION } from "@/db";
 import { formatDate, formatDay } from "../util/format";
@@ -14,23 +14,20 @@ const allowedRoles = [Role.staff, Role.admin];
 export async function markStudentPresent(
   email: string,
   date: Date | null,
-): Promise<ServerFuncRes> {
+): Promise<string> {
   if (date === null || isNaN(date.getTime())) {
-    return { success: false, message: "invalid date" };
+    throw new Error("invalid date");
   }
 
   const cookieStore = await cookies();
   const user = await userFromAuthCookie(cookieStore);
 
   if (!user || !allowedRoles.includes(user.role)) {
-    return { success: false, message: "unauthorized. please sign in again." };
+    throw new Error("unauthorized. please sign in again.");
   }
 
   if (ENV === "dev" && MOCK) {
-    return {
-      success: true,
-      message: `successfully marked ${email} as present on ${formatDate(date)}`,
-    };
+    return `successfully marked ${email} as absent on ${formatDate(date)}`;
   }
 
   const { session, collection: usersCollection } =
@@ -71,21 +68,10 @@ export async function markStudentPresent(
 
     console.log("SUCCESSFULLY MARKED PRESENT");
     setUserInCache(documentToUserProps(data));
-    return {
-      success: true,
-      message: `successfully marked ${email} as present on ${formatDate(date)}`,
-    };
+    return `successfully marked ${email} as present on ${formatDate(date)}`;
   } catch (error) {
-    console.log("CAUGHT ERROR");
-    let message = `could not mark ${email} as present. please try again later.`;
-    if (error instanceof Error) {
-      message = error.message;
-    }
     await session.abortTransaction();
-    return {
-      success: false,
-      message,
-    };
+    throw error;
   } finally {
     await session.endSession();
   }
