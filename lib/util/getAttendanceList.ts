@@ -40,8 +40,8 @@ export function getAttendanceList(
     return [
       user.name,
       user.email,
-      numPresent.toString(),
-      percentage(numPresent, dates.length).toString(),
+      numPresent,
+      percentage(numPresent, dates.length),
       ...dates.map((d) => {
         while (
           i < user.attendanceList.length &&

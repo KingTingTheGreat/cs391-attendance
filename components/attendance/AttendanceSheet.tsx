@@ -95,7 +95,9 @@ export default function AttendanceSheet() {
           rows={attendanceList.slice(1)}
           getRowId={(row) => row[1]}
           getCellClassName={(cell) => {
-            // assumes students names and emails will not contain a colon
+            if (headers.includes(cell.colDef.headerName as string)) {
+              return "bg-inherit";
+            }
             return cell.value.includes(":")
               ? "bg-green-200"
               : cell.value === AttendanceStatus.absent
