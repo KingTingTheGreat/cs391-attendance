@@ -31,7 +31,9 @@ function headerWidth(h: string) {
     case headers[1]:
       return 150;
     case headers[2]:
-      return 75;
+      return 60;
+    case headers[3]:
+      return 60;
     default:
       return 100;
   }

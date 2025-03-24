@@ -1,8 +1,16 @@
 import { AttendanceStatus, Class, Role, UserProps } from "@/types";
 import { formatDate, formatTime } from "./format";
 
+function percentage(numPresent: number, totalDates: number) {
+  if (totalDates === 0) {
+    return 0;
+  }
+
+  return Math.round((numPresent / totalDates) * 10000) / 100;
+}
+
 // number of headers that are not dates
-export const headers = ["Name", "Email", "Total"];
+export const headers = ["Name", "Email", "Total", "%"];
 
 export function getAttendanceList(
   users: UserProps[],
@@ -24,13 +32,16 @@ export function getAttendanceList(
   dates.sort((a, b) => uniqueDates[a].getTime() - uniqueDates[b].getTime());
 
   const rows = users.map((user) => {
+    const numPresent = user.attendanceList.reduce(
+      (acc, cur) => (cur.class === classType ? acc + 1 : acc),
+      0,
+    );
     let i = 0;
     return [
       user.name,
       user.email,
-      user.attendanceList
-        .reduce((acc, cur) => (cur.class === classType ? acc + 1 : acc), 0)
-        .toString(),
+      numPresent.toString(),
+      percentage(numPresent, dates.length).toString(),
       ...dates.map((d) => {
         while (
           i < user.attendanceList.length &&
