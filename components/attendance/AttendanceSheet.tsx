@@ -55,8 +55,9 @@ export default function AttendanceSheet() {
 
   const columns: GridColDef[] = attendanceList[0].map((col, i) => ({
     field: `${i}`,
-    headerName: col,
-    width: headerWidth(col),
+    // headers are always string, so this is fine
+    headerName: col as string,
+    width: headerWidth(col as string),
   }));
 
   return (

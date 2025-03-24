@@ -15,7 +15,7 @@ export const headers = ["Name", "Email", "Total", "%"];
 export function getAttendanceList(
   users: UserProps[],
   classType: Class,
-): string[][] {
+): (string | number)[][] {
   // filter for students only
   users = users.filter((user) => user.role === Role.student);
 

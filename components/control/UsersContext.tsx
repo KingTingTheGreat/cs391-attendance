@@ -15,7 +15,7 @@ const UsersContext = createContext<UsersContextType | null>(null);
 type UsersContextType = {
   users: UserProps[];
   setUsers: Dispatch<SetStateAction<UserProps[]>>;
-  attList: { [classType: string]: string[][] };
+  attList: { [classType: string]: (string | number)[][] };
 };
 
 export const UsersContextProvider = ({
@@ -26,7 +26,7 @@ export const UsersContextProvider = ({
   children: React.ReactNode;
 }) => {
   const [users, setUsers] = useState<UserProps[]>(usersInput);
-  const initialAttList: { [classType: string]: string[][] } = {};
+  const initialAttList: { [classType: string]: (string | number)[][] } = {};
   for (const clsType in Class) {
     initialAttList[clsType] = getAttendanceList(users, clsType as Class);
   }
