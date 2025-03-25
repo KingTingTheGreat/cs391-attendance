@@ -69,7 +69,7 @@ export default function TemporaryCodeDisplay() {
       <div className="flex flex-col items-center space-y-6">
         {tempCode ? (
           <>
-            <CodeDisplay code={tempCode} />
+            <CodeDisplay code={tempCode} show={true} />
             <p className="text-center text-gray-600">
               Use this code to confirm your attendance
             </p>

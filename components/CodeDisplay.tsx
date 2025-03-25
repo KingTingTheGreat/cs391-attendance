@@ -4,8 +4,14 @@ import { CODE_LENGTH } from "@/lib/generateCode";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useState } from "react";
 
-export default function CodeDisplay({ code }: { code: string }) {
-  const [visible, setVisible] = useState(false);
+export default function CodeDisplay({
+  code,
+  show,
+}: {
+  code: string;
+  show?: boolean;
+}) {
+  const [visible, setVisible] = useState(show || false);
 
   return (
     <div
