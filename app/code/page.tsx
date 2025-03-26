@@ -1,6 +1,7 @@
 import CodeDisplay from "@/components/CodeDisplay";
 import Header from "@/components/Header";
 import QRCodeDisplay from "@/components/QRCodeDisplay";
+import { PREV_QRCODE_SIZE_COOKIE } from "@/lib/cookies/cookies";
 import { userFromAuthCookie } from "@/lib/cookies/userFromAuthCookie";
 import { todayCode } from "@/lib/generateCode";
 import { Role } from "@/types";
@@ -18,6 +19,8 @@ export default async function CodePage() {
     return redirect("/");
   }
 
+  const prevSize = Number(cookieStore.get(PREV_QRCODE_SIZE_COOKIE)?.value);
+
   console.log("code viewed by", user.name, user.email);
 
   return (
@@ -32,7 +35,7 @@ export default async function CodePage() {
               Use this code to confirm your attendance
             </p>
           </div>
-          <QRCodeDisplay />
+          <QRCodeDisplay prevSize={prevSize} />
         </div>
       </div>
     </>
