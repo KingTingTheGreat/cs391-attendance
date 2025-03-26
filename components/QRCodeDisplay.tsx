@@ -6,10 +6,13 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import QRCode from "react-qr-code";
 
-export default function QRCodeDisplay() {
+const defaultSize = 256;
+
+export default function QRCodeDisplay({ prevSize }: { prevSize?: number }) {
   const [domain, setDomain] = useState("");
-  const prevSize = Number(Cookie.get(PREV_QRCODE_SIZE_COOKIE));
-  const [size, setSize] = useState(isNaN(prevSize) ? 256 : prevSize);
+  const [size, setSize] = useState(
+    isNaN(prevSize || NaN) ? defaultSize : (prevSize as number),
+  );
 
   useEffect(() => {
     const currentDomain = window.location.origin;

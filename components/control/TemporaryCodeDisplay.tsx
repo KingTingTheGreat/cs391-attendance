@@ -14,11 +14,14 @@ import { formatSeconds } from "@/lib/util/format";
 // 5 min default
 const defaultSeconds = 5 * 60;
 
-export default function TemporaryCodeDisplay() {
+export default function TemporaryCodeDisplay({
+  prevSeconds,
+}: {
+  prevSeconds?: number;
+}) {
   const [tempCode, setTempCode] = useState<string | null>(null);
-  const prevSeconds = Number(Cookie.get(PREV_EXP_SEC_COOKIE));
   const [expSeconds, setExpSeconds] = useState(
-    isNaN(prevSeconds) ? defaultSeconds : prevSeconds,
+    isNaN(prevSeconds || NaN) ? defaultSeconds : (prevSeconds as number),
   );
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [isActive, setIsActive] = useState(false);
@@ -51,9 +54,7 @@ export default function TemporaryCodeDisplay() {
       if (repeat) {
         handleStart();
       } else {
-        setTempCode(null);
-        setIsActive(false);
-        setTimeLeft(null);
+        handleStop();
       }
     }
 
@@ -93,9 +94,7 @@ export default function TemporaryCodeDisplay() {
                   minutes: 1,
                   seconds: 5,
                 }}
-                defaultValue={dayjs()
-                  .minute(0)
-                  .second(prevSeconds || defaultSeconds)}
+                value={dayjs().minute(0).second(expSeconds)}
                 format={`mm:ss (${expSeconds} sec)`}
                 onChange={(newDayjsDate) => {
                   if (newDayjsDate) {
