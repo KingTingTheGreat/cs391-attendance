@@ -7,9 +7,10 @@ import { useEffect, useState } from "react";
 import QRCode from "react-qr-code";
 
 const defaultSize = 256;
+const defaultDomain = process.env.NEXT_PUBLIC_DOMAIN || "";
 
 export default function QRCodeDisplay({ prevSize }: { prevSize?: number }) {
-  const [domain, setDomain] = useState("");
+  const [domain, setDomain] = useState(defaultDomain);
   const [size, setSize] = useState(
     isNaN(prevSize || NaN) ? defaultSize : (prevSize as number),
   );
