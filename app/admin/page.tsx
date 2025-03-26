@@ -1,7 +1,12 @@
 import AdminPanel from "@/components/control/AdminPanel";
 import Header from "@/components/Header";
+import {
+  PREV_ATTENDANCE_SORT_COOKIE,
+  PREV_CLASS_TYPE_COOKIE,
+} from "@/lib/cookies/cookies";
 import { userFromAuthCookie } from "@/lib/cookies/userFromAuthCookie";
-import { Role } from "@/types";
+import { Class, Role } from "@/types";
+import { GridSortModel } from "@mui/x-data-grid";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -16,6 +21,11 @@ export default async function AdminPage() {
     return redirect("/");
   }
 
+  const prevClassType = cookieStore.get(PREV_CLASS_TYPE_COOKIE)?.value as Class;
+  const prevSortModel = JSON.parse(
+    cookieStore.get(PREV_ATTENDANCE_SORT_COOKIE)?.value || "[]",
+  ) as GridSortModel;
+
   console.log("admin panel viewed by", user.name, user.email);
 
   // use default role in dev environment
@@ -24,7 +34,11 @@ export default async function AdminPage() {
       <Header role={user.role} />
       <div className="px-8 py-2 w-full">
         <h1 className="text-4xl font-bold text-center">Admin Page</h1>
-        <AdminPanel role={user.role} />
+        <AdminPanel
+          role={user.role}
+          prevClassType={prevClassType}
+          prevSortModel={prevSortModel}
+        />
       </div>
     </>
   );

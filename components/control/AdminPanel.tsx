@@ -1,5 +1,5 @@
 "use client";
-import { Role, UserProps } from "@/types";
+import { Class, Role, UserProps } from "@/types";
 import { useEffect, useState } from "react";
 import EditRole from "./EditRole";
 import DeleteAllStudents from "./DeleteAllStudents";
@@ -9,8 +9,17 @@ import MarkStudentAttendance from "./MarkStudentAttendance";
 import AttendanceSheet from "../attendance/AttendanceSheet";
 import { CircularProgress } from "@mui/material";
 import { getAllUsers } from "@/lib/util/getAllUsers";
+import { GridSortModel } from "@mui/x-data-grid";
 
-export default function AdminPanel({ role }: { role: Role }) {
+export default function AdminPanel({
+  role,
+  prevClassType,
+  prevSortModel,
+}: {
+  role: Role;
+  prevClassType?: Class;
+  prevSortModel?: GridSortModel;
+}) {
   const [users, setUsers] = useState<UserProps[] | null>(null);
 
   useEffect(() => {
@@ -37,7 +46,10 @@ export default function AdminPanel({ role }: { role: Role }) {
       </div>
 
       <div className="flex flex-col items-center p-8">
-        <AttendanceSheet />
+        <AttendanceSheet
+          prevClassType={prevClassType}
+          prevSortModel={prevSortModel}
+        />
       </div>
       {role === Role.admin && (
         <div className="flex justify-center">

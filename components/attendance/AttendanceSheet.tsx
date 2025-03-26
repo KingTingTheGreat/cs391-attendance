@@ -39,18 +39,16 @@ function headerWidth(h: string) {
   }
 }
 
-export default function AttendanceSheet() {
+export default function AttendanceSheet({
+  prevClassType,
+  prevSortModel,
+}: {
+  prevClassType?: Class;
+  prevSortModel?: GridSortModel;
+}) {
   const { attList } = useUsersContext();
-  const prevClassType = Cookie.get(PREV_CLASS_TYPE_COOKIE);
-  const [classType, setClassType] = useState(
-    prevClassType ? (prevClassType as Class) : Class.lecture,
-  );
-  const prevSortModel = JSON.parse(
-    Cookie.get(PREV_ATTENDANCE_SORT_COOKIE) || "[]",
-  ) as GridSortModel;
-  const [sortModel, setSortModel] = useState<GridSortModel>(
-    prevSortModel || defaultSortModel,
-  );
+  const [classType, setClassType] = useState(prevClassType || Class.lecture);
+  const [sortModel, setSortModel] = useState(prevSortModel || defaultSortModel);
   const attendanceList = attList[classType];
 
   const columns: GridColDef[] = attendanceList[0].map((col, i) => ({
