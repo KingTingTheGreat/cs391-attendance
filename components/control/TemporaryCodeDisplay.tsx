@@ -8,7 +8,10 @@ import { generateTempCode } from "@/lib/control/generateTempCode";
 import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import { PREV_EXP_SEC_COOKIE } from "@/lib/cookies/cookies";
+import {
+  PREV_EXP_SEC_COOKIE,
+  PREV_REPEAT_TEMP_COOKIE,
+} from "@/lib/cookies/cookies";
 import { formatSeconds } from "@/lib/util/format";
 
 // 5 min default
@@ -16,8 +19,10 @@ const defaultSeconds = 5 * 60;
 
 export default function TemporaryCodeDisplay({
   prevSeconds,
+  prevRepeatTemp,
 }: {
   prevSeconds?: number;
+  prevRepeatTemp?: boolean;
 }) {
   const [tempCode, setTempCode] = useState<string | null>(null);
   const [expSeconds, setExpSeconds] = useState(
@@ -25,7 +30,7 @@ export default function TemporaryCodeDisplay({
   );
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [isActive, setIsActive] = useState(false);
-  const [repeat, setRepeat] = useState(false);
+  const [repeat, setRepeat] = useState(prevRepeatTemp as boolean);
 
   const handleStart = () => {
     console.log("handle start");
@@ -110,7 +115,14 @@ export default function TemporaryCodeDisplay({
             <div className="flex justify-around w-full">
               <FormControlLabel
                 control={
-                  <Switch value={repeat} onChange={(_, v) => setRepeat(v)} />
+                  <Switch
+                    defaultChecked={prevRepeatTemp}
+                    value={repeat}
+                    onChange={(_, v) => {
+                      setRepeat(v);
+                      Cookie.set(PREV_REPEAT_TEMP_COOKIE, String(v));
+                    }}
+                  />
                 }
                 label="Repeat?"
                 labelPlacement="start"
