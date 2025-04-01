@@ -1,6 +1,8 @@
 import { Class } from "@/types";
 import { useStudentContext } from "./StudentContext";
-import formatPercentage from "@/lib/util/formatPercentage";
+import formatPercentage from "@/lib/util/format";
+
+const minPercentage = 80;
 
 export default function ClassPercentages() {
   const { user, attendanceDates } = useStudentContext();
@@ -13,11 +15,23 @@ export default function ClassPercentages() {
         const numPresent = user.attendanceList.filter(
           (d) => d.class === clsType,
         ).length;
+        const percentage = formatPercentage(
+          numPresent,
+          attendanceDates[clsType].size,
+        );
         return (
           <div key={clsType}>
             <p>
               {clsType}:{" "}
-              {formatPercentage(numPresent, attendanceDates[clsType].size)}%
+              <span
+                className={
+                  percentage >= minPercentage
+                    ? "text-green-700"
+                    : "text-red-500 underline"
+                }
+              >
+                {percentage}%
+              </span>
             </p>
           </div>
         );

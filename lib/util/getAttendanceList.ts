@@ -1,6 +1,6 @@
 import { AttendanceStatus, Class, Role, UserProps } from "@/types";
 import { formatDate, formatTime } from "./format";
-import formatPercentage from "./formatPercentage";
+import formatPercentage from "./format";
 
 // number of headers that are not dates
 export const headers = ["Name", "Email", "Total", "%"];
