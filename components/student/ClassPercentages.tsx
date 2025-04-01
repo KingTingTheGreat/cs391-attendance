@@ -13,7 +13,6 @@ export default function ClassPercentages() {
         const numPresent = user.attendanceList.filter(
           (d) => d.class === clsType,
         ).length;
-        console.log("attendanceDates", clsType, attendanceDates[clsType]);
         return (
           <div key={clsType}>
             <p>
