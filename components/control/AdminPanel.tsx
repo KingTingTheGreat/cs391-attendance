@@ -8,6 +8,8 @@ import AttendanceSheet from "../attendance/AttendanceSheet";
 import { getAllUsers } from "@/lib/util/getAllUsers";
 import { GridSortModel } from "@mui/x-data-grid";
 import createInitialAttList from "@/lib/util/createInitialAttList";
+import { headers } from "@/lib/util/getAttendanceList";
+import { setDateCache } from "@/lib/cache/redis";
 
 export default async function AdminPanel({
   role,
@@ -20,6 +22,17 @@ export default async function AdminPanel({
 }) {
   const users = await getAllUsers();
   const initialAttList = createInitialAttList(users);
+
+  // update cache
+  try {
+    for (const clsType in initialAttList) {
+      const dates = initialAttList[clsType][0].slice(headers.length);
+      // the dates fields of attendance list are all strings
+      await setDateCache(clsType as Class, ...(dates as string[]));
+    }
+  } catch (e) {
+    console.error("something went wrong when updating cache", e);
+  }
 
   return (
     <UsersContextProvider usersInput={users} initialAttList={initialAttList}>
