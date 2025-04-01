@@ -18,6 +18,7 @@ export default function ClassPercentages() {
         const numPresent = user.attendanceList.filter(
           (d) => d.class === clsType,
         ).length;
+        const minPerc = minPercentages.get(clsType);
         const percentage = formatPercentage(
           numPresent,
           attendanceDates[clsType].size,
@@ -28,8 +29,8 @@ export default function ClassPercentages() {
               {clsType}:{" "}
               <span
                 className={
-                  minPercentages.get(clsType) > 0
-                    ? percentage >= minPercentages.get(clsType)
+                  minPerc !== undefined && minPerc > 0
+                    ? percentage >= minPerc
                       ? "text-green-700"
                       : "text-red-500 underline"
                     : ""
