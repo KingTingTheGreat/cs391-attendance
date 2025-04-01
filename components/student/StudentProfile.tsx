@@ -4,6 +4,7 @@ import "react-day-picker/style.css";
 import AttendanceCalendar from "./AttendanceCalendar";
 import AttendanceForm from "./AttendanceForm";
 import { useStudentContext } from "./StudentContext";
+import ClassPercentages from "./ClassPercentages";
 
 export default function StudentProfile() {
   const { user } = useStudentContext();
@@ -24,6 +25,7 @@ export default function StudentProfile() {
       </div>
       <AttendanceForm />
       <AttendanceCalendar />
+      <ClassPercentages />
     </div>
   );
 }

@@ -1,13 +1,6 @@
 import { AttendanceStatus, Class, Role, UserProps } from "@/types";
 import { formatDate, formatTime } from "./format";
-
-function percentage(numPresent: number, totalDates: number) {
-  if (totalDates === 0) {
-    return 0;
-  }
-
-  return Math.round((numPresent / totalDates) * 10000) / 100;
-}
+import formatPercentage from "./formatPercentage";
 
 // number of headers that are not dates
 export const headers = ["Name", "Email", "Total", "%"];
@@ -41,7 +34,7 @@ export function getAttendanceList(
       user.name,
       user.email,
       numPresent,
-      percentage(numPresent, dates.length),
+      formatPercentage(numPresent, dates.length),
       ...dates.map((d) => {
         while (
           i < user.attendanceList.length &&
