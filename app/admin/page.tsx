@@ -1,4 +1,5 @@
 import AdminPanel from "@/components/control/AdminPanel";
+import { PrevConfigContextProvider } from "@/components/control/PrevConfigContext";
 import Header from "@/components/Header";
 import {
   PREV_ATTENDANCE_SORT_COOKIE,
@@ -35,7 +36,10 @@ export default async function AdminPage() {
 
   // use default role in dev environment
   return (
-    <>
+    <PrevConfigContextProvider
+      prevClassType={prevClassType}
+      prevSortModel={prevSortModel}
+    >
       <Header role={user.role} />
       <div className="px-8 py-2 w-full">
         <h1 className="text-4xl font-bold text-center">Admin Page</h1>
@@ -49,6 +53,6 @@ export default async function AdminPage() {
           <AdminPanel role={user.role} />
         </Suspense>
       </div>
-    </>
+    </PrevConfigContextProvider>
   );
 }

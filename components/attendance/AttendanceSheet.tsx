@@ -18,6 +18,7 @@ import {
   PREV_CLASS_TYPE_COOKIE,
 } from "@/lib/cookies/cookies";
 import { headers } from "@/lib/util/getAttendanceList";
+import { usePrevConfigContext } from "../control/PrevConfigContext";
 
 const pageSizeOpts = [25, 50, 100];
 const paginationModel = { page: 0, pageSize: pageSizeOpts[0] };
@@ -39,13 +40,8 @@ function headerWidth(h: string) {
   }
 }
 
-export default function AttendanceSheet({
-  prevClassType,
-  prevSortModel,
-}: {
-  prevClassType?: Class;
-  prevSortModel?: GridSortModel;
-}) {
+export default function AttendanceSheet() {
+  const { prevClassType, prevSortModel } = usePrevConfigContext();
   const { attList } = useUsersContext();
   const [classType, setClassType] = useState(prevClassType || Class.lecture);
   const [sortModel, setSortModel] = useState(prevSortModel || defaultSortModel);
