@@ -52,6 +52,7 @@ const datesKey = `-dates-${ENV}`;
 export async function setDateCache(classType: Class, ...dates: string[]) {
   const tx = redis.multi();
   tx.del(classType + datesKey);
+  // @ts-expect-error spread operator is intended
   tx.sadd(classType + datesKey, ...dates);
   await tx.exec();
 }
