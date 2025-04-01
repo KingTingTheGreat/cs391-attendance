@@ -52,3 +52,5 @@ export enum DayEnum {
   saturday = "saturday",
   sunday = "sunday",
 }
+
+export type AttendanceList = { [classType: string]: (string | number)[][] };
