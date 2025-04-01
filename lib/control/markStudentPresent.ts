@@ -6,7 +6,7 @@ import { formatDate, formatDay } from "../util/format";
 import { DISCUSSION_DAYS, ENV, MOCK } from "../env";
 import { userFromAuthCookie } from "../cookies/userFromAuthCookie";
 import documentToUserProps from "../util/documentToUserProps";
-import { setUserInCache } from "../cache/redis";
+import { addDateToCache, setUserInCache } from "../cache/redis";
 import { addToAttendanceList } from "../util/addToAttendanceList";
 
 const allowedRoles = [Role.staff, Role.admin];
@@ -64,6 +64,12 @@ export async function markStudentPresent(
         `could not mark ${email} as present. please try again later`,
       );
     }
+    await addDateToCache(
+      DISCUSSION_DAYS.includes(formatDay(date))
+        ? Class.discussion
+        : Class.lecture,
+      formatDay(date),
+    );
     await session.commitTransaction();
 
     console.log("SUCCESSFULLY MARKED PRESENT");

@@ -5,6 +5,8 @@ import StudentProfile from "@/components/student/StudentProfile";
 import Header from "@/components/Header";
 import { userFromAuthCookie } from "@/lib/cookies/userFromAuthCookie";
 import { StudentContextProvider } from "@/components/student/StudentContext";
+import getAttendanceDates from "@/lib/util/getAttendanceDates";
+import { AttendanceDates } from "@/types";
 
 export default async function Home({
   searchParams,
@@ -18,8 +20,15 @@ export default async function Home({
     return <SignInPage errorMessage={qParams.message} />;
   }
 
+  let attendanceDates: AttendanceDates | undefined = undefined;
+  try {
+    attendanceDates = await getAttendanceDates();
+  } catch (e) {
+    console.error("could not get attendance dates", e);
+  }
+
   return (
-    <StudentContextProvider inputUser={user}>
+    <StudentContextProvider inputUser={user} attendanceDates={attendanceDates}>
       <Header role={user.role} />
       <div className="flex justify-center">
         <div className="p-1 m-2 flex flex-col items-center text-xl max-w-[90vw] text-center">

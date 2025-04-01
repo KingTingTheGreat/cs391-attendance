@@ -1,4 +1,4 @@
-import { UserProps } from "@/types";
+import { Class, UserProps } from "@/types";
 import { Redis } from "@upstash/redis";
 import { parseUser } from "./parseUser";
 import { ENV } from "../env";
@@ -45,4 +45,20 @@ export async function clearCache() {
       break;
     }
   }
+}
+
+const datesKey = `-dates-${ENV}`;
+
+export async function setDateCache(classType: Class, ...dates: string[]) {
+  await redis.sadd(classType + datesKey, dates);
+}
+
+export async function addDateToCache(classType: Class, date: string) {
+  await redis.sadd(classType + datesKey, date);
+}
+
+// handle removal by updating entire set when viewed by course staff
+
+export async function getDatesFromCache(classType: Class) {
+  return await redis.smembers(classType + datesKey);
 }

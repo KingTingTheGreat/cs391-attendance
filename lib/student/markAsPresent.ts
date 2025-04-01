@@ -12,7 +12,7 @@ import {
   MOCK,
 } from "../env";
 import { userFromAuthCookie } from "../cookies/userFromAuthCookie";
-import { getFromCache, setUserInCache } from "../cache/redis";
+import { addDateToCache, getFromCache, setUserInCache } from "../cache/redis";
 import documentToUserProps from "../util/documentToUserProps";
 
 export default async function markAsPresent(
@@ -112,6 +112,12 @@ export default async function markAsPresent(
       console.error("error message:", error.message);
       message = error.message;
     }
+    await addDateToCache(
+      LECTURE_DAYS.includes(formatDay(today))
+        ? Class.lecture
+        : Class.discussion,
+      formatToday,
+    );
     await session.abortTransaction();
     throw new Error(message);
   } finally {

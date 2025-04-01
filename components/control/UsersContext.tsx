@@ -1,6 +1,6 @@
 "use client";
 import { getAttendanceList } from "@/lib/util/getAttendanceList";
-import { Class, UserProps } from "@/types";
+import { AttendanceList, Class, UserProps } from "@/types";
 import {
   createContext,
   Dispatch,
@@ -15,22 +15,19 @@ const UsersContext = createContext<UsersContextType | null>(null);
 type UsersContextType = {
   users: UserProps[];
   setUsers: Dispatch<SetStateAction<UserProps[]>>;
-  attList: { [classType: string]: (string | number)[][] };
+  attList: AttendanceList;
 };
 
 export const UsersContextProvider = ({
   usersInput,
+  initialAttList,
   children,
 }: {
   usersInput: UserProps[];
+  initialAttList: AttendanceList;
   children: React.ReactNode;
 }) => {
   const [users, setUsers] = useState<UserProps[]>(usersInput);
-  const initialAttList: { [classType: string]: (string | number)[][] } = {};
-  for (const clsType in Class) {
-    initialAttList[clsType] = getAttendanceList(users, clsType as Class);
-  }
-  // maybe move this stuff to component w/ useMemo
   const [attList, setAttList] = useState(initialAttList);
 
   useEffect(() => {

@@ -6,9 +6,11 @@ import {
 } from "@/lib/cookies/cookies";
 import { userFromAuthCookie } from "@/lib/cookies/userFromAuthCookie";
 import { Class, Role } from "@/types";
+import { CircularProgress } from "@mui/material";
 import { GridSortModel } from "@mui/x-data-grid";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
 const allowedRoles = [Role.staff, Role.admin];
 
@@ -37,7 +39,15 @@ export default async function AdminPage() {
       <Header role={user.role} />
       <div className="px-8 py-2 w-full">
         <h1 className="text-4xl font-bold text-center">Admin Page</h1>
-        <AdminPanel role={user.role} />
+        <Suspense
+          fallback={
+            <div className="flex justify-center items-center w-full p-20">
+              <CircularProgress color="primary" size={100} />
+            </div>
+          }
+        >
+          <AdminPanel role={user.role} />
+        </Suspense>
       </div>
     </>
   );
