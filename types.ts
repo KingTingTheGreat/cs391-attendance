@@ -54,3 +54,5 @@ export enum DayEnum {
 }
 
 export type AttendanceList = { [classType: string]: (string | number)[][] };
+
+export type AttendanceDates = { [classType: string]: Set<string> };
