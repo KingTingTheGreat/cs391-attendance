@@ -2,7 +2,10 @@ import { Class } from "@/types";
 import { useStudentContext } from "./StudentContext";
 import formatPercentage from "@/lib/util/format";
 
-const minPercentage = 80;
+const minPercentages = new Map<Class, number>([
+  [Class.lecture, 85],
+  [Class.discussion, 10 / 12],
+]);
 
 export default function ClassPercentages() {
   const { user, attendanceDates } = useStudentContext();
@@ -25,9 +28,11 @@ export default function ClassPercentages() {
               {clsType}:{" "}
               <span
                 className={
-                  percentage >= minPercentage
-                    ? "text-green-700"
-                    : "text-red-500 underline"
+                  minPercentages.get(clsType) > 0
+                    ? percentage >= minPercentages.get(clsType)
+                      ? "text-green-700"
+                      : "text-red-500 underline"
+                    : ""
                 }
               >
                 {percentage}%
