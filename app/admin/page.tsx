@@ -26,6 +26,9 @@ export default async function AdminPage() {
     cookieStore.get(PREV_ATTENDANCE_SORT_COOKIE)?.value || "[]",
   ) as GridSortModel;
 
+  console.log("prevClassType", prevClassType);
+  console.log("prevSortModel", prevSortModel);
+
   console.log("admin panel viewed by", user.name, user.email);
 
   // use default role in dev environment
@@ -34,11 +37,7 @@ export default async function AdminPage() {
       <Header role={user.role} />
       <div className="px-8 py-2 w-full">
         <h1 className="text-4xl font-bold text-center">Admin Page</h1>
-        <AdminPanel
-          role={user.role}
-          prevClassType={prevClassType}
-          prevSortModel={prevSortModel}
-        />
+        <AdminPanel role={user.role} />
       </div>
     </>
   );
