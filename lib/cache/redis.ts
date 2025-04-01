@@ -58,3 +58,7 @@ export async function addDateToCache(classType: Class, date: string) {
 }
 
 // handle removal by updating entire set when viewed by course staff
+
+export async function getDatesFromCache(classType: Class) {
+  return await redis.smembers(classType + datesKey);
+}
