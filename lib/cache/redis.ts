@@ -50,7 +50,10 @@ export async function clearCache() {
 const datesKey = `-dates-${ENV}`;
 
 export async function setDateCache(classType: Class, ...dates: string[]) {
-  await redis.sadd(classType + datesKey, dates);
+  const tx = redis.multi();
+  tx.del(classType + datesKey);
+  tx.sadd(classType + datesKey, ...dates);
+  await tx.exec();
 }
 
 export async function addDateToCache(classType: Class, date: string) {
@@ -60,5 +63,6 @@ export async function addDateToCache(classType: Class, date: string) {
 // handle removal by updating entire set when viewed by course staff
 
 export async function getDatesFromCache(classType: Class) {
-  return await redis.smembers(classType + datesKey);
+  const dates = await redis.smembers(classType + datesKey);
+  return new Set(dates);
 }
