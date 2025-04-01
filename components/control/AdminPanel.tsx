@@ -8,8 +8,6 @@ import AttendanceSheet from "../attendance/AttendanceSheet";
 import { getAllUsers } from "@/lib/util/getAllUsers";
 import { GridSortModel } from "@mui/x-data-grid";
 import createInitialAttList from "@/lib/util/createInitialAttList";
-import { headers } from "@/lib/util/getAttendanceList";
-import { setDateCache } from "@/lib/cache/redis";
 
 export default async function AdminPanel({
   role,
