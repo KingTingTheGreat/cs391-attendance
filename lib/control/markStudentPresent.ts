@@ -73,7 +73,7 @@ export async function markStudentPresent(
     await session.commitTransaction();
 
     console.log("SUCCESSFULLY MARKED PRESENT");
-    setUserInCache(documentToUserProps(data));
+    await setUserInCache(documentToUserProps(data));
     return `successfully marked ${email} as present on ${formatDate(date)}`;
   } catch (error) {
     await session.abortTransaction();

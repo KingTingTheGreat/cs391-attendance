@@ -104,7 +104,7 @@ export default async function markAsPresent(
     }
 
     await session.commitTransaction();
-    setUserInCache(documentToUserProps(data));
+    await setUserInCache(documentToUserProps(data));
   } catch (error) {
     console.log("CAUGHT ERROR");
     let message = "something went wrong. please try again later.";

@@ -58,7 +58,7 @@ export async function markStudentAbsent(
     );
   }
 
-  setUserInCache(documentToUserProps(data));
+  await setUserInCache(documentToUserProps(data));
 
   return `successfully marked ${email} as absent on ${formatDate(date)}`;
 }

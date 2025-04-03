@@ -61,7 +61,7 @@ export async function setUserAuthCookie(
     },
   );
 
-  setUserInCache(documentToUserProps(data));
+  await setUserInCache(documentToUserProps(data));
 
   return true;
 }

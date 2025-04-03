@@ -61,6 +61,6 @@ export async function userFromAuthCookie(
 
   const user = documentToUserProps(data);
   console.log("successfully got user from db", user);
-  setUserInCache(user);
+  await setUserInCache(user);
   return user;
 }
