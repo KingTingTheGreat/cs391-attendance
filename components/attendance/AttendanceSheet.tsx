@@ -71,6 +71,9 @@ export default function AttendanceSheet({
           value={classType}
           exclusive
           onChange={(_, newCls) => {
+            if (!newCls) {
+              return;
+            }
             setClassType(newCls as Class);
             Cookie.set(PREV_CLASS_TYPE_COOKIE, newCls);
           }}
