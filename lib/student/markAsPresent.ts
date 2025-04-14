@@ -4,7 +4,7 @@ import { startCollectionSession, USERS_COLLECTION } from "@/db";
 import { AttendanceProps, Class } from "@/types";
 import { formatDate, formatDay } from "../util/format";
 import { todayCode } from "../generateCode";
-import { CLASS_DAYS, DISABLE_DAY_CHECKING, ENV, MOCK } from "../env";
+import { ENV, MOCK } from "../env";
 import { userFromAuthCookie } from "../cookies/userFromAuthCookie";
 import { addDateToCache, getFromCache, setUserInCache } from "../cache/redis";
 import documentToUserProps from "../util/documentToUserProps";
