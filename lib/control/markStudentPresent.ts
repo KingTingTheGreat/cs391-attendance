@@ -13,9 +13,9 @@ const allowedRoles = [Role.staff, Role.admin];
 
 export async function markStudentPresent(
   email: string,
-  date: Date | null,
+  date: Date,
 ): Promise<string> {
-  if (date === null || isNaN(date.getTime())) {
+  if (isNaN(date.getTime())) {
     throw new Error("invalid date");
   }
 
