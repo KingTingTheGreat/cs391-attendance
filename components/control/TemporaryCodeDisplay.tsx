@@ -13,6 +13,7 @@ import {
   PREV_REPEAT_TEMP_COOKIE,
 } from "@/lib/cookies/cookies";
 import { formatSeconds } from "@/lib/util/format";
+import { Class } from "@/types";
 
 // 5 min default
 const defaultSeconds = 5 * 60;
@@ -34,7 +35,7 @@ export default function TemporaryCodeDisplay({
 
   const handleStart = () => {
     console.log("handle start");
-    generateTempCode(expSeconds).then((res) => {
+    generateTempCode(expSeconds, Class.discussion).then((res) => {
       if (!res) return;
       setTempCode(res);
       setIsActive(true);

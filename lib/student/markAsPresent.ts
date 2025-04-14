@@ -4,13 +4,7 @@ import { startCollectionSession, USERS_COLLECTION } from "@/db";
 import { AttendanceProps, Class } from "@/types";
 import { formatDate, formatDay } from "../util/format";
 import { todayCode } from "../generateCode";
-import {
-  CLASS_DAYS,
-  DISABLE_DAY_CHECKING,
-  ENV,
-  LECTURE_DAYS,
-  MOCK,
-} from "../env";
+import { CLASS_DAYS, DISABLE_DAY_CHECKING, ENV, MOCK } from "../env";
 import { userFromAuthCookie } from "../cookies/userFromAuthCookie";
 import { addDateToCache, getFromCache, setUserInCache } from "../cache/redis";
 import documentToUserProps from "../util/documentToUserProps";
@@ -21,44 +15,54 @@ export default async function markAsPresent(
   console.log("mark as present");
   const today = new Date();
   const formatToday = formatDate(today);
-  if (!DISABLE_DAY_CHECKING) {
-    if (!CLASS_DAYS.includes(formatDay(today))) {
-      console.error(
-        "student claiming to be present on",
-        formatDay(today),
-        formatToday,
-      );
-      throw new Error("why are you here? there's no class today");
-    }
-  }
 
   const cookieStore = await cookies();
   const user = await userFromAuthCookie(cookieStore, true);
   if (!user) {
-    console.error("no user");
+    console.error("user not signed in claiming to be present");
     throw new Error("something went wrong. please sign in again.");
   }
+
+  console.log(
+    user.name,
+    "claiming to be present on",
+    formatDay(today),
+    formatToday,
+  );
 
   if (user.attendanceList.some((att) => formatDate(att.date) === formatToday)) {
     console.error("already marked as present");
     throw new Error("you have already been marked present today");
   }
 
-  if (code.toUpperCase() !== todayCode()) {
-    // check for temporary code
-    if (!(await getFromCache(code.toUpperCase()))) {
-      console.error("incorrect code: ", code.toUpperCase());
-      throw new Error("incorrect code");
+  let newAtt: AttendanceProps | null = null;
+  for (const classType in Class) {
+    if (code.toUpperCase() === todayCode(classType as Class)) {
+      newAtt = {
+        class: classType as Class,
+        date: today,
+      };
+      break;
     }
   }
+  if (newAtt === null) {
+    // check for temporary code
+    const classType = await getFromCache(code.toUpperCase());
+    if (!classType) {
+      console.log(user.name, "tried with incorrect code");
+      throw new Error("incorrect code");
+    }
 
-  if (ENV === "dev" && MOCK) {
-    return {
-      class: LECTURE_DAYS.includes(formatDay(today))
-        ? Class.lecture
-        : Class.discussion,
+    newAtt = {
+      class: classType as Class,
       date: today,
     };
+  }
+
+  console.log(user.name, "successfully marked as present on", formatToday);
+
+  if (ENV === "dev" && MOCK) {
+    return newAtt;
   }
 
   const { session, collection: usersCollection } =
@@ -71,7 +75,12 @@ export default async function markAsPresent(
     if (!data) throw new Error(`user with email ${user.email} not found`);
 
     const attendanceList = data.attendanceList as AttendanceProps[];
-    if (attendanceList.some((att) => formatDate(att.date) === formatToday)) {
+    if (
+      attendanceList.some(
+        (att) =>
+          formatDate(att.date) === formatToday && att.class === newAtt.class,
+      )
+    ) {
       throw new Error("you have already been marked present for today");
     }
 
@@ -81,14 +90,7 @@ export default async function markAsPresent(
         // @ts-expect-error weird mongo linting?
         $push: {
           attendanceList: {
-            $each: [
-              {
-                class: LECTURE_DAYS.includes(formatDay(today))
-                  ? Class.lecture
-                  : Class.discussion,
-                date: today,
-              },
-            ],
+            $each: [newAtt],
             $sort: { date: 1 },
           },
         },
@@ -102,12 +104,7 @@ export default async function markAsPresent(
         "something went wrong on our end. please try again and notify the instructor.",
       );
     }
-    await addDateToCache(
-      LECTURE_DAYS.includes(formatDay(today))
-        ? Class.lecture
-        : Class.discussion,
-      formatToday,
-    );
+    await addDateToCache(newAtt.class, formatToday);
     await session.commitTransaction();
 
     await setUserInCache(documentToUserProps(data));
@@ -124,10 +121,5 @@ export default async function markAsPresent(
     await session.endSession();
   }
 
-  return {
-    class: LECTURE_DAYS.includes(formatDay(today))
-      ? Class.lecture
-      : Class.discussion,
-    date: today,
-  };
+  return newAtt;
 }

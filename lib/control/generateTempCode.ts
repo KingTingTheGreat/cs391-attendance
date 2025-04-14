@@ -1,5 +1,5 @@
 "use server";
-import { Role } from "@/types";
+import { Class, Role } from "@/types";
 import { cookies } from "next/headers";
 import { userFromAuthCookie } from "../cookies/userFromAuthCookie";
 import { ENV, MOCK } from "../env";
@@ -10,6 +10,7 @@ const allowedRoles = [Role.staff, Role.admin];
 
 export async function generateTempCode(
   seconds: number,
+  classType: Class,
 ): Promise<string | null> {
   const cookieStore = await cookies();
   const user = await userFromAuthCookie(cookieStore);
@@ -22,7 +23,7 @@ export async function generateTempCode(
     return "mockcode";
   }
 
-  const tempCode = newTemporaryCode();
+  const tempCode = newTemporaryCode(classType);
 
   setInCache(tempCode, tempCode, seconds);
 
