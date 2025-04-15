@@ -1,4 +1,5 @@
 "use client";
+import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import Cookie from "js-cookie";
 import { Button, FormControlLabel, Switch } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
@@ -32,6 +33,7 @@ export default function TemporaryCodeDisplay({
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [isActive, setIsActive] = useState(false);
   const [repeat, setRepeat] = useState(prevRepeatTemp as boolean);
+  const [classType, setClassType] = useState<Class | null>(null);
 
   const handleStart = () => {
     console.log("handle start");
@@ -93,6 +95,27 @@ export default function TemporaryCodeDisplay({
           </>
         ) : (
           <>
+            <div className="p-1 m-0.5 flex flex-col sm:flex-row items-center justify-center w-full ">
+              <ToggleButtonGroup
+                color="primary"
+                value={classType}
+                exclusive
+                onChange={(_, newCls) => {
+                  console.log("new class", newCls);
+                  setClassType(newCls as Class);
+                }}
+              >
+                {Object.keys(Class).map((cls) => (
+                  <ToggleButton
+                    key={cls}
+                    value={cls}
+                    sx={{ width: "125px", paddingY: "10px", paddingX: "25px" }}
+                  >
+                    {cls}
+                  </ToggleButton>
+                ))}
+              </ToggleButtonGroup>
+            </div>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <TimePicker
                 views={["minutes", "seconds"]}
@@ -110,7 +133,7 @@ export default function TemporaryCodeDisplay({
                     Cookie.set(PREV_EXP_SEC_COOKIE, newExpSec.toString());
                   }
                 }}
-                sx={{ margin: "0.5rem" }}
+                sx={{ margin: "0.5rem", maxWidth: "250px" }}
               />
             </LocalizationProvider>
             <div className="flex justify-around w-full">
@@ -132,6 +155,7 @@ export default function TemporaryCodeDisplay({
                 variant="contained"
                 sx={{ maxWidth: "275px" }}
                 onClick={handleStart}
+                disabled={classType === null}
               >
                 Create
               </Button>
