@@ -1,13 +1,12 @@
 import { Class, Role } from "@/types";
-import EditRole from "./EditRole";
 import DeleteAllStudents from "./DeleteAllStudents";
-import DeleteUser from "./DeleteUser";
 import { UsersContextProvider } from "./UsersContext";
 import MarkStudentAttendance from "./MarkStudentAttendance";
 import AttendanceSheet from "../attendance/AttendanceSheet";
 import { getAllUsers } from "@/lib/util/getAllUsers";
 import { GridSortModel } from "@mui/x-data-grid";
 import createInitialAttList from "@/lib/util/createInitialAttList";
+import EditDeleteUser from "./EditDeleteUser";
 
 export default async function AdminPanel({
   role,
@@ -26,8 +25,7 @@ export default async function AdminPanel({
       <div className="flex flex-col items-center sm:flex-row justify-center sm:items-start">
         {role === Role.admin && (
           <>
-            <EditRole />
-            <DeleteUser />
+            <EditDeleteUser />
           </>
         )}
         <MarkStudentAttendance />
