@@ -5,7 +5,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useActionState, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { useUsersContext } from "./UsersContext";
-import { Button } from "@mui/material";
+import { Autocomplete, Button, TextField } from "@mui/material";
 import { markStudentPresent } from "@/lib/control/markStudentPresent";
 import { Class, Role, UserProps } from "@/types";
 import { markStudentAbsent } from "@/lib/control/markStudentAbsent";
@@ -16,6 +16,7 @@ export default function MarkStudentAttendance() {
   const [dayjsDate, setDayjsDate] = useState<Dayjs>(dayjs(new Date()));
   const [selectedUser, setSelectedUser] = useState<UserProps | null>(null);
   const [resMsg, setResMsg] = useState("");
+  const [classType, setClassType] = useState<Class | null>(null);
 
   const [error, submitAction, isPending] = useActionState(
     async (
@@ -80,36 +81,43 @@ export default function MarkStudentAttendance() {
           disabled={isPending}
         />
       </LocalizationProvider>
-      <div className="m-2 flex flex-col items-center">
-        <div className="flex justify-around w-full">
-          {Object.keys(Class).map((classType) => (
-            <form
-              key={classType}
-              action={() =>
-                submitAction({
-                  attType: "present",
-                  classType: classType as Class,
-                })
-              }
-              className="w-[40%]"
-            >
-              <Button
-                disabled={!selectedUser || isPending}
-                variant="contained"
-                sx={{ width: "100%", height: "50px" }}
-                type="submit"
-              >
-                {classType}
-              </Button>
-            </form>
-          ))}
-        </div>
+      <Autocomplete
+        disablePortal
+        disabled={isPending}
+        options={Object.keys(Class).map((clsType) => clsType)}
+        sx={{
+          margin: "0.25rem",
+          width: "100%",
+        }}
+        renderInput={(params) => <TextField {...params} label="Class Type" />}
+        value={classType}
+        onChange={(_, val) => setClassType(val as Class)}
+      />
+      <div className="flex justify-between w-full m-[0.25rem]">
         <form
-          action={() => submitAction({ attType: "absent" })}
-          className="w-full m-2"
+          action={() =>
+            submitAction({
+              attType: "present",
+              classType: classType as Class,
+            })
+          }
+          className="w-[40%]"
         >
           <Button
-            disabled={!selectedUser || isPending}
+            disabled={!selectedUser || isPending || !classType}
+            variant="contained"
+            sx={{ width: "100%", height: "50px" }}
+            type="submit"
+          >
+            Present
+          </Button>
+        </form>
+        <form
+          action={() => submitAction({ attType: "absent" })}
+          className="w-[40%]"
+        >
+          <Button
+            disabled={!selectedUser || isPending || !classType}
             variant="outlined"
             sx={{ width: "100%", height: "50px" }}
             type="submit"
