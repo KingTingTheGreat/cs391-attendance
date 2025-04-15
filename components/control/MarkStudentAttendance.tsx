@@ -19,23 +19,24 @@ export default function MarkStudentAttendance() {
   const [classType, setClassType] = useState<Class | null>(null);
 
   const [error, submitAction, isPending] = useActionState(
-    async (
-      _: Error | null,
-      data: { attType: "present"; classType: Class } | { attType: "absent" },
-    ) => {
-      console.log("attType", data.attType);
+    async (_: Error | null, attType: "present" | "absent") => {
+      console.log("attType", attType);
       try {
         if (!selectedUser) throw new Error("no user selected");
         const result = await (function () {
-          switch (data.attType) {
+          switch (attType) {
             case "present":
               return markStudentPresent(
                 selectedUser.email,
                 dayjsDate.toDate(),
-                data.classType,
+                classType as Class,
               );
             case "absent":
-              return markStudentAbsent(selectedUser.email, dayjsDate.toDate());
+              return markStudentAbsent(
+                selectedUser.email,
+                dayjsDate.toDate(),
+                classType as Class,
+              );
           }
         })();
 
@@ -94,15 +95,7 @@ export default function MarkStudentAttendance() {
         onChange={(_, val) => setClassType(val as Class)}
       />
       <div className="flex justify-between w-full m-[0.25rem]">
-        <form
-          action={() =>
-            submitAction({
-              attType: "present",
-              classType: classType as Class,
-            })
-          }
-          className="w-[40%]"
-        >
+        <form action={() => submitAction("present")} className="w-[40%]">
           <Button
             disabled={!selectedUser || isPending || !classType}
             variant="contained"
@@ -112,10 +105,7 @@ export default function MarkStudentAttendance() {
             Present
           </Button>
         </form>
-        <form
-          action={() => submitAction({ attType: "absent" })}
-          className="w-[40%]"
-        >
+        <form action={() => submitAction("absent")} className="w-[40%]">
           <Button
             disabled={!selectedUser || isPending || !classType}
             variant="outlined"

@@ -1,5 +1,5 @@
 "use server";
-import { MarkResult, Role } from "@/types";
+import { Class, MarkResult, Role } from "@/types";
 import { cookies } from "next/headers";
 import getCollection, { USERS_COLLECTION } from "@/db";
 import { formatDate } from "../util/format";
@@ -13,6 +13,7 @@ const allowedRoles = [Role.staff, Role.admin];
 export async function markStudentAbsent(
   email: string,
   date: Date,
+  classType: Class,
 ): Promise<MarkResult> {
   if (isNaN(date.getTime())) {
     throw new Error("invalid date");
@@ -47,6 +48,7 @@ export async function markStudentAbsent(
             $gte: startOfDay,
             $lte: endOfDay,
           },
+          class: classType,
         },
       },
     },
