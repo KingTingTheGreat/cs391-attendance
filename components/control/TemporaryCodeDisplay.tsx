@@ -75,7 +75,7 @@ export default function TemporaryCodeDisplay({
   return (
     <div className="p-1 m-2 flex flex-col items-center text-xl max-w-[90vw] text-center">
       <h2 className="text-2xl font-bold text-center">Temporary Code</h2>
-      <div className="flex flex-col items-center space-y-6">
+      <div className="flex flex-col items-center space-y-6 pt-4">
         {tempCode ? (
           <>
             <CodeDisplay code={tempCode} show={true} />
