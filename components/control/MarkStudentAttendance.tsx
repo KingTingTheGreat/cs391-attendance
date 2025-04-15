@@ -9,9 +9,8 @@ import { Button } from "@mui/material";
 import { markStudentPresent } from "@/lib/control/markStudentPresent";
 import { Class, Role, UserProps } from "@/types";
 import { markStudentAbsent } from "@/lib/control/markStudentAbsent";
-import { formatDate, formatDay } from "@/lib/util/format";
+import { formatDate } from "@/lib/util/format";
 import { addToAttendanceList } from "@/lib/util/addToAttendanceList";
-import { DISCUSSION_DAYS } from "@/lib/env";
 import UserSelect from "./UserSelect";
 
 export default function MarkStudentAttendance() {
@@ -21,13 +20,20 @@ export default function MarkStudentAttendance() {
   const [resMsg, setResMsg] = useState("");
 
   const [error, submitAction, isPending] = useActionState(
-    async (_: Error | null, attType: "present" | "absent") => {
-      console.log("attType", attType);
+    async (
+      _: Error | null,
+      data: { attType: "present"; classType: Class } | { attType: "absent" },
+    ) => {
+      console.log("attType", data.attType);
       try {
         if (!selectedUser) throw new Error("no user selected");
-        if (attType === "present") {
+        if (data.attType === "present") {
           setResMsg(
-            await markStudentPresent(selectedUser.email, dayjsDate.toDate()),
+            await markStudentPresent(
+              selectedUser.email,
+              dayjsDate.toDate(),
+              data.classType,
+            ),
           );
           setUsers(
             users.map((user) =>
@@ -35,18 +41,14 @@ export default function MarkStudentAttendance() {
                 ? {
                     ...user,
                     attendanceList: addToAttendanceList(user.attendanceList, {
-                      class: DISCUSSION_DAYS.includes(
-                        formatDay(dayjsDate.toDate()),
-                      )
-                        ? Class.discussion
-                        : Class.lecture,
+                      class: data.classType,
                       date: dayjsDate.toDate(),
                     }),
                   }
                 : user,
             ),
           );
-        } else if (attType === "absent") {
+        } else if (data.attType === "absent") {
           setResMsg(
             await markStudentAbsent(selectedUser.email, dayjsDate.toDate()),
           );
@@ -75,7 +77,7 @@ export default function MarkStudentAttendance() {
   );
 
   return (
-    <div className="p-2 m-2 w-fit flex flex-col lg:block mx-3">
+    <div className="p-2 m-2 w-fit max-w-82 flex flex-col lg:block mx-3">
       <h3 className="text-2xl font-semibold text-center w-full m-3">
         Mark Attendance
       </h3>
@@ -95,22 +97,38 @@ export default function MarkStudentAttendance() {
           disabled={isPending}
         />
       </LocalizationProvider>
-      <div className="flex justify-between w-full m-[0.25rem]">
-        <form action={() => submitAction("present")} className="w-[40%]">
-          <Button
-            disabled={!selectedUser || isPending}
-            variant="contained"
-            sx={{ width: "100%", height: "56px" }}
-            type="submit"
-          >
-            Present
-          </Button>
-        </form>
-        <form action={() => submitAction("absent")} className="w-[40%]">
+      <div className="m-2 flex flex-col items-center">
+        <div className="flex justify-around w-full">
+          {Object.keys(Class).map((classType) => (
+            <form
+              key={classType}
+              action={() =>
+                submitAction({
+                  attType: "present",
+                  classType: classType as Class,
+                })
+              }
+              className="w-[40%]"
+            >
+              <Button
+                disabled={!selectedUser || isPending}
+                variant="contained"
+                sx={{ width: "100%", height: "50px" }}
+                type="submit"
+              >
+                {classType}
+              </Button>
+            </form>
+          ))}
+        </div>
+        <form
+          action={() => submitAction({ attType: "absent" })}
+          className="w-full m-2"
+        >
           <Button
             disabled={!selectedUser || isPending}
             variant="outlined"
-            sx={{ width: "100%", height: "56px" }}
+            sx={{ width: "100%", height: "50px" }}
             type="submit"
           >
             Absent

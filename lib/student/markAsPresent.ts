@@ -8,6 +8,7 @@ import { ENV, MOCK } from "../env";
 import { userFromAuthCookie } from "../cookies/userFromAuthCookie";
 import { addDateToCache, getFromCache, setUserInCache } from "../cache/redis";
 import documentToUserProps from "../util/documentToUserProps";
+import { addToAttendanceList } from "../util/addToAttendanceList";
 
 export default async function markAsPresent(
   code: string,
@@ -29,11 +30,6 @@ export default async function markAsPresent(
     formatDay(today),
     formatToday,
   );
-
-  if (user.attendanceList.some((att) => formatDate(att.date) === formatToday)) {
-    console.error("already marked as present");
-    throw new Error("you have already been marked present today");
-  }
 
   let newAtt: AttendanceProps | null = null;
   for (const classType in Class) {
@@ -57,6 +53,16 @@ export default async function markAsPresent(
       class: classType as Class,
       date: today,
     };
+  }
+
+  // maybe avoid call to mongo based on cache user state
+  if (
+    user.attendanceList.some(
+      (att) =>
+        formatDate(att.date) === formatToday && att.class === newAtt.class,
+    )
+  ) {
+    throw new Error("you have already been marked present for today");
   }
 
   console.log(user.name, "successfully marked as present on", formatToday);
@@ -83,16 +89,13 @@ export default async function markAsPresent(
     ) {
       throw new Error("you have already been marked present for today");
     }
+    addToAttendanceList(attendanceList, newAtt);
 
     data = await usersCollection.findOneAndUpdate(
       { email: user.email },
       {
-        // @ts-expect-error weird mongo linting?
-        $push: {
-          attendanceList: {
-            $each: [newAtt],
-            $sort: { date: 1 },
-          },
+        $set: {
+          attendanceList,
         },
       },
       {
@@ -104,10 +107,10 @@ export default async function markAsPresent(
         "something went wrong on our end. please try again and notify the instructor.",
       );
     }
-    await addDateToCache(newAtt.class, formatToday);
-    await session.commitTransaction();
-
     await setUserInCache(documentToUserProps(data));
+    await addDateToCache(newAtt.class, formatToday);
+
+    await session.commitTransaction();
   } catch (error) {
     console.log("CAUGHT ERROR");
     let message = "something went wrong. please try again later.";
