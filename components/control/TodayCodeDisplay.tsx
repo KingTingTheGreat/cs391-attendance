@@ -1,13 +1,19 @@
 "use client";
 import CodeDisplay from "@/components/CodeDisplay";
 import QRCodeDisplay from "@/components/QRCodeDisplay";
-import { todayCode } from "@/lib/generateCode";
 import { Class } from "@/types";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { generateTodayCode } from "@/lib/control/generateTodayCode";
 
 export default function TodayCodeDisplay({ prevSize }: { prevSize: number }) {
   const [classType, setClassType] = useState<Class | null>(null);
+  const query = useQuery({
+    queryKey: [classType],
+    queryFn: () => (classType ? generateTodayCode(classType) : null),
+    staleTime: 5 * 1000 * 60, // five minutes
+  });
 
   return (
     <div className="p-1 m-2 flex flex-col items-center text-xl max-w-[90vw] text-center">
@@ -37,7 +43,7 @@ export default function TodayCodeDisplay({ prevSize }: { prevSize: number }) {
             </ToggleButton>
           ))}
         </ToggleButtonGroup>
-        <CodeDisplay code={classType ? todayCode(classType) : undefined} />
+        <CodeDisplay code={query.data ?? undefined} />
         <p className="text-center text-gray-600">
           Use this code to confirm your attendance
         </p>

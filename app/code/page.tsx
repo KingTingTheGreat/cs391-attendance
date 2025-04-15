@@ -1,5 +1,6 @@
 import TodayCodeDisplay from "@/components/control/TodayCodeDisplay";
 import Header from "@/components/Header";
+import QueryWrapper from "@/components/QueryWrapper";
 import { PREV_QRCODE_SIZE_COOKIE } from "@/lib/cookies/cookies";
 import { userFromAuthCookie } from "@/lib/cookies/userFromAuthCookie";
 import { Role } from "@/types";
@@ -25,7 +26,9 @@ export default async function CodePage() {
     <>
       <Header role={user.role} />
       <div className="flex justify-center">
-        <TodayCodeDisplay prevSize={prevSize} />
+        <QueryWrapper>
+          <TodayCodeDisplay prevSize={prevSize} />
+        </QueryWrapper>
       </div>
     </>
   );
