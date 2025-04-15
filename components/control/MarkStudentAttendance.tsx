@@ -62,7 +62,7 @@ export default function MarkStudentAttendance() {
   );
 
   return (
-    <div className="p-2 m-2 w-fit max-w-82 flex flex-col lg:block mx-3">
+    <div className="p-2 m-2 w-82 max-w-82 flex flex-col lg:block mx-3">
       <h3 className="text-2xl font-semibold text-center w-full m-3">
         Mark Attendance
       </h3>
