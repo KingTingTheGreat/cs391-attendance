@@ -8,15 +8,15 @@ export default function CodeDisplay({
   code,
   show,
 }: {
-  code: string;
+  code?: string;
   show?: boolean;
 }) {
   const [visible, setVisible] = useState(show || false);
 
   return (
     <div
-      className="flex items-center text-6xl font-bold tracking-wider bg-gray-200 p-4 m-2 rounded-lg cursor-pointer"
-      onClick={() => setVisible(!visible)}
+      className="flex items-center text-6xl font-bold tracking-wider bg-gray-200 p-4 rounded-lg cursor-pointer"
+      onClick={() => code && setVisible(!visible)}
     >
       <p>{visible ? code : "•".repeat(CODE_LENGTH)}</p>
       <div className="pl-4 flex items-center">
