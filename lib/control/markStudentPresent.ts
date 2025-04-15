@@ -1,9 +1,9 @@
 "use server";
-import { AttendanceProps, Class, Role } from "@/types";
+import { AttendanceProps, Class, MarkResult, Role } from "@/types";
 import { cookies } from "next/headers";
 import { startCollectionSession, USERS_COLLECTION } from "@/db";
 import { formatDate, formatDay } from "../util/format";
-import { DISCUSSION_DAYS, ENV, MOCK } from "../env";
+import { ENV, MOCK } from "../env";
 import { userFromAuthCookie } from "../cookies/userFromAuthCookie";
 import documentToUserProps from "../util/documentToUserProps";
 import { addDateToCache, setUserInCache } from "../cache/redis";
@@ -13,9 +13,10 @@ const allowedRoles = [Role.staff, Role.admin];
 
 export async function markStudentPresent(
   email: string,
-  date: Date | null,
-): Promise<string> {
-  if (date === null || isNaN(date.getTime())) {
+  date: Date,
+  classType: Class,
+): Promise<MarkResult> {
+  if (isNaN(date.getTime())) {
     throw new Error("invalid date");
   }
 
@@ -27,7 +28,9 @@ export async function markStudentPresent(
   }
 
   if (ENV === "dev" && MOCK) {
-    return `successfully marked ${email} as absent on ${formatDate(date)}`;
+    return {
+      message: `successfully marked ${email} as absent on ${formatDate(date)}`,
+    };
   }
 
   const { session, collection: usersCollection } =
@@ -41,9 +44,7 @@ export async function markStudentPresent(
 
     const attendanceList = data.attendanceList as AttendanceProps[];
     addToAttendanceList(attendanceList, {
-      class: DISCUSSION_DAYS.includes(formatDay(date))
-        ? Class.discussion
-        : Class.lecture,
+      class: classType,
       date,
     });
 
@@ -64,17 +65,17 @@ export async function markStudentPresent(
         `could not mark ${email} as present. please try again later`,
       );
     }
-    await addDateToCache(
-      DISCUSSION_DAYS.includes(formatDay(date))
-        ? Class.discussion
-        : Class.lecture,
-      formatDay(date),
-    );
-    await session.commitTransaction();
+    const updatedUser = documentToUserProps(data);
+    await setUserInCache(updatedUser);
+    await addDateToCache(classType, formatDay(date));
 
+    await session.commitTransaction();
     console.log("SUCCESSFULLY MARKED PRESENT");
-    await setUserInCache(documentToUserProps(data));
-    return `successfully marked ${email} as present on ${formatDate(date)}`;
+
+    return {
+      user: updatedUser,
+      message: `successfully marked ${email} as present on ${formatDate(date)}`,
+    };
   } catch (error) {
     await session.abortTransaction();
     throw error;

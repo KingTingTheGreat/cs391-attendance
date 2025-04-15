@@ -7,7 +7,8 @@ export function addToAttendanceList(
 ): AttendanceProps[] {
   const formattedDate = formatDate(newAtt.date);
   const i = attendanceList.findIndex(
-    (att) => formatDate(att.date) === formattedDate,
+    (att) =>
+      formatDate(att.date) === formattedDate && att.class === newAtt.class,
   );
 
   if (i !== -1) {

@@ -5,13 +5,10 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useActionState, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { useUsersContext } from "./UsersContext";
-import { Button } from "@mui/material";
+import { Autocomplete, Button, TextField } from "@mui/material";
 import { markStudentPresent } from "@/lib/control/markStudentPresent";
 import { Class, Role, UserProps } from "@/types";
 import { markStudentAbsent } from "@/lib/control/markStudentAbsent";
-import { formatDate, formatDay } from "@/lib/util/format";
-import { addToAttendanceList } from "@/lib/util/addToAttendanceList";
-import { DISCUSSION_DAYS } from "@/lib/env";
 import UserSelect from "./UserSelect";
 
 export default function MarkStudentAttendance() {
@@ -19,51 +16,41 @@ export default function MarkStudentAttendance() {
   const [dayjsDate, setDayjsDate] = useState<Dayjs>(dayjs(new Date()));
   const [selectedUser, setSelectedUser] = useState<UserProps | null>(null);
   const [resMsg, setResMsg] = useState("");
+  const [classType, setClassType] = useState<Class | null>(null);
 
   const [error, submitAction, isPending] = useActionState(
     async (_: Error | null, attType: "present" | "absent") => {
       console.log("attType", attType);
       try {
         if (!selectedUser) throw new Error("no user selected");
-        if (attType === "present") {
-          setResMsg(
-            await markStudentPresent(selectedUser.email, dayjsDate.toDate()),
-          );
+        const result = await (function () {
+          switch (attType) {
+            case "present":
+              return markStudentPresent(
+                selectedUser.email,
+                dayjsDate.toDate(),
+                classType as Class,
+              );
+            case "absent":
+              return markStudentAbsent(
+                selectedUser.email,
+                dayjsDate.toDate(),
+                classType as Class,
+              );
+          }
+        })();
+
+        if (result.user !== undefined) {
           setUsers(
             users.map((user) =>
-              user.email === selectedUser.email
-                ? {
-                    ...user,
-                    attendanceList: addToAttendanceList(user.attendanceList, {
-                      class: DISCUSSION_DAYS.includes(
-                        formatDay(dayjsDate.toDate()),
-                      )
-                        ? Class.discussion
-                        : Class.lecture,
-                      date: dayjsDate.toDate(),
-                    }),
-                  }
-                : user,
-            ),
-          );
-        } else if (attType === "absent") {
-          setResMsg(
-            await markStudentAbsent(selectedUser.email, dayjsDate.toDate()),
-          );
-          setUsers(
-            users.map((user) =>
-              user.email === selectedUser.email
-                ? {
-                    ...user,
-                    attendanceList: user.attendanceList.filter(
-                      (att) =>
-                        formatDate(att.date) !== formatDate(dayjsDate.toDate()),
-                    ),
-                  }
+              user.email === selectedUser.email && result.user
+                ? result.user
                 : user,
             ),
           );
         }
+
+        setResMsg(result.message);
 
         return null;
       } catch (e) {
@@ -75,7 +62,7 @@ export default function MarkStudentAttendance() {
   );
 
   return (
-    <div className="p-2 m-2 w-fit flex flex-col lg:block mx-3">
+    <div className="p-2 m-2 w-82 max-w-82 flex flex-col lg:block mx-3">
       <h3 className="text-2xl font-semibold text-center w-full m-3">
         Mark Attendance
       </h3>
@@ -95,12 +82,24 @@ export default function MarkStudentAttendance() {
           disabled={isPending}
         />
       </LocalizationProvider>
+      <Autocomplete
+        disablePortal
+        disabled={isPending}
+        options={Object.keys(Class).map((clsType) => clsType)}
+        sx={{
+          margin: "0.25rem",
+          width: "100%",
+        }}
+        renderInput={(params) => <TextField {...params} label="Class Type" />}
+        value={classType}
+        onChange={(_, val) => setClassType(val as Class)}
+      />
       <div className="flex justify-between w-full m-[0.25rem]">
         <form action={() => submitAction("present")} className="w-[40%]">
           <Button
-            disabled={!selectedUser || isPending}
+            disabled={!selectedUser || isPending || !classType}
             variant="contained"
-            sx={{ width: "100%", height: "56px" }}
+            sx={{ width: "100%", height: "50px" }}
             type="submit"
           >
             Present
@@ -108,9 +107,9 @@ export default function MarkStudentAttendance() {
         </form>
         <form action={() => submitAction("absent")} className="w-[40%]">
           <Button
-            disabled={!selectedUser || isPending}
+            disabled={!selectedUser || isPending || !classType}
             variant="outlined"
-            sx={{ width: "100%", height: "56px" }}
+            sx={{ width: "100%", height: "50px" }}
             type="submit"
           >
             Absent
