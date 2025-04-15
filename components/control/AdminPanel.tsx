@@ -31,7 +31,7 @@ export default async function AdminPanel({
         <MarkStudentAttendance />
       </div>
 
-      <div className="flex flex-col items-center p-8">
+      <div className="flex flex-col items-center px-8 pb-8 pt-2">
         <AttendanceSheet
           prevClassType={prevClassType}
           prevSortModel={prevSortModel}
