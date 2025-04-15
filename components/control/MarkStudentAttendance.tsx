@@ -9,8 +9,6 @@ import { Button } from "@mui/material";
 import { markStudentPresent } from "@/lib/control/markStudentPresent";
 import { Class, Role, UserProps } from "@/types";
 import { markStudentAbsent } from "@/lib/control/markStudentAbsent";
-import { formatDate } from "@/lib/util/format";
-import { addToAttendanceList } from "@/lib/util/addToAttendanceList";
 import UserSelect from "./UserSelect";
 
 export default function MarkStudentAttendance() {
@@ -27,45 +25,30 @@ export default function MarkStudentAttendance() {
       console.log("attType", data.attType);
       try {
         if (!selectedUser) throw new Error("no user selected");
-        if (data.attType === "present") {
-          setResMsg(
-            await markStudentPresent(
-              selectedUser.email,
-              dayjsDate.toDate(),
-              data.classType,
-            ),
-          );
+        const result = await (function () {
+          switch (data.attType) {
+            case "present":
+              return markStudentPresent(
+                selectedUser.email,
+                dayjsDate.toDate(),
+                data.classType,
+              );
+            case "absent":
+              return markStudentAbsent(selectedUser.email, dayjsDate.toDate());
+          }
+        })();
+
+        if (result.user !== undefined) {
           setUsers(
             users.map((user) =>
-              user.email === selectedUser.email
-                ? {
-                    ...user,
-                    attendanceList: addToAttendanceList(user.attendanceList, {
-                      class: data.classType,
-                      date: dayjsDate.toDate(),
-                    }),
-                  }
-                : user,
-            ),
-          );
-        } else if (data.attType === "absent") {
-          setResMsg(
-            await markStudentAbsent(selectedUser.email, dayjsDate.toDate()),
-          );
-          setUsers(
-            users.map((user) =>
-              user.email === selectedUser.email
-                ? {
-                    ...user,
-                    attendanceList: user.attendanceList.filter(
-                      (att) =>
-                        formatDate(att.date) !== formatDate(dayjsDate.toDate()),
-                    ),
-                  }
+              user.email === selectedUser.email && result.user
+                ? result.user
                 : user,
             ),
           );
         }
+
+        setResMsg(result.message);
 
         return null;
       } catch (e) {

@@ -1,5 +1,5 @@
 "use server";
-import { Role } from "@/types";
+import { MarkResult, Role } from "@/types";
 import { cookies } from "next/headers";
 import getCollection, { USERS_COLLECTION } from "@/db";
 import { formatDate } from "../util/format";
@@ -13,7 +13,7 @@ const allowedRoles = [Role.staff, Role.admin];
 export async function markStudentAbsent(
   email: string,
   date: Date,
-): Promise<string> {
+): Promise<MarkResult> {
   if (isNaN(date.getTime())) {
     throw new Error("invalid date");
   }
@@ -26,7 +26,9 @@ export async function markStudentAbsent(
   }
 
   if (ENV === "dev" && MOCK) {
-    return `successfully marked ${email} as absent on ${formatDate(date)}`;
+    return {
+      message: `successfully marked ${email} as absent on ${formatDate(date)}`,
+    };
   }
 
   const startOfDay = new Date(date);
@@ -58,7 +60,11 @@ export async function markStudentAbsent(
     );
   }
 
-  await setUserInCache(documentToUserProps(data));
+  const updatedUser = documentToUserProps(data);
+  await setUserInCache(updatedUser);
 
-  return `successfully marked ${email} as absent on ${formatDate(date)}`;
+  return {
+    user: updatedUser,
+    message: `successfully marked ${email} as absent on ${formatDate(date)}`,
+  };
 }

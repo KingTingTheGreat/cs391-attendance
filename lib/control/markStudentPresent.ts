@@ -1,5 +1,5 @@
 "use server";
-import { AttendanceProps, Class, Role } from "@/types";
+import { AttendanceProps, Class, MarkResult, Role } from "@/types";
 import { cookies } from "next/headers";
 import { startCollectionSession, USERS_COLLECTION } from "@/db";
 import { formatDate, formatDay } from "../util/format";
@@ -15,7 +15,7 @@ export async function markStudentPresent(
   email: string,
   date: Date,
   classType: Class,
-): Promise<string> {
+): Promise<MarkResult> {
   if (isNaN(date.getTime())) {
     throw new Error("invalid date");
   }
@@ -28,7 +28,9 @@ export async function markStudentPresent(
   }
 
   if (ENV === "dev" && MOCK) {
-    return `successfully marked ${email} as absent on ${formatDate(date)}`;
+    return {
+      message: `successfully marked ${email} as absent on ${formatDate(date)}`,
+    };
   }
 
   const { session, collection: usersCollection } =
@@ -63,13 +65,17 @@ export async function markStudentPresent(
         `could not mark ${email} as present. please try again later`,
       );
     }
-    await setUserInCache(documentToUserProps(data));
+    const updatedUser = documentToUserProps(data);
+    await setUserInCache(updatedUser);
     await addDateToCache(classType, formatDay(date));
 
     await session.commitTransaction();
     console.log("SUCCESSFULLY MARKED PRESENT");
 
-    return `successfully marked ${email} as present on ${formatDate(date)}`;
+    return {
+      user: updatedUser,
+      message: `successfully marked ${email} as present on ${formatDate(date)}`,
+    };
   } catch (error) {
     await session.abortTransaction();
     throw error;
