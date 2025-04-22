@@ -13,15 +13,19 @@ export default function AttendanceForm() {
   const today = formatDate(new Date());
   const [error, submitAction, isPending] = useActionState(async () => {
     try {
-      const newAtt = await markAsPresent(code);
+      const res = await markAsPresent(code);
+      if (res.errorMessage !== null) {
+        return res.errorMessage;
+      }
       setUser({
         ...user,
-        attendanceList: addToAttendanceList(user.attendanceList, newAtt),
+        attendanceList: addToAttendanceList(user.attendanceList, res.newAtt),
       });
 
       return null;
     } catch (e) {
-      return e as Error;
+      console.log("error", e);
+      return "something went wrong. please try again later.";
     }
   }, null);
 
@@ -61,7 +65,7 @@ export default function AttendanceForm() {
           }
         })}
       </div>
-      <p className="p-0.5 text-lg text-[#F00]">{error && error.message}</p>
+      <p className="p-0.5 text-lg text-[#F00]">{error}</p>
     </div>
   );
 }

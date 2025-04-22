@@ -1,7 +1,7 @@
 "use server";
 import { cookies } from "next/headers";
 import { startCollectionSession, USERS_COLLECTION } from "@/db";
-import { AttendanceProps, Class } from "@/types";
+import { AttendanceProps, Class, PresentResult } from "@/types";
 import { formatDate, formatDay } from "../util/format";
 import { todayCode } from "../generateCode";
 import { ENV, MOCK } from "../env";
@@ -12,7 +12,7 @@ import { addToAttendanceList } from "../util/addToAttendanceList";
 
 export default async function markAsPresent(
   code: string,
-): Promise<AttendanceProps> {
+): Promise<PresentResult> {
   console.log("mark as present");
   const today = new Date();
   const formatToday = formatDate(today);
@@ -21,7 +21,9 @@ export default async function markAsPresent(
   const user = await userFromAuthCookie(cookieStore, true);
   if (!user) {
     console.error("user not signed in claiming to be present");
-    throw new Error("something went wrong. please sign in again.");
+    return {
+      errorMessage: "something went wrong. please sign in again.",
+    };
   }
 
   console.log(
@@ -46,7 +48,9 @@ export default async function markAsPresent(
     const classType = await getFromCache(code.toUpperCase());
     if (!classType) {
       console.log(user.name, "tried with incorrect code");
-      throw new Error("incorrect code");
+      return {
+        errorMessage: "incorrect code",
+      };
     }
 
     newAtt = {
@@ -62,15 +66,15 @@ export default async function markAsPresent(
         formatDate(att.date) === formatToday && att.class === newAtt.class,
     )
   ) {
-    throw new Error(
-      `you have already been marked present in ${newAtt.class} today`,
-    );
+    return {
+      errorMessage: `you have already been marked present in ${newAtt.class} today`,
+    };
   }
 
   console.log(user.name, "successfully marked as present on", formatToday);
 
   if (ENV === "dev" && MOCK) {
-    return newAtt;
+    return { newAtt };
   }
 
   const { session, collection: usersCollection } =
@@ -89,7 +93,9 @@ export default async function markAsPresent(
           formatDate(att.date) === formatToday && att.class === newAtt.class,
       )
     ) {
-      throw new Error("you have already been marked present for today");
+      throw new Error(
+        `you have already been marked present in ${newAtt.class} today`,
+      );
     }
     addToAttendanceList(attendanceList, newAtt);
 
@@ -121,10 +127,12 @@ export default async function markAsPresent(
       message = error.message;
     }
     await session.abortTransaction();
-    throw new Error(message);
+    return {
+      errorMessage: message,
+    };
   } finally {
     await session.endSession();
   }
 
-  return newAtt;
+  return { newAtt };
 }
