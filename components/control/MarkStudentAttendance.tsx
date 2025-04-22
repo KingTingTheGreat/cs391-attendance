@@ -19,10 +19,14 @@ export default function MarkStudentAttendance() {
   const [classType, setClassType] = useState<Class | null>(null);
 
   const [error, submitAction, isPending] = useActionState(
-    async (_: Error | null, attType: "present" | "absent") => {
+    async (_: string | null, attType: "present" | "absent") => {
       console.log("attType", attType);
       try {
-        if (!selectedUser) throw new Error("no user selected");
+        if (!selectedUser) {
+          setResMsg("");
+          return "no user selected";
+        }
+
         const result = await (function () {
           switch (attType) {
             case "present":
@@ -40,22 +44,24 @@ export default function MarkStudentAttendance() {
           }
         })();
 
-        if (result.user !== undefined) {
-          setUsers(
-            users.map((user) =>
-              user.email === selectedUser.email && result.user
-                ? result.user
-                : user,
-            ),
-          );
+        if (result.user === undefined) {
+          return result.message;
         }
 
+        setUsers(
+          users.map((user) =>
+            user.email === selectedUser.email && result.user // && user to prevent type error
+              ? result.user
+              : user,
+          ),
+        );
         setResMsg(result.message);
 
         return null;
       } catch (e) {
+        console.log("e", e);
         setResMsg("");
-        return e as Error;
+        return "something went wrong. please try again later.";
       }
     },
     null,
@@ -116,7 +122,7 @@ export default function MarkStudentAttendance() {
           </Button>
         </form>
       </div>
-      <p className="text-center text-[#F00]">{error && error.message}</p>
+      <p className="text-center text-[#F00]">{error}</p>
       <p className="text-center">{resMsg}</p>
     </div>
   );

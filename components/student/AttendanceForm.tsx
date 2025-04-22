@@ -14,7 +14,7 @@ export default function AttendanceForm() {
   const [error, submitAction, isPending] = useActionState(async () => {
     try {
       const res = await markAsPresent(code);
-      if (res.errorMessage !== null) {
+      if (res.errorMessage !== null && res.errorMessage !== undefined) {
         return res.errorMessage;
       }
       setUser({

@@ -17,16 +17,17 @@ export async function markStudentPresent(
   classType: Class,
 ): Promise<MarkResult> {
   if (isNaN(date.getTime())) {
-    throw new Error("invalid date");
+    return { message: "invalid date" };
   }
 
   const cookieStore = await cookies();
   const user = await userFromAuthCookie(cookieStore);
 
   if (!user || !allowedRoles.includes(user.role)) {
-    throw new Error("unauthorized. please sign in again.");
+    return { message: "unauthorized. please sign in again." };
   }
 
+  // no way to get user data when MOCK, will show as error in the frontend
   if (ENV === "dev" && MOCK) {
     return {
       message: `successfully marked ${email} as absent on ${formatDate(date)}`,
@@ -78,7 +79,12 @@ export async function markStudentPresent(
     };
   } catch (error) {
     await session.abortTransaction();
-    throw error;
+    let message = "something went wrong. please try again later.";
+    if (error instanceof Error) {
+      console.error("error message:", error.message);
+      message = error.message;
+    }
+    return { message };
   } finally {
     await session.endSession();
   }
