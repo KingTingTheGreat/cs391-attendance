@@ -1,5 +1,21 @@
 import { UserProps } from "@/types";
-import { createSign, createVerify } from "crypto";
+import { createHmac } from "crypto";
+
+function base64UrlEncode(input: string): string {
+  return Buffer.from(input)
+    .toString("base64")
+    .replace(/=/g, "")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_");
+}
+
+function base64UrlDecode(input: string): string {
+  input = input.replace(/-/g, "+").replace(/_/g, "/");
+  while (input.length % 4) {
+    input += "=";
+  }
+  return Buffer.from(input, "base64").toString();
+}
 
 export type AuthClaims = {
   name: string;
@@ -20,20 +36,14 @@ const publicKey = process.env.PUBLIC_KEY as string;
 if (!publicKey) {
   throw new Error("PUBLIC_KEY is undefined");
 }
-const jwtHeader = btoa(
-  JSON.stringify({
-    alg: "HS256",
-    typ: "JWT",
-  }),
-);
 
 function jwtSignature(data: string): string {
-  const sign = createSign("SHA256");
-  sign.update(data);
-  sign.end();
-
-  const signature = sign.sign(privateKey, "base64");
-  return signature;
+  return createHmac("sha256", privateKey)
+    .update(data)
+    .digest("base64")
+    .replace(/=/g, "")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_");
 }
 
 export function createJwt(claims: AuthClaims | CacheClaims): string {
@@ -42,8 +52,11 @@ export function createJwt(claims: AuthClaims | CacheClaims): string {
     claims.expiration.setDate(claims.expiration.getDate() + 4); // expiration in days
   }
 
-  const data = btoa(JSON.stringify(claims));
-  return `${jwtHeader}.${data}.${jwtSignature(data)}`;
+  const header = base64UrlEncode(JSON.stringify({ alg: "HS256", typ: "JWT" }));
+  const payload = base64UrlEncode(JSON.stringify(claims));
+  const signature = jwtSignature(`${header}.${payload}`);
+
+  return `${header}.${payload}.${signature}`;
 }
 
 export type VerifyJwtRes = {
@@ -56,16 +69,20 @@ export function verifyJwt(jwt: string): VerifyJwtRes {
   if (jwtParts.length !== 3) {
     return { verified: false };
   }
-  const data = jwtParts[1];
+
+  const header = jwtParts[0];
+  const payload = jwtParts[1];
   const signature = jwtParts[2];
 
-  const verify = createVerify("SHA256");
-  verify.update(data);
-  verify.end();
-
-  if (!verify.verify(publicKey, signature, "base64")) {
+  if (signature !== jwtSignature(`${header}.${payload}`)) {
     return { verified: false };
   }
 
-  return { verified: true, claims: JSON.parse(atob(data)) };
+  try {
+    const claims = JSON.parse(base64UrlDecode(payload));
+    return { verified: true, claims };
+  } catch {
+    console.log("invalid json in jwt");
+    return { verified: false };
+  }
 }
