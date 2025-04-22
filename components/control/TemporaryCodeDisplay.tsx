@@ -1,4 +1,5 @@
 "use client";
+import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import Cookie from "js-cookie";
 import { Button, FormControlLabel, Switch } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
@@ -13,6 +14,7 @@ import {
   PREV_REPEAT_TEMP_COOKIE,
 } from "@/lib/cookies/cookies";
 import { formatSeconds } from "@/lib/util/format";
+import { Class } from "@/types";
 
 // 5 min default
 const defaultSeconds = 5 * 60;
@@ -31,10 +33,12 @@ export default function TemporaryCodeDisplay({
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [isActive, setIsActive] = useState(false);
   const [repeat, setRepeat] = useState(prevRepeatTemp as boolean);
+  const [classType, setClassType] = useState<Class | null>(null);
 
   const handleStart = () => {
+    if (classType === null) return;
     console.log("handle start");
-    generateTempCode(expSeconds).then((res) => {
+    generateTempCode(expSeconds, classType).then((res) => {
       if (!res) return;
       setTempCode(res);
       setIsActive(true);
@@ -72,7 +76,7 @@ export default function TemporaryCodeDisplay({
   return (
     <div className="p-1 m-2 flex flex-col items-center text-xl max-w-[90vw] text-center">
       <h2 className="text-2xl font-bold text-center">Temporary Code</h2>
-      <div className="flex flex-col items-center space-y-6">
+      <div className="flex flex-col items-center space-y-6 pt-4">
         {tempCode ? (
           <>
             <CodeDisplay code={tempCode} show={true} />
@@ -92,6 +96,27 @@ export default function TemporaryCodeDisplay({
           </>
         ) : (
           <>
+            <div className="p-1 m-0.5 flex flex-col sm:flex-row items-center justify-center w-full ">
+              <ToggleButtonGroup
+                color="primary"
+                value={classType}
+                exclusive
+                onChange={(_, newCls) => {
+                  console.log("new class", newCls);
+                  setClassType(newCls as Class);
+                }}
+              >
+                {Object.keys(Class).map((cls) => (
+                  <ToggleButton
+                    key={cls}
+                    value={cls}
+                    sx={{ width: "125px", paddingY: "10px", paddingX: "25px" }}
+                  >
+                    {cls}
+                  </ToggleButton>
+                ))}
+              </ToggleButtonGroup>
+            </div>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <TimePicker
                 views={["minutes", "seconds"]}
@@ -109,7 +134,7 @@ export default function TemporaryCodeDisplay({
                     Cookie.set(PREV_EXP_SEC_COOKIE, newExpSec.toString());
                   }
                 }}
-                sx={{ margin: "0.5rem" }}
+                sx={{ margin: "0.5rem", maxWidth: "250px" }}
               />
             </LocalizationProvider>
             <div className="flex justify-around w-full">
@@ -131,6 +156,7 @@ export default function TemporaryCodeDisplay({
                 variant="contained"
                 sx={{ maxWidth: "275px" }}
                 onClick={handleStart}
+                disabled={classType === null}
               >
                 Create
               </Button>

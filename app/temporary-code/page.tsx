@@ -31,7 +31,7 @@ export default async function TempCodePage() {
   return (
     <>
       <Header role={user.role} />
-      <div className="p-1 m-2 flex flex-col items-center">
+      <div className="flex flex-col items-center">
         <div className="flex justify-center">
           <TemporaryCodeDisplay
             prevSeconds={prevSeconds}

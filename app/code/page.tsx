@@ -1,9 +1,8 @@
-import CodeDisplay from "@/components/CodeDisplay";
+import TodayCodeDisplay from "@/components/control/TodayCodeDisplay";
 import Header from "@/components/Header";
-import QRCodeDisplay from "@/components/QRCodeDisplay";
+import QueryWrapper from "@/components/QueryWrapper";
 import { PREV_QRCODE_SIZE_COOKIE } from "@/lib/cookies/cookies";
 import { userFromAuthCookie } from "@/lib/cookies/userFromAuthCookie";
-import { todayCode } from "@/lib/generateCode";
 import { Role } from "@/types";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -27,16 +26,9 @@ export default async function CodePage() {
     <>
       <Header role={user.role} />
       <div className="flex justify-center">
-        <div className="p-1 m-2 flex flex-col items-center text-xl max-w-[90vw] text-center">
-          <h2 className="text-2xl font-bold text-center">Today&apos;s Code</h2>
-          <div className="flex flex-col items-center space-y-6">
-            <CodeDisplay code={todayCode()} />
-            <p className="text-center text-gray-600">
-              Use this code to confirm your attendance
-            </p>
-          </div>
-          <QRCodeDisplay prevSize={prevSize} />
-        </div>
+        <QueryWrapper>
+          <TodayCodeDisplay prevSize={prevSize} />
+        </QueryWrapper>
       </div>
     </>
   );

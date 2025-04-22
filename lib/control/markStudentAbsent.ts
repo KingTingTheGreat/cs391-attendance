@@ -1,5 +1,5 @@
 "use server";
-import { Role } from "@/types";
+import { Class, MarkResult, Role } from "@/types";
 import { cookies } from "next/headers";
 import getCollection, { USERS_COLLECTION } from "@/db";
 import { formatDate } from "../util/format";
@@ -12,21 +12,25 @@ const allowedRoles = [Role.staff, Role.admin];
 
 export async function markStudentAbsent(
   email: string,
-  date: Date | null,
-): Promise<string> {
-  if (date === null || isNaN(date.getTime())) {
-    throw new Error("invalid date");
+  date: Date,
+  classType: Class,
+): Promise<MarkResult> {
+  if (isNaN(date.getTime())) {
+    return { message: "invalid date" };
   }
 
   const cookieStore = await cookies();
   const user = await userFromAuthCookie(cookieStore);
 
   if (!user || !allowedRoles.includes(user.role)) {
-    throw new Error("unauthorized. please sign in again.");
+    return { message: "unauthorized. please sign in again." };
   }
 
+  // no way to get user data when MOCK, will show as error in the frontend
   if (ENV === "dev" && MOCK) {
-    return `successfully marked ${email} as absent on ${formatDate(date)}`;
+    return {
+      message: `successfully marked ${email} as absent on ${formatDate(date)}`,
+    };
   }
 
   const startOfDay = new Date(date);
@@ -45,6 +49,7 @@ export async function markStudentAbsent(
             $gte: startOfDay,
             $lte: endOfDay,
           },
+          class: classType,
         },
       },
     },
@@ -53,12 +58,16 @@ export async function markStudentAbsent(
     },
   );
   if (!data) {
-    throw new Error(
-      "could not mark student as absent. please try again later.",
-    );
+    return {
+      message: "could not mark student as absent. please try again later.",
+    };
   }
 
-  await setUserInCache(documentToUserProps(data));
+  const updatedUser = documentToUserProps(data);
+  await setUserInCache(updatedUser);
 
-  return `successfully marked ${email} as absent on ${formatDate(date)}`;
+  return {
+    user: updatedUser,
+    message: `successfully marked ${email} as absent on ${formatDate(date)}`,
+  };
 }
