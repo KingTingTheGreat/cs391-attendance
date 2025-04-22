@@ -67,10 +67,12 @@ export async function markStudentPresent(
       );
     }
     const updatedUser = documentToUserProps(data);
-    await setUserInCache(updatedUser);
-    await addDateToCache(classType, formatDay(date));
 
-    await session.commitTransaction();
+    await Promise.all([
+      session.commitTransaction(),
+      setUserInCache(updatedUser),
+      addDateToCache(classType, formatDay(date)),
+    ]);
     console.log("SUCCESSFULLY MARKED PRESENT");
 
     return {

@@ -115,10 +115,11 @@ export default async function markAsPresent(
         "something went wrong on our end. please try again and notify the instructor.",
       );
     }
-    await setUserInCache(documentToUserProps(data));
-    await addDateToCache(newAtt.class, formatToday);
-
-    await session.commitTransaction();
+    await Promise.all([
+      session.commitTransaction(),
+      addDateToCache(newAtt.class, formatToday),
+      setUserInCache(documentToUserProps(data)),
+    ]);
   } catch (error) {
     console.log("CAUGHT ERROR");
     let message = "something went wrong. please try again later.";
