@@ -76,7 +76,32 @@ export default function TemporaryCodeDisplay({
   return (
     <div className="p-1 m-2 flex flex-col items-center text-xl max-w-[90vw] text-center">
       <h2 className="text-2xl font-bold text-center">Temporary Code</h2>
-      <div className="flex flex-col items-center space-y-6 pt-4">
+      <div className="flex flex-col items-center space-y-4">
+        <ToggleButtonGroup
+          color="primary"
+          value={classType}
+          exclusive
+          disabled={isActive}
+          onChange={(_, newCls) => {
+            console.log("new class", newCls);
+            setClassType(newCls as Class);
+          }}
+        >
+          {Object.keys(Class).map((cls) => (
+            <ToggleButton
+              key={cls}
+              value={cls}
+              sx={{
+                width: "125px",
+                paddingY: "10px",
+                paddingX: "25px",
+                marginTop: "0.5rem",
+              }}
+            >
+              {cls}
+            </ToggleButton>
+          ))}
+        </ToggleButtonGroup>
         {tempCode ? (
           <>
             <CodeDisplay code={tempCode} show={true} />
@@ -96,27 +121,6 @@ export default function TemporaryCodeDisplay({
           </>
         ) : (
           <>
-            <div className="p-1 m-0.5 flex flex-col sm:flex-row items-center justify-center w-full ">
-              <ToggleButtonGroup
-                color="primary"
-                value={classType}
-                exclusive
-                onChange={(_, newCls) => {
-                  console.log("new class", newCls);
-                  setClassType(newCls as Class);
-                }}
-              >
-                {Object.keys(Class).map((cls) => (
-                  <ToggleButton
-                    key={cls}
-                    value={cls}
-                    sx={{ width: "125px", paddingY: "10px", paddingX: "25px" }}
-                  >
-                    {cls}
-                  </ToggleButton>
-                ))}
-              </ToggleButtonGroup>
-            </div>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <TimePicker
                 views={["minutes", "seconds"]}
@@ -134,7 +138,7 @@ export default function TemporaryCodeDisplay({
                     Cookie.set(PREV_EXP_SEC_COOKIE, newExpSec.toString());
                   }
                 }}
-                sx={{ margin: "0.5rem", maxWidth: "250px" }}
+                sx={{ marginBottom: "0.5rem", maxWidth: "250px" }}
               />
             </LocalizationProvider>
             <div className="flex justify-around w-full">
