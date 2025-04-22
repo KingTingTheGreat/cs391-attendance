@@ -48,13 +48,9 @@ export default function AttendanceCalendar() {
               selAttList.map((att) => (
                 <p key={att.date + att.class} className="p-2">
                   Present in {att.class} at{" "}
-                  <span className="text-blue-700">
-                    {formatTime(selAttList[0].date)}
-                  </span>
+                  <span className="text-blue-700">{formatTime(att.date)}</span>
                   {" on "}
-                  <span className="text-blue-700">
-                    {formatDate(selAttList[0].date)}
-                  </span>
+                  <span className="text-blue-700">{formatDate(att.date)}</span>
                 </p>
               ))
             )}
