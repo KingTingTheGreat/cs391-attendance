@@ -36,8 +36,9 @@ export default function TemporaryCodeDisplay({
   const [classType, setClassType] = useState<Class | null>(null);
 
   const handleStart = () => {
+    if (classType === null) return;
     console.log("handle start");
-    generateTempCode(expSeconds, Class.discussion).then((res) => {
+    generateTempCode(expSeconds, classType).then((res) => {
       if (!res) return;
       setTempCode(res);
       setIsActive(true);
