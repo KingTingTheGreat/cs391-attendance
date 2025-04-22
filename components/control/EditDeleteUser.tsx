@@ -16,8 +16,17 @@ export default function EditDeleteUser() {
 
   const [roleError, roleAction, rolePending] = useActionState(async () => {
     try {
-      if (!selectedUser) throw new Error("no user selected");
-      setResMsg(await editUserRole(selectedUser.email, newRole as Role));
+      if (!selectedUser) {
+        setResMsg("");
+        return "no user selected";
+      }
+      const res = await editUserRole(selectedUser.email, newRole as Role);
+      if (!res.success) {
+        setResMsg("");
+        return res.message;
+      }
+
+      setResMsg(res.message);
       setUsers(
         users.map((user) =>
           user.email === selectedUser.email
@@ -28,23 +37,34 @@ export default function EditDeleteUser() {
 
       return null;
     } catch (e) {
+      console.log("e", e);
       setResMsg("");
-      return e as Error;
+      return "something went wrong. please try again later.";
     }
   }, null);
 
   const [deleteError, deleteAction, deletePending] = useActionState(
     async () => {
       try {
-        if (!selectedUser) throw new Error("no user selected");
-        setResMsg(await deleteUser(selectedUser.email));
+        if (!selectedUser) {
+          setResMsg("");
+          return "no user selected";
+        }
+        const res = await deleteUser(selectedUser.email);
+        if (!res.success) {
+          setResMsg("");
+          return res.message;
+        }
+
+        setResMsg(res.message);
         setUsers(users.filter((user) => user.email !== selectedUser.email));
         setSelectedUser(null);
 
         return null;
       } catch (e) {
+        console.log("e", e);
         setResMsg("");
-        return e as Error;
+        return "something went wrong. please try again later.";
       } finally {
         setOpen(false);
       }
@@ -99,10 +119,12 @@ export default function EditDeleteUser() {
           Delete User
         </Button>
       </div>
-      <p className="text-center text-[#F00]">
-        {roleError && roleError.message}
-        {deleteError && deleteError.message}
-      </p>
+      {roleError !== null && (
+        <p className="text-center text-[#F00]">{roleError}</p>
+      )}
+      {deleteError !== null && (
+        <p className="text-center text-[#F00]">{deleteError}</p>
+      )}
       <p className="text-center">{resMsg}</p>
       <Modal open={open} onClose={() => setOpen(false)}>
         <form
