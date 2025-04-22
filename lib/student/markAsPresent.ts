@@ -62,7 +62,9 @@ export default async function markAsPresent(
         formatDate(att.date) === formatToday && att.class === newAtt.class,
     )
   ) {
-    throw new Error("you have already been marked present for today");
+    throw new Error(
+      `you have already been marked present in ${newAtt.class} today`,
+    );
   }
 
   console.log(user.name, "successfully marked as present on", formatToday);
