@@ -25,7 +25,7 @@ export async function generateTempCode(
 
   const tempCode = newTemporaryCode(classType);
 
-  setInCache(tempCode, tempCode, seconds);
+  setInCache(tempCode, classType, seconds);
 
   return tempCode;
 }
