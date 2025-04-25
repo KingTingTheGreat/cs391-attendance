@@ -75,7 +75,10 @@ export default function AttendanceSheet({
               return;
             }
             setClassType(newCls as Class);
-            Cookie.set(PREV_CLASS_TYPE_COOKIE, newCls);
+            Cookie.set(PREV_CLASS_TYPE_COOKIE, newCls, {
+              maxAge: 100 * 365 * 24 * 60 * 60 * 1000,
+              path: "/",
+            });
           }}
         >
           {Object.keys(Class).map((cls) => (
@@ -119,6 +122,7 @@ export default function AttendanceSheet({
             Cookie.set(
               PREV_ATTENDANCE_SORT_COOKIE,
               JSON.stringify(newSortModel),
+              { maxAge: 100 * 365 * 24 * 60 * 60 * 1000, path: "/" },
             );
           }}
           pageSizeOptions={[...pageSizeOpts, { value: -1, label: "All" }]}

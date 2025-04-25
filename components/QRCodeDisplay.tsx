@@ -36,7 +36,10 @@ export default function QRCodeDisplay({ prevSize }: { prevSize?: number }) {
         max={1024}
         onChange={(_, val) => {
           setSize(val as number);
-          Cookie.set(PREV_QRCODE_SIZE_COOKIE, val.toString());
+          Cookie.set(PREV_QRCODE_SIZE_COOKIE, val.toString(), {
+            maxAge: 100 * 365 * 24 * 60 * 60 * 1000,
+            path: "/",
+          });
         }}
       />
       <div className="flex justify-center p-2 m-2">

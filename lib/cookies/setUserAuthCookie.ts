@@ -58,6 +58,7 @@ export async function setUserAuthCookie(
       httpOnly: true,
       secure: ENV === "prod",
       path: "/",
+      maxAge: 100 * 365 * 24 * 60 * 60 * 1000,
     },
   );
 

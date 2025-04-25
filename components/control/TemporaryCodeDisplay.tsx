@@ -135,7 +135,10 @@ export default function TemporaryCodeDisplay({
                     const newExpSec =
                       newDayjsDate.minute() * 60 + newDayjsDate.second();
                     setExpSeconds(newExpSec);
-                    Cookie.set(PREV_EXP_SEC_COOKIE, newExpSec.toString());
+                    Cookie.set(PREV_EXP_SEC_COOKIE, newExpSec.toString(), {
+                      maxAge: 100 * 365 * 24 * 60 * 60 * 1000,
+                      path: "/",
+                    });
                   }
                 }}
                 sx={{ marginBottom: "0.5rem", maxWidth: "250px" }}
@@ -149,7 +152,10 @@ export default function TemporaryCodeDisplay({
                     value={repeat}
                     onChange={(_, v) => {
                       setRepeat(v);
-                      Cookie.set(PREV_REPEAT_TEMP_COOKIE, String(v));
+                      Cookie.set(PREV_REPEAT_TEMP_COOKIE, String(v), {
+                        maxAge: 100 * 365 * 24 * 60 * 60 * 1000,
+                        path: "/",
+                      });
                     }}
                   />
                 }
