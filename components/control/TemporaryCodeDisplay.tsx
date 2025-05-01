@@ -1,38 +1,25 @@
 "use client";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
-import Cookie from "js-cookie";
-import { Button, FormControlLabel, Switch } from "@mui/material";
+import { Button } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import CodeDisplay from "../CodeDisplay";
 import { useEffect, useState } from "react";
 import { generateTempCode } from "@/lib/control/generateTempCode";
-import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs from "dayjs";
-import {
-  PREV_EXP_SEC_COOKIE,
-  PREV_REPEAT_TEMP_COOKIE,
-} from "@/lib/cookies/cookies";
 import { formatSeconds } from "@/lib/util/format";
 import { Class } from "@/types";
+import QRCodeDisplay from "../QRCodeDisplay";
 
-// 5 min default
-const defaultSeconds = 5 * 60;
+// timeout in seconds
+const expSeconds = 10;
 
 export default function TemporaryCodeDisplay({
-  prevSeconds,
-  prevRepeatTemp,
+  prevSize,
 }: {
-  prevSeconds?: number;
-  prevRepeatTemp?: boolean;
+  prevSize?: number;
 }) {
   const [tempCode, setTempCode] = useState<string | null>(null);
-  const [expSeconds, setExpSeconds] = useState(
-    isNaN(prevSeconds || NaN) ? defaultSeconds : (prevSeconds as number),
-  );
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [isActive, setIsActive] = useState(false);
-  const [repeat, setRepeat] = useState(prevRepeatTemp as boolean);
   const [classType, setClassType] = useState<Class | null>(null);
 
   const handleStart = () => {
@@ -60,7 +47,7 @@ export default function TemporaryCodeDisplay({
         setTimeLeft((prevTime) => (prevTime !== null ? prevTime - 1 : null));
       }, 1000);
     } else if (timeLeft === 0) {
-      if (repeat) {
+      if (isActive) {
         handleStart();
       } else {
         handleStop();
@@ -71,109 +58,83 @@ export default function TemporaryCodeDisplay({
       if (interval) clearInterval(interval);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isActive, timeLeft, repeat]);
+  }, [isActive, timeLeft]);
 
   return (
-    <div className="p-1 m-2 flex flex-col items-center text-xl max-w-[90vw] text-center">
-      <h2 className="text-2xl font-bold text-center">Temporary Code</h2>
-      <div className="flex flex-col items-center space-y-4">
-        <ToggleButtonGroup
-          color="primary"
-          value={classType}
-          exclusive
-          disabled={isActive}
-          onChange={(_, newCls) => {
-            console.log("new class", newCls);
-            setClassType(newCls as Class);
-          }}
-        >
-          {Object.keys(Class).map((cls) => (
-            <ToggleButton
-              key={cls}
-              value={cls}
-              sx={{
-                width: "125px",
-                paddingY: "10px",
-                paddingX: "25px",
-                marginTop: "0.5rem",
+    <>
+      <div className="flex justify-center">
+        <div className="p-1 m-2 flex flex-col items-center text-xl max-w-[90vw] text-center">
+          <h2 className="text-2xl font-bold text-center">Temporary Code</h2>
+          <div className="flex flex-col items-center space-y-4">
+            <ToggleButtonGroup
+              color="primary"
+              value={classType}
+              exclusive
+              disabled={isActive}
+              onChange={(_, newCls) => {
+                console.log("new class", newCls);
+                setClassType(newCls as Class);
               }}
             >
-              {cls}
-            </ToggleButton>
-          ))}
-        </ToggleButtonGroup>
-        {tempCode ? (
-          <>
-            <CodeDisplay code={tempCode} show={true} />
-            <p className="text-center text-gray-600">
-              Use this code to confirm your attendance
-            </p>
-            {timeLeft !== null && (
-              <div className="flex justify-center items-center">
-                <div className="text-4xl font-bold mr-4">
-                  <p>Time Left: {formatSeconds(timeLeft)}</p>
+              {Object.keys(Class).map((cls) => (
+                <ToggleButton
+                  key={cls}
+                  value={cls}
+                  sx={{
+                    width: "125px",
+                    paddingY: "10px",
+                    paddingX: "25px",
+                    marginTop: "0.5rem",
+                  }}
+                >
+                  {cls}
+                </ToggleButton>
+              ))}
+            </ToggleButtonGroup>
+            {tempCode ? (
+              <>
+                <CodeDisplay code={tempCode} show={true} />
+                <p className="text-center text-gray-600">
+                  Use this code to confirm your attendance
+                </p>
+                {timeLeft !== null && (
+                  <div className="flex justify-center items-center">
+                    <div className="text-3xl font-bold mr-4">
+                      <p>
+                        Time Left:{" "}
+                        <span
+                          className={
+                            timeLeft <= 3 ? "text-[#F00]" : "text-inherit"
+                          }
+                        >
+                          {formatSeconds(timeLeft)}
+                        </span>
+                      </p>
+                    </div>
+                    <Button onClick={handleStop}>
+                      <CancelIcon sx={{ color: "red" }} fontSize="large" />
+                    </Button>
+                  </div>
+                )}
+              </>
+            ) : (
+              <>
+                <div className="flex justify-around w-full">
+                  <Button
+                    variant="contained"
+                    sx={{ maxWidth: "275px" }}
+                    onClick={handleStart}
+                    disabled={classType === null}
+                  >
+                    Create
+                  </Button>
                 </div>
-                <Button onClick={handleStop}>
-                  <CancelIcon sx={{ color: "red" }} fontSize="large" />
-                </Button>
-              </div>
+              </>
             )}
-          </>
-        ) : (
-          <>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <TimePicker
-                views={["minutes", "seconds"]}
-                timeSteps={{
-                  minutes: 1,
-                  seconds: 5,
-                }}
-                value={dayjs().minute(0).second(expSeconds)}
-                format={`mm:ss (${expSeconds} sec)`}
-                onChange={(newDayjsDate) => {
-                  if (newDayjsDate) {
-                    const newExpSec =
-                      newDayjsDate.minute() * 60 + newDayjsDate.second();
-                    setExpSeconds(newExpSec);
-                    Cookie.set(PREV_EXP_SEC_COOKIE, newExpSec.toString(), {
-                      maxAge: 100 * 365 * 24 * 60 * 60 * 1000,
-                      path: "/",
-                    });
-                  }
-                }}
-                sx={{ marginBottom: "0.5rem", maxWidth: "250px" }}
-              />
-            </LocalizationProvider>
-            <div className="flex justify-around w-full">
-              <FormControlLabel
-                control={
-                  <Switch
-                    defaultChecked={prevRepeatTemp}
-                    value={repeat}
-                    onChange={(_, v) => {
-                      setRepeat(v);
-                      Cookie.set(PREV_REPEAT_TEMP_COOKIE, String(v), {
-                        maxAge: 100 * 365 * 24 * 60 * 60 * 1000,
-                        path: "/",
-                      });
-                    }}
-                  />
-                }
-                label="Repeat?"
-                labelPlacement="start"
-              />
-              <Button
-                variant="contained"
-                sx={{ maxWidth: "275px" }}
-                onClick={handleStart}
-                disabled={classType === null}
-              >
-                Create
-              </Button>
-            </div>
-          </>
-        )}
+          </div>
+        </div>
       </div>
-    </div>
+      <QRCodeDisplay prevSize={prevSize} code={tempCode ?? undefined} />
+    </>
   );
 }

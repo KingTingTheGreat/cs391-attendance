@@ -9,16 +9,29 @@ import QRCode from "react-qr-code";
 const defaultSize = 256;
 const defaultDomain = process.env.NEXT_PUBLIC_DOMAIN || "";
 
-export default function QRCodeDisplay({ prevSize }: { prevSize?: number }) {
-  const [domain, setDomain] = useState(defaultDomain);
+function createDomain(domain: string, code?: string) {
+  if (code !== undefined) {
+    return `${domain}?code=${code}`;
+  }
+  return domain;
+}
+
+export default function QRCodeDisplay({
+  prevSize,
+  code,
+}: {
+  prevSize?: number;
+  code?: string;
+}) {
+  const [domain, setDomain] = useState(createDomain(defaultDomain, code));
   const [size, setSize] = useState(
     isNaN(prevSize || NaN) ? defaultSize : (prevSize as number),
   );
 
   useEffect(() => {
     const currentDomain = window.location.origin;
-    setDomain(currentDomain);
-  }, []);
+    setDomain(createDomain(currentDomain, code));
+  }, [code]);
 
   return (
     <div className="flex flex-col items-center">
@@ -31,7 +44,7 @@ export default function QRCodeDisplay({ prevSize }: { prevSize?: number }) {
       <Slider
         value={size}
         sx={{ width: "30vw" }}
-        valueLabelDisplay="auto"
+        valueLabelDisplay="off"
         min={64}
         max={1024}
         onChange={(_, val) => {
@@ -42,7 +55,7 @@ export default function QRCodeDisplay({ prevSize }: { prevSize?: number }) {
           });
         }}
       />
-      <div className="flex justify-center p-2 m-2">
+      <div className="flex justify-center p-2 m-2 pb-32">
         <QRCode value={domain} size={size} />
       </div>
     </div>

@@ -38,7 +38,6 @@ export async function userFromAuthCookie(
   }
 
   const claims = res.claims as AuthClaims;
-  console.log("fro auth cookie. claims:", claims);
   if (!claims) {
     return null;
   }
@@ -47,7 +46,10 @@ export async function userFromAuthCookie(
     console.log("GETTING USER FROM CACHE");
     const user = await getUserFromCache(claims.email);
     if (user) {
-      console.log("successfully got user from cache", user);
+      console.log("successfully got user from cache", {
+        ...user,
+        attendanceList: null,
+      });
       return user;
     } else {
       console.log("failed to get user from cache");
@@ -60,7 +62,10 @@ export async function userFromAuthCookie(
   if (!data) return null;
 
   const user = documentToUserProps(data);
-  console.log("successfully got user from db", user);
+  console.log("successfully got user from db", {
+    ...user,
+    attendanceList: null,
+  });
   await setUserInCache(user);
   return user;
 }

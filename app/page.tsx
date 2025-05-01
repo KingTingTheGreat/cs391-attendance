@@ -7,17 +7,29 @@ import { userFromAuthCookie } from "@/lib/cookies/userFromAuthCookie";
 import { StudentContextProvider } from "@/components/student/StudentContext";
 import getAttendanceDates from "@/lib/util/getAttendanceDates";
 import { AttendanceDates } from "@/types";
+import markAsPresent from "@/lib/student/markAsPresent";
+import { addToAttendanceList } from "@/lib/util/addToAttendanceList";
 
 export default async function Home({
   searchParams,
 }: {
-  searchParams: Promise<{ message: string }>;
+  searchParams: Promise<{ message: string; code: string }>;
 }) {
   const cookieStore = await cookies();
-  const user = await userFromAuthCookie(cookieStore, true);
+  const qParams = await searchParams;
+  let user = await userFromAuthCookie(cookieStore, true);
   if (!user) {
-    const qParams = await searchParams;
     return <SignInPage errorMessage={qParams.message} />;
+  }
+
+  if (qParams.code) {
+    const res = await markAsPresent(qParams.code);
+    if (res.errorMessage === null || res.errorMessage === undefined) {
+      user = {
+        ...user,
+        attendanceList: addToAttendanceList(user.attendanceList, res.newAtt),
+      };
+    }
   }
 
   let attendanceDates: AttendanceDates | undefined = undefined;

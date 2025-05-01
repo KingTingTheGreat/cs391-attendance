@@ -20,6 +20,7 @@
     "@vercel/speed-insights": "^1.1.0",
     "babel-plugin-react-compiler": "^19.0.0-beta-27714ef-20250124",
     "dayjs": "^1.11.13",
+    "html5-qrcode": "^2.3.8",
     "js-cookie": "^3.0.5",
     "mongodb": "^6.12.0",
     "next": "^15.2.4",

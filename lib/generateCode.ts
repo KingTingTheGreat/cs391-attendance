@@ -2,7 +2,7 @@ import { createHash } from "crypto";
 import { formatDate } from "./util/format";
 import { Class } from "@/types";
 
-export const CODE_LENGTH = 8;
+export const CODE_LENGTH = 6;
 
 export function todayCode(classType: Class) {
   const secret = process.env.SECRET as string;

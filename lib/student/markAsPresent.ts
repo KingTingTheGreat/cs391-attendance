@@ -33,6 +33,10 @@ export default async function markAsPresent(
     formatToday,
   );
 
+  if (ENV === "dev" && MOCK) {
+    return { newAtt: { class: Class.lecture, date: today } };
+  }
+
   let newAtt: AttendanceProps | null = null;
   for (const classType in Class) {
     if (code.toUpperCase() === todayCode(classType as Class)) {
@@ -71,11 +75,9 @@ export default async function markAsPresent(
     };
   }
 
-  console.log(user.name, "successfully marked as present on", formatToday);
-
-  if (ENV === "dev" && MOCK) {
-    return { newAtt };
-  }
+  console.log(
+    `starting transaction to mark ${user.name} as present in ${newAtt.class} on ${formatToday}`,
+  );
 
   const { session, collection: usersCollection } =
     await startCollectionSession(USERS_COLLECTION);
@@ -121,7 +123,7 @@ export default async function markAsPresent(
       setUserInCache(documentToUserProps(data)),
     ]);
   } catch (error) {
-    console.log("CAUGHT ERROR");
+    console.log("CAUGHT ERROR WITH TRANSACTION");
     let message = "something went wrong. please try again later.";
     if (error instanceof Error) {
       console.error("error message:", error.message);
