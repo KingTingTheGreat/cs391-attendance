@@ -135,6 +135,13 @@ export default function AttendanceSheet({
               </GridOverlay>
             ),
           }}
+          slotProps={{
+            toolbar: {
+              csvOptions: {
+                fileName: `cs391-attendance-${classType}`,
+              },
+            },
+          }}
         />
       </Paper>
     </>
