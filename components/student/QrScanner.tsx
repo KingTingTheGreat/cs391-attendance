@@ -21,8 +21,7 @@ export default function QrScanner({
         <Button
           onClick={() => {
             setActive(false);
-            scannerRef.current?.stop();
-            scannerRef.current?.clear();
+            scannerRef.current?.stop().then(() => scannerRef.current?.clear());
           }}
         >
           Cancel
@@ -43,8 +42,9 @@ export default function QrScanner({
                   setActive(false);
                   const code = text.split("=")[1];
                   onScan(code);
-                  scannerRef.current?.stop();
-                  scannerRef.current?.clear();
+                  scannerRef.current
+                    ?.stop()
+                    .then(() => scannerRef.current?.clear());
                 },
                 () => {},
               );
