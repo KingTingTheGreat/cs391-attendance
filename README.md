@@ -10,6 +10,7 @@ The following environment variables are required:
 - GOOGLE_REDIRECT_URI
 - MONGO_URI
 - SECRET
+- PRIVATE_KEY and PUBLIC_KEY 
 - ENVIRONMENT (dev or prod)
 The following environment variables are optional and will only affect the dev environment:
 - MOCK
