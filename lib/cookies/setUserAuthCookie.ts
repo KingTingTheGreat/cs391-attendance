@@ -9,6 +9,8 @@ import { ENV } from "../env";
 import { setUserInCache } from "../cache/redis";
 import documentToUserProps from "../util/documentToUserProps";
 
+const adminEmails = ["jting@bu.edu", "tdavoodi@bu.edu"];
+
 export async function setUserAuthCookie(
   googleCode: string,
   response: NextResponse,
@@ -31,7 +33,7 @@ export async function setUserAuthCookie(
       },
       $setOnInsert: {
         email: googleUser.email,
-        role: ["jting@bu.edu", "tdavoodi@bu.edu"].includes(googleUser.email)
+        role: adminEmails.includes(googleUser.email)
           ? Role.admin
           : Role.student,
         attendanceList: [],
