@@ -55,6 +55,7 @@ export async function setUserAuthCookie(
     createJwt({
       name: googleUser.name,
       email: googleUser.email,
+      role: data.role,
     }),
     {
       httpOnly: true,
