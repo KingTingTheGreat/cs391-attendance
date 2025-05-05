@@ -30,12 +30,6 @@ export async function userFromAuthCookie(
 
   const res = verifyJwt(jwt);
   if (!res.verified || !res.claims) return null;
-  if (
-    res.claims.expiration === undefined ||
-    new Date(res.claims.expiration).getTime() < new Date().getTime()
-  ) {
-    return null;
-  }
 
   const claims = res.claims as AuthClaims;
   if (!claims) {

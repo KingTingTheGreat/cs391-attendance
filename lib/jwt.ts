@@ -80,6 +80,11 @@ export function verifyJwt(jwt: string): VerifyJwtRes {
 
   try {
     const claims = JSON.parse(base64UrlDecode(payload));
+
+    if (!claims.expiration || claims.expiration < new Date()) {
+      return { verified: false };
+    }
+
     return { verified: true, claims };
   } catch {
     console.log("invalid json in jwt");
