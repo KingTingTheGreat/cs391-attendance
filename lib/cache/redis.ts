@@ -1,18 +1,7 @@
-import { Class, UserProps } from "@/types";
 import { Redis } from "@upstash/redis";
-import { parseUser } from "./parseUser";
 import { ENV } from "../env";
 
 const redis = Redis.fromEnv();
-
-export async function getUserFromCache(id: string): Promise<UserProps | null> {
-  const result = await redis.get(`${id}-${ENV}`);
-  return parseUser(result as UserProps);
-}
-
-export async function setUserInCache(user: UserProps) {
-  await redis.set(`${user.email}-${ENV}`, user);
-}
 
 export async function setInCache(
   key: string,
@@ -45,25 +34,4 @@ export async function clearCache() {
       break;
     }
   }
-}
-
-const datesKey = `-dates-${ENV}`;
-
-export async function setDateCache(classType: Class, ...dates: string[]) {
-  const tx = redis.multi();
-  tx.del(classType + datesKey);
-  // @ts-expect-error spread operator is intended
-  tx.sadd(classType + datesKey, ...dates);
-  await tx.exec();
-}
-
-export async function addDateToCache(classType: Class, date: string) {
-  await redis.sadd(classType + datesKey, date);
-}
-
-// handle removal by updating entire set when viewed by course staff
-
-export async function getDatesFromCache(classType: Class) {
-  const dates = await redis.smembers(classType + datesKey);
-  return new Set(dates);
 }

@@ -6,8 +6,6 @@ import { Role } from "@/types";
 import { createJwt } from "../jwt";
 import { AUTH_COOKIE } from "./cookies";
 import { ENV } from "../env";
-import { setUserInCache } from "../cache/redis";
-import documentToUserProps from "../util/documentToUserProps";
 
 const adminEmails = ["jting@bu.edu", "tdavoodi@bu.edu"];
 
@@ -55,7 +53,6 @@ export async function setUserAuthCookie(
     createJwt({
       name: googleUser.name,
       email: googleUser.email,
-      role: data.role,
     }),
     {
       httpOnly: true,
@@ -64,8 +61,6 @@ export async function setUserAuthCookie(
       maxAge: 100 * 365 * 24 * 60 * 60 * 1000,
     },
   );
-
-  await setUserInCache(documentToUserProps(data));
 
   return true;
 }

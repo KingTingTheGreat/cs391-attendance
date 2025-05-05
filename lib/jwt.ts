@@ -1,11 +1,9 @@
 import { createHmac } from "crypto";
 import { base64UrlDecode, base64UrlEncode } from "./b64";
-import { Role } from "@/types";
 
 export type AuthClaims = {
   name: string;
   email: string;
-  role: Role;
   expiration?: Date;
 };
 

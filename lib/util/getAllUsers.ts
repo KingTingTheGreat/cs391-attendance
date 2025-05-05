@@ -5,16 +5,20 @@ import { mockStudents } from "../mockStudents";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { ENV, MOCK } from "../env";
-import { userFromAuthCookie } from "../cookies/userFromAuthCookie";
 import documentToUserProps from "./documentToUserProps";
+import { dbDataFromAuthCookie } from "../cookies/dbDataFromAuthCookie";
 
 const allowedRoles = [Role.staff, Role.admin];
 
 export async function getAllUsers(): Promise<UserProps[]> {
   const cookieStore = await cookies();
-  const user = await userFromAuthCookie(cookieStore);
+  const authData = await dbDataFromAuthCookie(cookieStore);
+  if (!authData) {
+    return redirect("/");
+  }
 
-  if (!user || !allowedRoles.includes(user.role)) {
+  const { user } = authData;
+  if (!allowedRoles.includes(user.role)) {
     // only allow staff and admin to access this data
     return redirect("/");
   }
