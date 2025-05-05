@@ -48,12 +48,25 @@ export async function dbDataFromAuthCookie(
           {
             $project: {
               class: "$attendanceList.class",
-              formattedDate: {
-                $dateToString: {
-                  format: "%m/%d/%Y",
+              parts: {
+                $dateToParts: {
                   date: "$attendanceList.date",
                   timezone: "America/New_York",
                 },
+              },
+            },
+          },
+          {
+            $project: {
+              class: 1,
+              formattedDate: {
+                $concat: [
+                  { $toString: "$parts.month" },
+                  "/",
+                  { $toString: "$parts.day" },
+                  "/",
+                  { $toString: "$parts.year" },
+                ],
               },
             },
           },
