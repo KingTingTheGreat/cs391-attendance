@@ -39,7 +39,8 @@ export default function ClassPercentages() {
 
     return (
       <p>
-        You have missed the following{" "}
+        You have missed {absentDates.length} out of{" "}
+        {attendanceDates[selClassType].size}{" "}
         <span className="underline">{selClassType}</span> classes:{" "}
         <span className="text-[#F00]">{absentDates.join(", ")}</span>
       </p>

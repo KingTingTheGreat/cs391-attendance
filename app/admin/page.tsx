@@ -4,7 +4,7 @@ import {
   PREV_ATTENDANCE_SORT_COOKIE,
   PREV_CLASS_TYPE_COOKIE,
 } from "@/lib/cookies/cookies";
-import { userFromAuthCookie } from "@/lib/cookies/userFromAuthCookie";
+import { dbDataFromAuthCookie } from "@/lib/cookies/dbDataFromAuthCookie";
 import { Class, Role } from "@/types";
 import { CircularProgress } from "@mui/material";
 import { GridSortModel } from "@mui/x-data-grid";
@@ -16,10 +16,9 @@ const allowedRoles = [Role.staff, Role.admin];
 
 export default async function AdminPage() {
   const cookieStore = await cookies();
-  const user = await userFromAuthCookie(cookieStore);
+  const dbData = await dbDataFromAuthCookie(cookieStore);
 
-  if (!user || !allowedRoles.includes(user.role)) {
-    // only allow staff and admin to see this page
+  if (!dbData || !allowedRoles.includes(dbData.user.role)) {
     return redirect("/");
   }
 
@@ -31,12 +30,12 @@ export default async function AdminPage() {
   console.log("prevClassType", prevClassType);
   console.log("prevSortModel", prevSortModel);
 
-  console.log("admin panel viewed by", user.name, user.email);
+  console.log("admin panel viewed by", dbData.user.name, dbData.user.email);
 
   // use default role in dev environment
   return (
     <>
-      <Header role={user.role} />
+      <Header role={dbData.user.role} />
       <div className="px-8 py-2 w-full">
         <h1 className="text-4xl font-bold text-center">Admin Page</h1>
         <Suspense
@@ -46,7 +45,7 @@ export default async function AdminPage() {
             </div>
           }
         >
-          <AdminPanel role={user.role} />
+          <AdminPanel role={dbData.user.role} />
         </Suspense>
       </div>
     </>

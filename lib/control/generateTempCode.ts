@@ -1,10 +1,10 @@
 "use server";
 import { Class, Role } from "@/types";
 import { cookies } from "next/headers";
-import { userFromAuthCookie } from "../cookies/userFromAuthCookie";
 import { ENV, MOCK } from "../env";
 import { setInCache } from "../cache/redis";
 import { newTemporaryCode } from "../generateCode";
+import { dbDataFromAuthCookie } from "../cookies/dbDataFromAuthCookie";
 
 const allowedRoles = [Role.staff, Role.admin];
 
@@ -13,9 +13,9 @@ export async function generateTempCode(
   classType: Class,
 ): Promise<string | null> {
   const cookieStore = await cookies();
-  const user = await userFromAuthCookie(cookieStore);
+  const dbData = await dbDataFromAuthCookie(cookieStore);
 
-  if (!user || !allowedRoles.includes(user.role)) {
+  if (!dbData || !allowedRoles.includes(dbData.user.role)) {
     return null;
   }
 

@@ -2,12 +2,11 @@
 import { AttendanceProps, Class, MarkResult, Role } from "@/types";
 import { cookies } from "next/headers";
 import { startCollectionSession, USERS_COLLECTION } from "@/db";
-import { formatDate, formatDay } from "../util/format";
+import { formatDate } from "../util/format";
 import { ENV, MOCK } from "../env";
-import { userFromAuthCookie } from "../cookies/userFromAuthCookie";
 import documentToUserProps from "../util/documentToUserProps";
-import { addDateToCache, setUserInCache } from "../cache/redis";
 import { addToAttendanceList } from "../util/addToAttendanceList";
+import { dbDataFromAuthCookie } from "../cookies/dbDataFromAuthCookie";
 
 const allowedRoles = [Role.staff, Role.admin];
 
@@ -21,9 +20,9 @@ export async function markStudentPresent(
   }
 
   const cookieStore = await cookies();
-  const user = await userFromAuthCookie(cookieStore);
+  const dbData = await dbDataFromAuthCookie(cookieStore);
 
-  if (!user || !allowedRoles.includes(user.role)) {
+  if (!dbData || !allowedRoles.includes(dbData.user.role)) {
     return { message: "unauthorized. please sign in again." };
   }
 
@@ -68,11 +67,7 @@ export async function markStudentPresent(
     }
     const updatedUser = documentToUserProps(data);
 
-    await Promise.all([
-      session.commitTransaction(),
-      setUserInCache(updatedUser),
-      addDateToCache(classType, formatDay(date)),
-    ]);
+    session.commitTransaction();
     console.log("SUCCESSFULLY MARKED PRESENT");
 
     return {

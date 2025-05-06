@@ -5,10 +5,9 @@ import { AttendanceProps, Class, PresentResult } from "@/types";
 import { formatDate, formatDay } from "../util/format";
 import { todayCode } from "../generateCode";
 import { ENV, MOCK } from "../env";
-import { userFromAuthCookie } from "../cookies/userFromAuthCookie";
-import { addDateToCache, getFromCache, setUserInCache } from "../cache/redis";
-import documentToUserProps from "../util/documentToUserProps";
+import { getFromCache } from "../cache/redis";
 import { addToAttendanceList } from "../util/addToAttendanceList";
+import { jwtDataFromAuthCookie } from "../cookies/jwtDataFromAuthCookie";
 
 export default async function markAsPresent(
   code: string,
@@ -18,8 +17,8 @@ export default async function markAsPresent(
   const formatToday = formatDate(today);
 
   const cookieStore = await cookies();
-  const user = await userFromAuthCookie(cookieStore, true);
-  if (!user) {
+  const claims = await jwtDataFromAuthCookie(cookieStore);
+  if (!claims) {
     console.error("user not signed in claiming to be present");
     return {
       errorMessage: "something went wrong. please sign in again.",
@@ -27,7 +26,7 @@ export default async function markAsPresent(
   }
 
   console.log(
-    user.name,
+    claims.name,
     "claiming to be present on",
     formatDay(today),
     formatToday,
@@ -51,7 +50,7 @@ export default async function markAsPresent(
     // check for temporary code
     const classType = await getFromCache(code.toUpperCase());
     if (!classType) {
-      console.log(user.name, "tried with incorrect code");
+      console.log(claims.name, "tried with incorrect code");
       return {
         errorMessage: "incorrect code",
       };
@@ -63,20 +62,8 @@ export default async function markAsPresent(
     };
   }
 
-  // maybe avoid call to mongo based on cache user state
-  if (
-    user.attendanceList.some(
-      (att) =>
-        formatDate(att.date) === formatToday && att.class === newAtt.class,
-    )
-  ) {
-    return {
-      errorMessage: `you have already been marked present in ${newAtt.class} today`,
-    };
-  }
-
   console.log(
-    `starting transaction to mark ${user.name} as present in ${newAtt.class} on ${formatToday}`,
+    `starting transaction to mark ${claims.name} as present in ${newAtt.class} on ${formatToday}`,
   );
 
   const { session, collection: usersCollection } =
@@ -85,8 +72,8 @@ export default async function markAsPresent(
   try {
     session.startTransaction();
 
-    let data = await usersCollection.findOne({ email: user.email });
-    if (!data) throw new Error(`user with email ${user.email} not found`);
+    let data = await usersCollection.findOne({ email: claims.email });
+    if (!data) throw new Error(`user with email ${claims.email} not found`);
 
     const attendanceList = data.attendanceList as AttendanceProps[];
     if (
@@ -102,7 +89,7 @@ export default async function markAsPresent(
     addToAttendanceList(attendanceList, newAtt);
 
     data = await usersCollection.findOneAndUpdate(
-      { email: user.email },
+      { email: claims.email },
       {
         $set: {
           attendanceList,
@@ -117,11 +104,7 @@ export default async function markAsPresent(
         "something went wrong on our end. please try again and notify the instructor.",
       );
     }
-    await Promise.all([
-      session.commitTransaction(),
-      addDateToCache(newAtt.class, formatToday),
-      setUserInCache(documentToUserProps(data)),
-    ]);
+    session.commitTransaction();
   } catch (error) {
     console.log("CAUGHT ERROR WITH TRANSACTION");
     let message = "something went wrong. please try again later.";

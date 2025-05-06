@@ -23,15 +23,15 @@ export default function QRCodeDisplay({
   prevSize?: number;
   code?: string;
 }) {
-  const [domain, setDomain] = useState(createDomain(defaultDomain, code));
+  const [domain, setDomain] = useState(defaultDomain);
   const [size, setSize] = useState(
     isNaN(prevSize || NaN) ? defaultSize : (prevSize as number),
   );
 
   useEffect(() => {
     const currentDomain = window.location.origin;
-    setDomain(createDomain(currentDomain, code));
-  }, [code]);
+    setDomain(currentDomain);
+  }, []);
 
   return (
     <div className="flex flex-col items-center">
@@ -56,7 +56,7 @@ export default function QRCodeDisplay({
         }}
       />
       <div className="flex justify-center p-2 m-2 pb-32">
-        <QRCode value={domain} size={size} />
+        <QRCode value={createDomain(domain, code)} size={size} />
       </div>
     </div>
   );
