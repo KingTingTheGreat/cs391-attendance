@@ -19,7 +19,7 @@ export function newTemporaryCode(classType: Class) {
   if (!secret)
     throw new Error("newTemporaryCode() must be called on the server");
   return createHash("sha256")
-    .update(new Date() + secret + classType)
+    .update(Date.now() + secret + classType)
     .digest("hex")
     .slice(0, CODE_LENGTH)
     .toUpperCase();

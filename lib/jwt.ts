@@ -60,7 +60,7 @@ export function verifyJwt(jwt: string): VerifyJwtRes {
   try {
     const claims = JSON.parse(base64UrlDecode(payload));
 
-    if (!claims.expiration || claims.expiration < new Date()) {
+    if (!claims.expiration || claims.expiration < Date.now()) {
       return { verified: false };
     }
 
