@@ -65,6 +65,7 @@ export type PresentResult =
 
 export type TemporaryCode = {
   code: string;
+  classType: Class;
   start: number;
   end: number;
 };
