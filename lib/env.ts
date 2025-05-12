@@ -13,11 +13,11 @@ export const NUM_CODES = (() => {
   }
   return numCodes;
 })();
-export const GRACE_PERIOD = () => {
+export const GRACE_PERIOD = (() => {
   const gracePeriod = Number(process.env.GRACE_PERIOD);
   if (isNaN(gracePeriod) || gracePeriod < 0) {
     // default to 0 ms
     return 0;
   }
   return gracePeriod;
-};
+})();
