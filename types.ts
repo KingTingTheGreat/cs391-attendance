@@ -62,3 +62,9 @@ export type MarkResult = { user?: UserProps; message: string };
 export type PresentResult =
   | { newAtt: AttendanceProps; errorMessage?: null }
   | { errorMessage: string };
+
+export type TemporaryCode = {
+  code: string;
+  start: number;
+  end: number;
+};
