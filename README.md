@@ -11,6 +11,17 @@ The following environment variables are required:
 - MONGO_URI
 - SECRET
 - ENVIRONMENT (dev or prod)
+- PUBLIC
+The following environment variables are recommended:
+- TTL 
+    - Lifetime of temporary codes in seconds
+    - Defaults to 10 seconds
+- GRACE_PERIOD
+    - Acceptable +/- in milliseconds to account for network delays and clock misalignment 
+    - Defaults to 0 milliseconds
+- NUM_CODES
+    - The number of temporary codes to create at a time, reducing DB calls
+    - Defaults to 3
 The following environment variables are optional and will only affect the dev environment:
 - MOCK
 - DEFAULT_ROLE
