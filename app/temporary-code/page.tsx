@@ -1,5 +1,6 @@
 import TemporaryCodeDisplay from "@/components/control/TemporaryCodeDisplay";
 import Header from "@/components/Header";
+import QueryWrapper from "@/components/QueryWrapper";
 import { PREV_QRCODE_SIZE_COOKIE } from "@/lib/cookies/cookies";
 import { dbDataFromAuthCookie } from "@/lib/cookies/dbDataFromAuthCookie";
 import { Role } from "@/types";
@@ -24,7 +25,9 @@ export default async function TempCodePage() {
     <>
       <Header role={dbData.user.role} />
       <div className="flex flex-col items-center">
-        <TemporaryCodeDisplay prevSize={prevSize} />
+        <QueryWrapper>
+          <TemporaryCodeDisplay prevSize={prevSize} />
+        </QueryWrapper>
       </div>
     </>
   );
