@@ -5,9 +5,9 @@ import { AttendanceProps, Class, PresentResult } from "@/types";
 import { formatDate, formatDay } from "../util/format";
 import { todayCode } from "../generateCode";
 import { ENV, MOCK } from "../env";
-import { getFromCache } from "../cache/redis";
 import { addToAttendanceList } from "../util/addToAttendanceList";
 import { jwtDataFromAuthCookie } from "../cookies/jwtDataFromAuthCookie";
+import codeToClass from "../codeToClass";
 
 export default async function markAsPresent(
   code: string,
@@ -48,7 +48,7 @@ export default async function markAsPresent(
   }
   if (newAtt === null) {
     // check for temporary code
-    const classType = await getFromCache(code.toUpperCase());
+    const classType = await codeToClass(code);
     if (!classType) {
       console.log(claims.name, "tried with incorrect code");
       return {

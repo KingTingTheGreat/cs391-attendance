@@ -3,7 +3,6 @@ import { cookies } from "next/headers";
 import { Role, ServerFuncRes } from "@/types";
 import getCollection, { USERS_COLLECTION } from "@/db";
 import { ENV, MOCK } from "../env";
-import { deleteFromCache } from "../cache/redis";
 import { dbDataFromAuthCookie } from "../cookies/dbDataFromAuthCookie";
 
 const allowedRoles = [Role.admin];
@@ -33,8 +32,6 @@ export async function deleteUser(email: string): Promise<ServerFuncRes> {
       success: false,
       message: "could not delete user. try again later.",
     };
-
-  await deleteFromCache(email);
 
   return { success: true, message: `successfully deleted ${email}` };
 }

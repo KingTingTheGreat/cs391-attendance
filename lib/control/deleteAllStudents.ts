@@ -3,7 +3,6 @@ import { cookies } from "next/headers";
 import { Role, ServerFuncRes } from "@/types";
 import getCollection, { USERS_COLLECTION } from "@/db";
 import { ENV, MOCK } from "../env";
-import { clearCache } from "../cache/redis";
 import { dbDataFromAuthCookie } from "@/lib/cookies/dbDataFromAuthCookie";
 
 const allowedRoles = [Role.admin];
@@ -28,8 +27,6 @@ export async function deleteAllStudents(): Promise<ServerFuncRes> {
       message: "could not delete students. please try again later.",
     };
   }
-
-  await clearCache();
 
   return { success: true, message: "successfully deleted all students" };
 }
