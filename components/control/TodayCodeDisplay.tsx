@@ -3,17 +3,30 @@ import CodeDisplay from "@/components/CodeDisplay";
 import QRCodeDisplay from "@/components/QRCodeDisplay";
 import { Class } from "@/types";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { generateTodayCode } from "@/lib/control/generateTodayCode";
+
+const staleTime = 20 * 60 * 1000;
 
 export default function TodayCodeDisplay({ prevSize }: { prevSize: number }) {
   const [classType, setClassType] = useState<Class | null>(null);
+  const queryClient = useQueryClient();
   const query = useQuery({
     queryKey: [classType],
     queryFn: () => (classType ? generateTodayCode(classType) : null),
-    staleTime: 5 * 1000 * 60, // five minutes
+    staleTime,
   });
+
+  useEffect(() => {
+    Object.keys(Class).forEach((classType) => {
+      queryClient.prefetchQuery({
+        queryKey: [classType],
+        queryFn: () => generateTodayCode(classType as Class),
+        staleTime,
+      });
+    });
+  }, [queryClient]);
 
   return (
     <div className="p-1 m-2 flex flex-col items-center text-xl max-w-[90vw] text-center">
