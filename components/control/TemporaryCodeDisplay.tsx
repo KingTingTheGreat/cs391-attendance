@@ -3,134 +3,128 @@ import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { Button } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import CodeDisplay from "../CodeDisplay";
-import { useEffect, useState } from "react";
-import { generateTempCodes } from "@/lib/control/generateTempCodes";
+import { useEffect, useRef, useState } from "react";
 import { formatSeconds } from "@/lib/util/format";
-import { Class, TemporaryCode } from "@/types";
+import { Class, TempCodeKeys } from "@/types";
 import QRCodeDisplay from "../QRCodeDisplay";
-import { INTERVAL_LENGTH, TTL } from "@/lib/env";
-
-// when these number of seconds are left, display as red
-const finalTimes = [...Array(3 + 1).keys()].map((s) => formatSeconds(s));
-
-function calcTimeLeft(expiryTime: number) {
-  const diff = expiryTime - Date.now();
-  return diff < INTERVAL_LENGTH ? 0 : Math.round(diff / 1000);
-}
+import {
+  createInputTotp,
+  createScanTotp,
+  INPUT_TEMP_CODE_PERIOD,
+  SCAN_TEMP_CODE_PERIOD,
+} from "@/lib/temporary-code/createTotpObj";
+import { TOTP } from "otpauth";
 
 export default function TemporaryCodeDisplay({
+  scanTempCodeKeys,
+  inputTempCodeKeys,
   prevSize,
 }: {
+  scanTempCodeKeys: TempCodeKeys;
+  inputTempCodeKeys: TempCodeKeys;
   prevSize?: number;
 }) {
-  const [tempCodes, setTempCodes] = useState<TemporaryCode[] | null>(null);
-  const [timeLeft, setTimeLeft] = useState<string | null>(null);
+  const inputTotpRef = useRef<TOTP | null>(null);
+  const [inputTempCode, setInputTempCode] = useState<string | null>();
+  const [timeLeft, setTimeLeft] = useState<number | null>(null);
+
+  const scanTotpRef = useRef<TOTP | null>(null);
+  const [scanTempCode, setScanTempCode] = useState<string | null>(null);
+
   const [isActive, setIsActive] = useState(false);
   const [classType, setClassType] = useState<Class | null>(null);
+
+  const generateInputTempCode = () => {
+    if (classType === null) return;
+
+    if (inputTotpRef.current === null) {
+      inputTotpRef.current = createInputTotp(
+        classType,
+        inputTempCodeKeys[classType],
+      );
+    }
+
+    setInputTempCode(inputTotpRef.current.generate());
+    setTimeLeft(INPUT_TEMP_CODE_PERIOD);
+  };
+
+  const generateScanTempCode = () => {
+    if (classType === null) return;
+
+    if (scanTotpRef.current === null) {
+      scanTotpRef.current = createScanTotp(
+        classType,
+        scanTempCodeKeys[classType],
+      );
+    }
+
+    setScanTempCode(scanTotpRef.current.generate());
+  };
 
   const handleStart = () => {
     if (classType === null) return;
 
-    console.log("GENERATIGN NEW CODES");
-    generateTempCodes(
-      TTL,
-      classType,
-      tempCodes && tempCodes.length > 0
-        ? tempCodes[tempCodes.length - 1].end
-        : undefined,
-    )
-      .then((res) => {
-        if (!res) {
-          throw new Error("failed to get new codes");
-        }
+    generateInputTempCode();
+    generateScanTempCode();
 
-        let newTempCodes = [];
-        if (!tempCodes || tempCodes.length === 0) {
-          newTempCodes = res;
-        } else {
-          const timeLeft = calcTimeLeft(tempCodes[0].end);
-          if (timeLeft === 0) {
-            newTempCodes = [...tempCodes.slice(1), ...res];
-          } else {
-            newTempCodes = res;
-          }
-        }
+    setIsActive(true);
+  };
 
-        setTempCodes(newTempCodes);
-        setIsActive(true);
-        setTimeLeft(formatSeconds(calcTimeLeft(newTempCodes[0].end)));
-      })
-      .catch(() => {
-        // try again in 1 second
-        setTimeout(() => {
-          handleStart();
-        }, 1000);
+  const clearInputTempCode = () => {
+    inputTotpRef.current = null;
+    setInputTempCode(null);
+    setTimeLeft(null);
+  };
 
-        if (!tempCodes) {
-          return;
-        }
-
-        // next in queue if necessary
-        const newTimeLeft = calcTimeLeft(tempCodes[0].end);
-        if (newTimeLeft === 0) {
-          setTempCodes(tempCodes.slice(1));
-          setTimeLeft(formatSeconds(newTimeLeft));
-        }
-      });
+  const clearScanTempCode = () => {
+    scanTotpRef.current = null;
+    setScanTempCode(null);
   };
 
   const handleStop = () => {
-    setTempCodes(null);
+    clearInputTempCode();
+    clearScanTempCode();
+
     setIsActive(false);
-    setTimeLeft(null);
   };
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
 
-    // if (isActive && timeLeft !== null && timeLeft > 0) {
-    //   interval = setInterval(() => {
-    //     setTimeLeft((prevTime) => (prevTime !== null ? prevTime - 1 : null));
-    //   }, 1000);
-    // } else if (timeLeft === 0) {
-    //   if (isActive) {
-    //     handleStart();
-    //   } else {
-    //     handleStop();
-    //   }
-    // }
-
-    if (
-      timeLeft === null ||
-      timeLeft === formatSeconds(0) ||
-      !tempCodes ||
-      tempCodes.length === 0
-    ) {
-      return isActive ? handleStart() : handleStop();
+    if (isActive) {
+      if (timeLeft !== null && timeLeft > 0) {
+        interval = setInterval(() => {
+          setTimeLeft((prevTime) => (prevTime !== null ? prevTime - 1 : null));
+        }, 1000);
+      } else if (timeLeft === 0) {
+        generateInputTempCode();
+      }
+    } else {
+      clearInputTempCode();
     }
-
-    interval = setInterval(() => {
-      const newTimeLeft = formatSeconds(calcTimeLeft(tempCodes[0].end));
-      if (newTimeLeft !== "0:00") {
-        setTimeLeft(newTimeLeft);
-        return;
-      }
-
-      const newTempCodes = tempCodes.slice(1);
-      // if there is only one code left, get more
-      if (newTempCodes.length <= 1) {
-        handleStart();
-      }
-
-      setTempCodes(newTempCodes);
-      setTimeLeft(formatSeconds(calcTimeLeft(newTempCodes[0].end)));
-    }, INTERVAL_LENGTH);
 
     return () => {
       if (interval) clearInterval(interval);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isActive, timeLeft]);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+
+    if (isActive) {
+      interval = setInterval(() => {
+        generateScanTempCode();
+      }, SCAN_TEMP_CODE_PERIOD * 1000);
+    } else {
+      clearScanTempCode();
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isActive]);
 
   return (
     <>
@@ -163,9 +157,9 @@ export default function TemporaryCodeDisplay({
                 </ToggleButton>
               ))}
             </ToggleButtonGroup>
-            {tempCodes && tempCodes.length > 0 ? (
+            {inputTempCode ? (
               <>
-                <CodeDisplay code={tempCodes[0].code} show={true} />
+                <CodeDisplay code={inputTempCode} show={true} />
                 <p className="text-center text-gray-600">
                   Use this code to confirm your attendance
                 </p>
@@ -176,12 +170,10 @@ export default function TemporaryCodeDisplay({
                         Time Left:{" "}
                         <span
                           className={
-                            finalTimes.includes(timeLeft)
-                              ? "text-[#F00]"
-                              : "text-inherit"
+                            timeLeft <= 3 ? "text-[#F00]" : "text-inherit"
                           }
                         >
-                          {timeLeft}
+                          {formatSeconds(timeLeft)}
                         </span>
                       </p>
                     </div>
@@ -208,10 +200,7 @@ export default function TemporaryCodeDisplay({
           </div>
         </div>
       </div>
-      <QRCodeDisplay
-        prevSize={prevSize}
-        code={tempCodes && tempCodes.length > 0 ? tempCodes[0].code : undefined}
-      />
+      <QRCodeDisplay prevSize={prevSize} code={scanTempCode ?? undefined} />
     </>
   );
 }
