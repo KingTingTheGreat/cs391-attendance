@@ -1,4 +1,4 @@
-export function base32Encode(input: Buffer<ArrayBufferLike>) {
+export function base32EncodeBuffer(input: Buffer<ArrayBufferLike>) {
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
   let bits = 0;
   let value = 0;
