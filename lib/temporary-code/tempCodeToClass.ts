@@ -8,16 +8,13 @@ export default function tempCodeToClass(
   onlyScan?: boolean,
 ): Class | null {
   const digits = base32CodeToDigits(code);
-  if (digits === null) {
-    return null;
-  }
 
   for (const classType of Object.keys(Class)) {
     const scanTOTP = createScanTotp(classType as Class);
-    if (scanTOTP.validate({ token: digits, window: WINDOW_SIZE }) !== null) {
+    if (scanTOTP.validate({ token: code, window: WINDOW_SIZE }) !== null) {
       return classType as Class;
     }
-    if (onlyScan) {
+    if (onlyScan || digits === null) {
       continue;
     }
 
