@@ -10,10 +10,10 @@ import QRCodeDisplay from "../QRCodeDisplay";
 import {
   createInputTotp,
   createScanTotp,
-  INPUT_TEMP_CODE_PERIOD,
-  SCAN_TEMP_CODE_PERIOD,
 } from "@/lib/temporary-code/createTotpObj";
 import { TOTP } from "otpauth";
+import { INPUT_TEMP_CODE_PERIOD, SCAN_TEMP_CODE_PERIOD } from "@/lib/env";
+import { digitsToBase32Code } from "@/lib/b32";
 
 export default function TemporaryCodeDisplay({
   scanTempCodeKeys,
@@ -44,7 +44,9 @@ export default function TemporaryCodeDisplay({
       );
     }
 
-    setInputTempCode(inputTotpRef.current.generate());
+    setInputTempCode(
+      digitsToBase32Code(Number(inputTotpRef.current.generate())),
+    );
     setTimeLeft(INPUT_TEMP_CODE_PERIOD);
   };
 
