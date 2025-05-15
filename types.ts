@@ -9,11 +9,6 @@ export enum Class {
   discussion = "discussion",
 }
 
-export enum AttendanceStatus {
-  present = "present",
-  absent = "absent",
-}
-
 export type AttendanceProps = {
   class: Class;
   date: Date;

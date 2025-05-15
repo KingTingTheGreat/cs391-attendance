@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "knip": "knip"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -16,7 +17,6 @@
     "@mui/x-data-grid": "^7.24.1",
     "@mui/x-date-pickers": "^7.24.1",
     "@tanstack/react-query": "^5.74.3",
-    "@upstash/redis": "^1.34.3",
     "@vercel/speed-insights": "^1.1.0",
     "babel-plugin-react-compiler": "^19.0.0-beta-27714ef-20250124",
     "dayjs": "^1.11.13",
@@ -35,13 +35,14 @@
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4.0.0",
     "@types/js-cookie": "^3.0.6",
-    "@types/node": "^20",
+    "@types/node": "^20.17.47",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.1.6",
+    "knip": "^5.56.0",
     "postcss": "^8",
     "tailwindcss": "^4.0.0",
-    "typescript": "^5"
+    "typescript": "^5.8.3"
   }
 }
