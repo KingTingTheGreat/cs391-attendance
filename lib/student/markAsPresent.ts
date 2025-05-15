@@ -11,6 +11,7 @@ import tempCodeToClass from "../temporary-code/tempCodeToClass";
 
 export default async function markAsPresent(
   code: string,
+  onlyScan?: boolean,
 ): Promise<PresentResult> {
   console.log("mark as present");
   const today = new Date();
@@ -37,18 +38,20 @@ export default async function markAsPresent(
   }
 
   let newAtt: AttendanceProps | null = null;
-  for (const classType in Class) {
-    if (code.toUpperCase() === todayCode(classType as Class)) {
-      newAtt = {
-        class: classType as Class,
-        date: today,
-      };
-      break;
+  if (!onlyScan) {
+    for (const classType in Class) {
+      if (code.toUpperCase() === todayCode(classType as Class)) {
+        newAtt = {
+          class: classType as Class,
+          date: today,
+        };
+        break;
+      }
     }
   }
   if (newAtt === null) {
     // check for temporary code
-    const classType = tempCodeToClass(code);
+    const classType = tempCodeToClass(code, onlyScan);
     if (!classType) {
       console.log(claims.name, "tried with incorrect code");
       return {
@@ -61,6 +64,8 @@ export default async function markAsPresent(
       date: today,
     };
   }
+
+  return { newAtt };
 
   console.log(
     `starting transaction to mark ${claims.name} as present in ${newAtt.class} on ${formatToday}`,

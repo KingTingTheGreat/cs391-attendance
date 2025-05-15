@@ -28,7 +28,7 @@ export default async function Home({
   }
 
   if (qParams.code) {
-    const res = await markAsPresent(qParams.code);
+    const res = await markAsPresent(qParams.code, true);
     if (res.errorMessage === null || res.errorMessage === undefined) {
       user = {
         ...user,
