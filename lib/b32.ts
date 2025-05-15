@@ -38,7 +38,7 @@ export function base32CodeToDigits(code: string) {
   for (let i = 0; i < code.length; i++) {
     const val = chars.indexOf(code[i].toUpperCase());
     if (val === -1) {
-      return 0;
+      return null;
     }
     num = num * 32 + val;
   }
