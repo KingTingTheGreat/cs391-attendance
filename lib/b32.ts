@@ -1,4 +1,4 @@
-import { INPUT_TEMP_CODE_LENGTH, INPUT_TEMP_CODE_NUM_DIGITS } from "./env";
+import { INPUT_CODE_LENGTH, INPUT_TEMP_CODE_NUM_DIGITS } from "./env";
 
 const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 
@@ -30,7 +30,7 @@ export function digitsToBase32Code(input: number): string {
     output = chars[input % 32] + output;
     input = Math.floor(input / 32);
   } while (input > 0);
-  return output.padStart(INPUT_TEMP_CODE_LENGTH, "A");
+  return output.padStart(INPUT_CODE_LENGTH, "A");
 }
 
 export function base32CodeToDigits(code: string): string | null {

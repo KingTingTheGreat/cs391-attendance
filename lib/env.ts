@@ -9,17 +9,15 @@ export const WINDOW_SIZE = (() => {
   return winSize;
 })();
 
-export const INPUT_TEMP_CODE_LENGTH = (() => {
-  const inputTempCodeLength = Number(
-    process.env.NEXT_PUBLIC_INPUT_TEMP_CODE_LENGTH,
-  );
-  if (isNaN(inputTempCodeLength) || inputTempCodeLength < 0) {
+export const INPUT_CODE_LENGTH = (() => {
+  const inputCodeLength = Number(process.env.NEXT_PUBLIC_INPUT_CODE_LENGTH);
+  if (isNaN(inputCodeLength) || inputCodeLength < 0) {
     return 6;
   }
-  return inputTempCodeLength;
+  return inputCodeLength;
 })();
 export const INPUT_TEMP_CODE_NUM_DIGITS = Math.floor(
-  INPUT_TEMP_CODE_LENGTH * (Math.log(32) / Math.log(10)),
+  INPUT_CODE_LENGTH * (Math.log(32) / Math.log(10)),
 );
 export const INPUT_TEMP_CODE_PERIOD = (() => {
   const inputTempCodePeriod = Number(

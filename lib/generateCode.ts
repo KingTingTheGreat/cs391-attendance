@@ -1,7 +1,7 @@
 import { createHash } from "crypto";
 import { formatDate } from "./util/format";
 import { Class } from "@/types";
-import { INPUT_TEMP_CODE_LENGTH } from "./env";
+import { INPUT_CODE_LENGTH } from "./env";
 
 export function todayCode(classType: Class) {
   const secret = process.env.SECRET as string;
@@ -9,6 +9,6 @@ export function todayCode(classType: Class) {
   return createHash("sha256")
     .update(formatDate(new Date()) + secret + classType)
     .digest("hex")
-    .slice(0, INPUT_TEMP_CODE_LENGTH)
+    .slice(0, INPUT_CODE_LENGTH)
     .toUpperCase();
 }
