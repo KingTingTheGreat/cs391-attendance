@@ -1,9 +1,12 @@
 import { TOTP } from "otpauth";
 import { getInputTempCodeKey, getScanTempCodeKey } from "./getTempCodeKey";
 import { Class } from "@/types";
-
-const INPUT_TEMP_CODE_LENGTH = 6;
-export const INPUT_TEMP_CODE_PERIOD = 15;
+import {
+  INPUT_TEMP_CODE_LENGTH,
+  INPUT_TEMP_CODE_PERIOD,
+  SCAN_TEMP_CODE_LENGTH,
+  SCAN_TEMP_CODE_PERIOD,
+} from "../env";
 
 export function createInputTotp(classType: Class, secret?: string) {
   return new TOTP({
@@ -12,9 +15,6 @@ export function createInputTotp(classType: Class, secret?: string) {
     period: INPUT_TEMP_CODE_PERIOD,
   });
 }
-
-const SCAN_TEMP_CODE_LENGTH = 12;
-export const SCAN_TEMP_CODE_PERIOD = 5;
 
 export function createScanTotp(classType: Class, secret?: string) {
   return new TOTP({
