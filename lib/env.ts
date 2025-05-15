@@ -34,7 +34,7 @@ export const SCAN_TEMP_CODE_LENGTH = (() => {
     process.env.NEXT_PUBLIC_SCAN_TEMP_CODE_LENGTH,
   );
   if (isNaN(scanTempCodeLength) || scanTempCodeLength < 0) {
-    return 20;
+    return 10;
   }
   return scanTempCodeLength;
 })();
