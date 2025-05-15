@@ -1,7 +1,6 @@
 import { Class } from "@/types";
 import { createInputTotp, createScanTotp } from "./createTotpObj";
-
-const WINDOW_SIZE = 1;
+import { WINDOW_SIZE } from "../env";
 
 export default function tempCodeToClass(
   code: string,

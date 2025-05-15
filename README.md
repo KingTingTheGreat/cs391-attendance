@@ -8,21 +8,31 @@ The following environment variables are required:
 - GOOGLE_CLIENT_ID
 - GOOGLE_CLIENT_SECRET
 - GOOGLE_REDIRECT_URI
+    - /callback path for your domain
 - MONGO_URI
+    - MongoDB connection string
 - SECRET
+    - Any string random characters, essentially a password
 - PRIVATE_KEY and PUBLIC_KEY 
-- ENVIRONMENT (dev or prod)
-- PUBLIC
-The following environment variables are recommended:
-- TTL 
-    - Lifetime of temporary codes in seconds
-    - Defaults to 10 seconds
-- GRACE_PERIOD
-    - Acceptable +/- in milliseconds to account for network delays and clock misalignment 
-    - Defaults to 0 milliseconds
-- NUM_CODES
-    - The number of temporary codes to create at a time, reducing DB calls
-    - Defaults to 3
+    - RSA private and public keys, respectively
+- ENVIRONMENT 
+    - e.g. dev, prod
+- WINDOW_SIZE
+    - Positive integer representing the allowable totp offset
+    - Defaults to 1
+The following public environment variables are recommended:
+- NEXT_PUBLIC_INPUT_CODE_LENGTH
+    - Positive integer representing the length of manual input codes
+    - Defaults to 6 digits
+- NEXT_PUBLIC_INPUT_TEMP_CODE_PERIOD
+    - Positive integer representing how long, in seconds, manual input temporary codes live
+    - Defaults to 15 seconds
+- NEXT_PUBLIC_SCAN_TEMP_CODE_LENGTH
+    - Positive integer representing the length of scannable codes
+    - Defaults to 16 digits
+- NEXT_PUBLIC_SCAN_TEMP_CODE_PERIOD
+    - Positive integer representing how long, in seconds, scannable temporary codes live
+    - Defaults to 5 seconds
 The following environment variables are optional and will only affect the dev environment:
 - MOCK
 - DEFAULT_ROLE
