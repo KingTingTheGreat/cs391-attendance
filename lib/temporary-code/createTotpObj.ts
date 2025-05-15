@@ -3,7 +3,8 @@ import { getInputTempCodeKey, getScanTempCodeKey } from "./getTempCodeKey";
 import { Class } from "@/types";
 
 const SCAN_TEMP_CODE_LENGTH = 12;
-const SCAN_TEMP_CODE_PERIOD = 5;
+export const SCAN_TEMP_CODE_PERIOD = 5;
+
 export function createScanTotp(classType: Class) {
   return new TOTP({
     secret: getScanTempCodeKey(classType),
@@ -11,8 +12,9 @@ export function createScanTotp(classType: Class) {
     period: SCAN_TEMP_CODE_PERIOD,
   });
 }
+
 const INPUT_TEMP_CODE_LENGTH = 6;
-const INPUT_TEMP_CODE_PERIOD = 5;
+export const INPUT_TEMP_CODE_PERIOD = 5;
 
 export function createInputTotp(classType: Class) {
   return new TOTP({
