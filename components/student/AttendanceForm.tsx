@@ -45,11 +45,26 @@ export default function AttendanceForm() {
         className="flex flex-col w-72"
       >
         <TextField
-          type="text"
+          type="number"
           value={code}
           placeholder="Today's Code"
           variant="outlined"
-          sx={{ margin: "0.1rem" }}
+          sx={{
+            margin: "0.1rem",
+            fontSize: "1.5rem",
+            textAlign: "center",
+            "& input": {
+              textAlign: "center",
+            },
+            "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
+              {
+                WebkitAppearance: "none",
+                margin: 0,
+              },
+            "& input[type=number]": {
+              MozAppearance: "textfield",
+            },
+          }}
           onChange={(e) => setCode(e.target.value)}
         />
         <Button
