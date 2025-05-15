@@ -1,8 +1,7 @@
 import { createHash } from "crypto";
 import { formatDate } from "./util/format";
 import { Class } from "@/types";
-
-export const CODE_LENGTH = 6;
+import { INPUT_TEMP_CODE_LENGTH } from "./env";
 
 export function todayCode(classType: Class) {
   const secret = process.env.SECRET as string;
@@ -10,7 +9,7 @@ export function todayCode(classType: Class) {
   return createHash("sha256")
     .update(formatDate(new Date()) + secret + classType)
     .digest("hex")
-    .slice(0, CODE_LENGTH)
+    .slice(0, INPUT_TEMP_CODE_LENGTH)
     .toUpperCase();
 }
 
@@ -21,6 +20,6 @@ export function newTemporaryCode(classType: Class, i?: number) {
   return createHash("sha256")
     .update(Date.now() + secret + classType + i || "")
     .digest("hex")
-    .slice(0, CODE_LENGTH)
+    .slice(0, INPUT_TEMP_CODE_LENGTH)
     .toUpperCase();
 }

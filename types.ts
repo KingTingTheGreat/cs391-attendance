@@ -69,3 +69,5 @@ export type TemporaryCode = {
   start: number;
   end: number;
 };
+
+export type TempCodeKeys = { [classType: string]: string };

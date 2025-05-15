@@ -8,7 +8,6 @@ if (!MONGO_URI) {
 
 const DB_NAME = "cs391-attendance-" + ENV || "dev";
 export const USERS_COLLECTION = "users-collection";
-export const CODES_COLLECTION = "codes-collection";
 
 let client: MongoClient | null = null;
 let db: Db | null = null;
