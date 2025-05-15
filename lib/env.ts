@@ -18,6 +18,9 @@ export const INPUT_TEMP_CODE_LENGTH = (() => {
   }
   return inputTempCodeLength;
 })();
+export const INPUT_TEMP_CODE_NUM_DIGITS = Math.floor(
+  INPUT_TEMP_CODE_LENGTH * (Math.log(32) / Math.log(10)),
+);
 export const INPUT_TEMP_CODE_PERIOD = (() => {
   const inputTempCodePeriod = Number(
     process.env.NEXT_PUBLIC_INPUT_TEMP_CODE_PERIOD,
