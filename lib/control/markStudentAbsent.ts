@@ -4,9 +4,8 @@ import { cookies } from "next/headers";
 import getCollection, { USERS_COLLECTION } from "@/db";
 import { formatDate } from "../util/format";
 import { ENV, MOCK } from "../env";
-import { userFromAuthCookie } from "../cookies/userFromAuthCookie";
 import documentToUserProps from "../util/documentToUserProps";
-import { setUserInCache } from "../cache/redis";
+import { dbDataFromAuthCookie } from "../cookies/dbDataFromAuthCookie";
 
 const allowedRoles = [Role.staff, Role.admin];
 
@@ -20,9 +19,9 @@ export async function markStudentAbsent(
   }
 
   const cookieStore = await cookies();
-  const user = await userFromAuthCookie(cookieStore);
+  const dbData = await dbDataFromAuthCookie(cookieStore);
 
-  if (!user || !allowedRoles.includes(user.role)) {
+  if (!dbData || !allowedRoles.includes(dbData.user.role)) {
     return { message: "unauthorized. please sign in again." };
   }
 
@@ -64,7 +63,6 @@ export async function markStudentAbsent(
   }
 
   const updatedUser = documentToUserProps(data);
-  await setUserInCache(updatedUser);
 
   return {
     user: updatedUser,

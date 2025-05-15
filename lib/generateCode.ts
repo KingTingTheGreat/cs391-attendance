@@ -14,12 +14,12 @@ export function todayCode(classType: Class) {
     .toUpperCase();
 }
 
-export function newTemporaryCode(classType: Class) {
+export function newTemporaryCode(classType: Class, i?: number) {
   const secret = process.env.SECRET as string;
   if (!secret)
     throw new Error("newTemporaryCode() must be called on the server");
   return createHash("sha256")
-    .update(new Date() + secret + classType)
+    .update(Date.now() + secret + classType + i || "")
     .digest("hex")
     .slice(0, CODE_LENGTH)
     .toUpperCase();

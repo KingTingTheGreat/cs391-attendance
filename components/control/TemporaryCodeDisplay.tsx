@@ -4,37 +4,83 @@ import { Button } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import CodeDisplay from "../CodeDisplay";
 import { useEffect, useState } from "react";
-import { generateTempCode } from "@/lib/control/generateTempCode";
+import { generateTempCodes } from "@/lib/control/generateTempCodes";
 import { formatSeconds } from "@/lib/util/format";
-import { Class } from "@/types";
+import { Class, TemporaryCode } from "@/types";
 import QRCodeDisplay from "../QRCodeDisplay";
+import { INTERVAL_LENGTH, TTL } from "@/lib/env";
 
-// timeout in seconds
-const expSeconds = 10;
+// when these number of seconds are left, display as red
+const finalTimes = [...Array(3 + 1).keys()].map((s) => formatSeconds(s));
+
+function calcTimeLeft(expiryTime: number) {
+  const diff = expiryTime - Date.now();
+  return diff < INTERVAL_LENGTH ? 0 : Math.round(diff / 1000);
+}
 
 export default function TemporaryCodeDisplay({
   prevSize,
 }: {
   prevSize?: number;
 }) {
-  const [tempCode, setTempCode] = useState<string | null>(null);
-  const [timeLeft, setTimeLeft] = useState<number | null>(null);
+  const [tempCodes, setTempCodes] = useState<TemporaryCode[] | null>(null);
+  const [timeLeft, setTimeLeft] = useState<string | null>(null);
   const [isActive, setIsActive] = useState(false);
   const [classType, setClassType] = useState<Class | null>(null);
 
   const handleStart = () => {
     if (classType === null) return;
-    console.log("handle start");
-    generateTempCode(expSeconds, classType).then((res) => {
-      if (!res) return;
-      setTempCode(res);
-      setIsActive(true);
-      setTimeLeft(expSeconds);
-    });
+
+    console.log("GENERATIGN NEW CODES");
+    generateTempCodes(
+      TTL,
+      classType,
+      tempCodes && tempCodes.length > 0
+        ? tempCodes[tempCodes.length - 1].end
+        : undefined,
+    )
+      .then((res) => {
+        if (!res) {
+          throw new Error("failed to get new codes");
+        }
+
+        let newTempCodes = [];
+        if (!tempCodes || tempCodes.length === 0) {
+          newTempCodes = res;
+        } else {
+          const timeLeft = calcTimeLeft(tempCodes[0].end);
+          if (timeLeft === 0) {
+            newTempCodes = [...tempCodes.slice(1), ...res];
+          } else {
+            newTempCodes = res;
+          }
+        }
+
+        setTempCodes(newTempCodes);
+        setIsActive(true);
+        setTimeLeft(formatSeconds(calcTimeLeft(newTempCodes[0].end)));
+      })
+      .catch(() => {
+        // try again in 1 second
+        setTimeout(() => {
+          handleStart();
+        }, 1000);
+
+        if (!tempCodes) {
+          return;
+        }
+
+        // next in queue if necessary
+        const newTimeLeft = calcTimeLeft(tempCodes[0].end);
+        if (newTimeLeft === 0) {
+          setTempCodes(tempCodes.slice(1));
+          setTimeLeft(formatSeconds(newTimeLeft));
+        }
+      });
   };
 
   const handleStop = () => {
-    setTempCode(null);
+    setTempCodes(null);
     setIsActive(false);
     setTimeLeft(null);
   };
@@ -42,17 +88,43 @@ export default function TemporaryCodeDisplay({
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
 
-    if (isActive && timeLeft !== null && timeLeft > 0) {
-      interval = setInterval(() => {
-        setTimeLeft((prevTime) => (prevTime !== null ? prevTime - 1 : null));
-      }, 1000);
-    } else if (timeLeft === 0) {
-      if (isActive) {
-        handleStart();
-      } else {
-        handleStop();
-      }
+    // if (isActive && timeLeft !== null && timeLeft > 0) {
+    //   interval = setInterval(() => {
+    //     setTimeLeft((prevTime) => (prevTime !== null ? prevTime - 1 : null));
+    //   }, 1000);
+    // } else if (timeLeft === 0) {
+    //   if (isActive) {
+    //     handleStart();
+    //   } else {
+    //     handleStop();
+    //   }
+    // }
+
+    if (
+      timeLeft === null ||
+      timeLeft === formatSeconds(0) ||
+      !tempCodes ||
+      tempCodes.length === 0
+    ) {
+      return isActive ? handleStart() : handleStop();
     }
+
+    interval = setInterval(() => {
+      const newTimeLeft = formatSeconds(calcTimeLeft(tempCodes[0].end));
+      if (newTimeLeft !== "0:00") {
+        setTimeLeft(newTimeLeft);
+        return;
+      }
+
+      const newTempCodes = tempCodes.slice(1);
+      // if there is only one code left, get more
+      if (newTempCodes.length <= 1) {
+        handleStart();
+      }
+
+      setTempCodes(newTempCodes);
+      setTimeLeft(formatSeconds(calcTimeLeft(newTempCodes[0].end)));
+    }, INTERVAL_LENGTH);
 
     return () => {
       if (interval) clearInterval(interval);
@@ -91,9 +163,9 @@ export default function TemporaryCodeDisplay({
                 </ToggleButton>
               ))}
             </ToggleButtonGroup>
-            {tempCode ? (
+            {tempCodes && tempCodes.length > 0 ? (
               <>
-                <CodeDisplay code={tempCode} show={true} />
+                <CodeDisplay code={tempCodes[0].code} show={true} />
                 <p className="text-center text-gray-600">
                   Use this code to confirm your attendance
                 </p>
@@ -104,10 +176,12 @@ export default function TemporaryCodeDisplay({
                         Time Left:{" "}
                         <span
                           className={
-                            timeLeft <= 3 ? "text-[#F00]" : "text-inherit"
+                            finalTimes.includes(timeLeft)
+                              ? "text-[#F00]"
+                              : "text-inherit"
                           }
                         >
-                          {formatSeconds(timeLeft)}
+                          {timeLeft}
                         </span>
                       </p>
                     </div>
@@ -134,7 +208,10 @@ export default function TemporaryCodeDisplay({
           </div>
         </div>
       </div>
-      <QRCodeDisplay prevSize={prevSize} code={tempCode ?? undefined} />
+      <QRCodeDisplay
+        prevSize={prevSize}
+        code={tempCodes && tempCodes.length > 0 ? tempCodes[0].code : undefined}
+      />
     </>
   );
 }

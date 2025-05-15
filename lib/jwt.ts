@@ -1,30 +1,9 @@
-import { UserProps } from "@/types";
 import { createHmac } from "crypto";
-
-function base64UrlEncode(input: string): string {
-  return Buffer.from(input)
-    .toString("base64")
-    .replace(/=/g, "")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_");
-}
-
-function base64UrlDecode(input: string): string {
-  input = input.replace(/-/g, "+").replace(/_/g, "/");
-  while (input.length % 4) {
-    input += "=";
-  }
-  return Buffer.from(input, "base64").toString();
-}
+import { base64UrlDecode, base64UrlEncode } from "./b64";
 
 export type AuthClaims = {
   name: string;
   email: string;
-  expiration?: Date;
-};
-
-export type CacheClaims = {
-  user: UserProps;
   expiration?: Date;
 };
 
@@ -46,7 +25,7 @@ function jwtSignature(data: string): string {
     .replace(/\//g, "_");
 }
 
-export function createJwt(claims: AuthClaims | CacheClaims): string {
+export function createJwt(claims: AuthClaims): string {
   if (claims.expiration === undefined) {
     claims.expiration = new Date();
     claims.expiration.setDate(claims.expiration.getDate() + 4); // expiration in days
@@ -61,7 +40,7 @@ export function createJwt(claims: AuthClaims | CacheClaims): string {
 
 export type VerifyJwtRes = {
   verified: boolean;
-  claims?: AuthClaims | CacheClaims;
+  claims?: AuthClaims;
 };
 
 export function verifyJwt(jwt: string): VerifyJwtRes {
@@ -80,6 +59,11 @@ export function verifyJwt(jwt: string): VerifyJwtRes {
 
   try {
     const claims = JSON.parse(base64UrlDecode(payload));
+
+    if (!claims.expiration || claims.expiration < Date.now()) {
+      return { verified: false };
+    }
+
     return { verified: true, claims };
   } catch {
     console.log("invalid json in jwt");
