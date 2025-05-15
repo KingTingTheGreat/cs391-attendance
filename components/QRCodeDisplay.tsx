@@ -56,7 +56,7 @@ export default function QRCodeDisplay({
         }}
       />
       <div className="flex justify-center p-2 m-2 pb-32">
-        <QRCode value={createDomain(domain, code)} size={size} />
+        <QRCode value={createDomain(domain, code)} size={size} level="M" />
       </div>
     </div>
   );
