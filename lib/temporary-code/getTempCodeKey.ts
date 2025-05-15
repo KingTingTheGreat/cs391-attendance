@@ -3,7 +3,7 @@ import { formatDate } from "../util/format";
 import { Class } from "@/types";
 import { base32Encode } from "../b32";
 
-export const INPUT_KEY_CONSTANT = "input-temporary-code-key";
+const INPUT_KEY_CONSTANT = "input-temporary-code-key";
 
 export function getInputTempCodeKey(classType: Class) {
   const secret = process.env.SECRET as string;
@@ -17,7 +17,7 @@ export function getInputTempCodeKey(classType: Class) {
   );
 }
 
-export const SCAN_KEY_CONSTANT = "scan-temporary-code-key";
+const SCAN_KEY_CONSTANT = "scan-temporary-code-key";
 
 export function getScanTempCodeKey(classType: Class) {
   const secret = process.env.SECRET as string;
