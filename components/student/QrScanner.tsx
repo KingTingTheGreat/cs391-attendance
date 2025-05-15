@@ -33,6 +33,11 @@ export default function QrScanner({
             setActive(true);
             try {
               scannerRef.current = new Html5Qrcode(qrCodeRegionId);
+              scannerRef.current.applyVideoConstraints({
+                focusMode: "continuous",
+                // @ts-expect-error idk but docs say this may be okay
+                advanced: [{ zoom: 2.0 }],
+              });
 
               scannerRef.current.start(
                 { facingMode: "environment" },
