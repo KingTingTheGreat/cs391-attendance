@@ -7,7 +7,7 @@ import { todayCode } from "../generateCode";
 import { ENV, MOCK } from "../env";
 import { addToAttendanceList } from "../util/addToAttendanceList";
 import { jwtDataFromAuthCookie } from "../cookies/jwtDataFromAuthCookie";
-import codeToClass from "../codeToClass";
+import tempCodeToClass from "../temporary-code/tempCodeToClass";
 
 export default async function markAsPresent(
   code: string,
@@ -48,7 +48,7 @@ export default async function markAsPresent(
   }
   if (newAtt === null) {
     // check for temporary code
-    const classType = await codeToClass(code);
+    const classType = tempCodeToClass(code);
     if (!classType) {
       console.log(claims.name, "tried with incorrect code");
       return {
