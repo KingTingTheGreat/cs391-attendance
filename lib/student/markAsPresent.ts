@@ -65,8 +65,6 @@ export default async function markAsPresent(
     };
   }
 
-  return { newAtt };
-
   console.log(
     `starting transaction to mark ${claims.name} as present in ${newAtt.class} on ${formatToday}`,
   );
