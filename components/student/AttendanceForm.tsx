@@ -45,7 +45,7 @@ export default function AttendanceForm() {
         className="flex flex-col w-72"
       >
         <TextField
-          type="number"
+          type="text"
           value={code}
           placeholder="Today's Code"
           variant="outlined"
