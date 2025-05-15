@@ -38,7 +38,7 @@ export function createJwt(claims: AuthClaims): string {
   return `${header}.${payload}.${signature}`;
 }
 
-export type VerifyJwtRes = {
+type VerifyJwtRes = {
   verified: boolean;
   claims?: AuthClaims;
 };

@@ -58,11 +58,4 @@ export type PresentResult =
   | { newAtt: AttendanceProps; errorMessage?: null }
   | { errorMessage: string };
 
-export type TemporaryCode = {
-  code: string;
-  classType: Class;
-  start: number;
-  end: number;
-};
-
 export type TempCodeKeys = { [classType: string]: string };
