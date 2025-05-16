@@ -39,16 +39,10 @@ function headerWidth(h: string) {
   }
 }
 
-export default function AttendanceSheet({
-  prevClassType,
-  prevSortModel,
-}: {
-  prevClassType?: Class;
-  prevSortModel?: GridSortModel;
-}) {
+export default function AttendanceSheet() {
   const { attList } = useUsersContext();
-  const [classType, setClassType] = useState(prevClassType || Class.lecture);
-  const [sortModel, setSortModel] = useState(prevSortModel || defaultSortModel);
+  const [classType, setClassType] = useState(Class.lecture);
+  const [sortModel, setSortModel] = useState<GridSortModel>(defaultSortModel);
   const attendanceList = attList[classType];
 
   const columns: GridColDef[] = attendanceList[0].map((col, i) => ({
