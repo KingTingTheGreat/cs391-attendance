@@ -9,7 +9,7 @@ import { generateTodayCode } from "@/lib/control/generateTodayCode";
 
 const staleTime = 20 * 60 * 1000;
 
-export default function TodayCodeDisplay({ prevSize }: { prevSize: number }) {
+export default function TodayCodeDisplay() {
   const [classType, setClassType] = useState<Class | null>(null);
   const queryClient = useQueryClient();
   const query = useQuery({
@@ -61,7 +61,7 @@ export default function TodayCodeDisplay({ prevSize }: { prevSize: number }) {
           Use this code to confirm your attendance
         </p>
       </div>
-      <QRCodeDisplay prevSize={prevSize} />
+      <QRCodeDisplay />
     </div>
   );
 }

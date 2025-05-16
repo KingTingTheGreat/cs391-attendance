@@ -1,7 +1,6 @@
 import TodayCodeDisplay from "@/components/control/TodayCodeDisplay";
 import Header from "@/components/Header";
 import QueryWrapper from "@/components/QueryWrapper";
-import { PREV_QRCODE_SIZE_COOKIE } from "@/lib/cookies/cookies";
 import { dbDataFromAuthCookie } from "@/lib/cookies/dbDataFromAuthCookie";
 import { Role } from "@/types";
 import { cookies } from "next/headers";
@@ -18,8 +17,6 @@ export default async function CodePage() {
     return redirect("/");
   }
 
-  const prevSize = Number(cookieStore.get(PREV_QRCODE_SIZE_COOKIE)?.value);
-
   console.log("code viewed by", dbData.user.name, dbData.user.email);
 
   return (
@@ -27,7 +24,7 @@ export default async function CodePage() {
       <Header role={dbData.user.role} />
       <div className="flex justify-center">
         <QueryWrapper>
-          <TodayCodeDisplay prevSize={prevSize} />
+          <TodayCodeDisplay />
         </QueryWrapper>
       </div>
     </>

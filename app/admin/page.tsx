@@ -1,13 +1,8 @@
 import AdminPanel from "@/components/control/AdminPanel";
 import Header from "@/components/Header";
-import {
-  PREV_ATTENDANCE_SORT_COOKIE,
-  PREV_CLASS_TYPE_COOKIE,
-} from "@/lib/cookies/cookies";
 import { dbDataFromAuthCookie } from "@/lib/cookies/dbDataFromAuthCookie";
-import { Class, Role } from "@/types";
+import { Role } from "@/types";
 import { CircularProgress } from "@mui/material";
-import { GridSortModel } from "@mui/x-data-grid";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
@@ -21,14 +16,6 @@ export default async function AdminPage() {
   if (!dbData || !allowedRoles.includes(dbData.user.role)) {
     return redirect("/");
   }
-
-  const prevClassType = cookieStore.get(PREV_CLASS_TYPE_COOKIE)?.value as Class;
-  const prevSortModel = JSON.parse(
-    cookieStore.get(PREV_ATTENDANCE_SORT_COOKIE)?.value || "[]",
-  ) as GridSortModel;
-
-  console.log("prevClassType", prevClassType);
-  console.log("prevSortModel", prevSortModel);
 
   console.log("admin panel viewed by", dbData.user.name, dbData.user.email);
 

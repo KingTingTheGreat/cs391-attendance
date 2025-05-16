@@ -3,7 +3,7 @@ import { PREV_QRCODE_SIZE_COOKIE } from "@/lib/cookies/cookies";
 import Cookie from "js-cookie";
 import { Slider } from "@mui/material";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import QRCode from "react-qr-code";
 
 const defaultSize = 256;
@@ -16,17 +16,15 @@ function createDomain(domain: string, code?: string) {
   return domain;
 }
 
-export default function QRCodeDisplay({
-  prevSize,
-  code,
-}: {
-  prevSize?: number;
-  code?: string;
-}) {
+export default function QRCodeDisplay({ code }: { code?: string }) {
   const [domain, setDomain] = useState(defaultDomain);
-  const [size, setSize] = useState(
-    isNaN(prevSize || NaN) ? defaultSize : (prevSize as number),
-  );
+  const [size, setSize] = useState(defaultSize);
+
+  useLayoutEffect(() => {
+    const data = Number(Cookie.get(PREV_QRCODE_SIZE_COOKIE));
+    if (isNaN(data) || data < 0) return;
+    setSize(data);
+  }, []);
 
   useEffect(() => {
     const currentDomain = window.location.origin;
@@ -49,10 +47,7 @@ export default function QRCodeDisplay({
         max={1024}
         onChange={(_, val) => {
           setSize(val as number);
-          Cookie.set(PREV_QRCODE_SIZE_COOKIE, val.toString(), {
-            maxAge: 100 * 365 * 24 * 60 * 60 * 1000,
-            path: "/",
-          });
+          Cookie.set(PREV_QRCODE_SIZE_COOKIE, val.toString());
         }}
       />
       <div className="flex justify-center p-2 m-2 pb-32">

@@ -1,6 +1,5 @@
 import TemporaryCodeDisplay from "@/components/control/TemporaryCodeDisplay";
 import Header from "@/components/Header";
-import { PREV_QRCODE_SIZE_COOKIE } from "@/lib/cookies/cookies";
 import { dbDataFromAuthCookie } from "@/lib/cookies/dbDataFromAuthCookie";
 import {
   getInputTempCodeKey,
@@ -20,8 +19,6 @@ export default async function TempCodePage() {
     return redirect("/");
   }
 
-  const prevSize = Number(cookieStore.get(PREV_QRCODE_SIZE_COOKIE)?.value);
-
   const scanTempCodeKeys: TempCodeKeys = {};
   const inputTempCodeKeys: TempCodeKeys = {};
   Object.keys(Class).map((classType) => {
@@ -36,7 +33,6 @@ export default async function TempCodePage() {
       <Header role={dbData.user.role} />
       <div className="flex flex-col items-center">
         <TemporaryCodeDisplay
-          prevSize={prevSize}
           scanTempCodeKeys={scanTempCodeKeys}
           inputTempCodeKeys={inputTempCodeKeys}
         />
