@@ -2,6 +2,8 @@ import { Html5Qrcode, Html5QrcodeScannerState } from "html5-qrcode";
 import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
 import { Button, Slider } from "@mui/material";
 import { useRef, useState } from "react";
+import Cookie from "js-cookie";
+import { PREV_ZOOM_COOKIE } from "@/lib/cookies/cookies";
 
 const config = { fps: 10, qrbox: 250 };
 const qrCodeRegionId = "qr-reader";
@@ -12,6 +14,7 @@ export default function QrScanner({
   onScan: (decodedText: string) => void;
 }) {
   const [active, setActive] = useState(false);
+  const [zoom, setZoom] = useState(1);
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const [zoomCapabilities, setZoomCapabilities] = useState<{
     max: number;
@@ -35,20 +38,22 @@ export default function QrScanner({
               valueLabelDisplay="off"
               min={zoomCapabilities.min}
               max={zoomCapabilities.max}
-              defaultValue={1}
+              value={zoom}
               sx={{ width: "250px" }}
               step={0.1}
-              onChange={(_, zoom) => {
+              onChange={(_, newZoom) => {
                 if (
                   scannerRef.current &&
                   scannerRef.current.getState() ===
                     Html5QrcodeScannerState.SCANNING
                 ) {
+                  setZoom(newZoom as number);
                   scannerRef.current.applyVideoConstraints({
                     focusMode: "continuous",
                     // @ts-expect-error zoom is valid prop
-                    advanced: [{ zoom }],
+                    advanced: [{ zoom: newZoom }],
                   });
+                  Cookie.set(PREV_ZOOM_COOKIE, newZoom.toString());
                 }
               }}
             />
@@ -95,11 +100,20 @@ export default function QrScanner({
                   const capabilities =
                     scannerRef.current.getRunningTrackCapabilities();
                   if (Object.hasOwn(capabilities, "zoom")) {
-                    const newZoom = {
-                      // @ts-expect-error zoom has been confirmed to exist
-                      ...capabilities.zoom,
-                    };
-                    setZoomCapabilities(newZoom);
+                    // @ts-expect-error zoom has been confirmed to exist
+                    setZoomCapabilities({ ...capabilities.zoom });
+
+                    // use saved zoom from previous usages
+                    const prevZoom = Number(Cookie.get(PREV_ZOOM_COOKIE));
+                    if (!isNaN(prevZoom) && prevZoom > 0) {
+                      console.log("prevZoom", prevZoom);
+                      setZoom(prevZoom);
+                      scannerRef.current.applyVideoConstraints({
+                        focusMode: "continuous",
+                        // @ts-expect-error zoom is valid prop
+                        advanced: [{ zoom: prevZoom }],
+                      });
+                    }
                   }
                 })
                 .catch((e) => {
