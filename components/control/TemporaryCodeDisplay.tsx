@@ -18,11 +18,9 @@ import { digitsToBase32Code } from "@/lib/b32";
 export default function TemporaryCodeDisplay({
   scanTempCodeKeys,
   inputTempCodeKeys,
-  prevSize,
 }: {
   scanTempCodeKeys: TempCodeKeys;
   inputTempCodeKeys: TempCodeKeys;
-  prevSize?: number;
 }) {
   const inputTotpRef = useRef<TOTP | null>(null);
   const [inputTempCode, setInputTempCode] = useState<string | null>();
@@ -202,7 +200,7 @@ export default function TemporaryCodeDisplay({
           </div>
         </div>
       </div>
-      <QRCodeDisplay prevSize={prevSize} code={scanTempCode ?? undefined} />
+      <QRCodeDisplay code={scanTempCode ?? undefined} />
     </>
   );
 }
