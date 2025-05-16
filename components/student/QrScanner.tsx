@@ -34,29 +34,31 @@ export default function QrScanner({
       {active ? (
         <>
           {zoomCapabilities && (
-            <Slider
-              valueLabelDisplay="off"
-              min={zoomCapabilities.min}
-              max={zoomCapabilities.max}
-              value={zoom}
-              sx={{ width: "250px" }}
-              step={0.1}
-              onChange={(_, newZoom) => {
-                if (
-                  scannerRef.current &&
-                  scannerRef.current.getState() ===
-                    Html5QrcodeScannerState.SCANNING
-                ) {
-                  setZoom(newZoom as number);
-                  scannerRef.current.applyVideoConstraints({
-                    focusMode: "continuous",
-                    // @ts-expect-error zoom is valid prop
-                    advanced: [{ zoom: newZoom }],
-                  });
-                  Cookie.set(PREV_ZOOM_COOKIE, newZoom.toString());
-                }
-              }}
-            />
+            <>
+              <p className="text-sm pt-2">{zoom}x</p>
+              <Slider
+                min={zoomCapabilities.min}
+                max={zoomCapabilities.max}
+                value={zoom}
+                sx={{ width: "250px" }}
+                step={0.1}
+                onChange={(_, newZoom) => {
+                  if (
+                    scannerRef.current &&
+                    scannerRef.current.getState() ===
+                      Html5QrcodeScannerState.SCANNING
+                  ) {
+                    setZoom(newZoom as number);
+                    scannerRef.current.applyVideoConstraints({
+                      focusMode: "continuous",
+                      // @ts-expect-error zoom is valid prop
+                      advanced: [{ zoom: newZoom }],
+                    });
+                    Cookie.set(PREV_ZOOM_COOKIE, newZoom.toString());
+                  }
+                }}
+              />
+            </>
           )}
           <Button
             onClick={() => {
