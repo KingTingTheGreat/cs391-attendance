@@ -44,6 +44,7 @@ export default async function markAsPresent(
         newAtt = {
           class: classType as Class,
           date: today,
+          performedBy: claims.email,
         };
         break;
       }
@@ -62,6 +63,7 @@ export default async function markAsPresent(
     newAtt = {
       class: classType as Class,
       date: today,
+      performedBy: claims.email,
     };
   }
 
