@@ -46,6 +46,8 @@ export async function markStudentPresent(
     addToAttendanceList(attendanceList, {
       class: classType,
       date,
+      performedBy: dbData.user.email,
+      permittedBy: dbData.user.email,
     });
 
     // const usersCollection = await getCollection(USERS_COLLECTION);
