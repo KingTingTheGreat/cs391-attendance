@@ -28,7 +28,7 @@ export async function markStudentAbsent(
   // no way to get user data when MOCK, will show as error in the frontend
   if (ENV === "dev" && MOCK) {
     return {
-      message: `successfully marked ${email} as absent on ${formatDate(date)}`,
+      message: `successfully marked ${email} as absent in ${classType} on ${formatDate(date)}`,
     };
   }
 

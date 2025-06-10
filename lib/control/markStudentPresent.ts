@@ -74,7 +74,7 @@ export async function markStudentPresent(
 
     return {
       user: updatedUser,
-      message: `successfully marked ${email} as present on ${formatDate(date)}`,
+      message: `successfully marked ${email} as present in ${classType} on ${formatDate(date)}`,
     };
   } catch (error) {
     await session.abortTransaction();

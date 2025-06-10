@@ -7,10 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { formatSeconds } from "@/lib/util/format";
 import { Class, TempCodeKeys } from "@/types";
 import QRCodeDisplay from "../QRCodeDisplay";
-import {
-  createInputTotp,
-  createScanTotp,
-} from "@/lib/temporary-code/createTotpObj";
+import { createInputTotp, createScanTotp } from "@/lib/code/createTotpObj";
 import { TOTP } from "otpauth";
 import { INPUT_TEMP_CODE_PERIOD, SCAN_TEMP_CODE_PERIOD } from "@/lib/env";
 import { digitsToBase32Code } from "@/lib/b32";

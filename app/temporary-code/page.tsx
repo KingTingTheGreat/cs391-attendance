@@ -4,7 +4,7 @@ import { dbDataFromAuthCookie } from "@/lib/cookies/dbDataFromAuthCookie";
 import {
   getInputTempCodeKey,
   getScanTempCodeKey,
-} from "@/lib/temporary-code/getTempCodeKey";
+} from "@/lib/code/getTempCodeKey";
 import { Class, Role, TempCodeKeys } from "@/types";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -22,8 +22,14 @@ export default async function TempCodePage() {
   const scanTempCodeKeys: TempCodeKeys = {};
   const inputTempCodeKeys: TempCodeKeys = {};
   Object.keys(Class).map((classType) => {
-    scanTempCodeKeys[classType] = getScanTempCodeKey(classType as Class);
-    inputTempCodeKeys[classType] = getInputTempCodeKey(classType as Class);
+    scanTempCodeKeys[classType] = getScanTempCodeKey(
+      classType as Class,
+      dbData.user.email,
+    );
+    inputTempCodeKeys[classType] = getInputTempCodeKey(
+      classType as Class,
+      dbData.user.email,
+    );
   });
 
   console.log("temporary code viewed by", dbData.user.name, dbData.user.email);
