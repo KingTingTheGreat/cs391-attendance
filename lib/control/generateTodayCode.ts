@@ -2,8 +2,8 @@
 import { Class, Role } from "@/types";
 import { cookies } from "next/headers";
 import { ENV, MOCK } from "../env";
-import { todayCode } from "../generateCode";
 import { dbDataFromAuthCookie } from "../cookies/dbDataFromAuthCookie";
+import { todayCode } from "../generateCode";
 
 const allowedRoles = [Role.staff, Role.admin];
 
@@ -21,7 +21,7 @@ export async function generateTodayCode(
     return "mockcode";
   }
 
-  const code = todayCode(classType);
+  const code = todayCode(classType, dbData.user.email);
 
   return code;
 }

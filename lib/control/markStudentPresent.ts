@@ -46,6 +46,8 @@ export async function markStudentPresent(
     addToAttendanceList(attendanceList, {
       class: classType,
       date,
+      performedBy: dbData.user.email,
+      permittedBy: dbData.user.email,
     });
 
     // const usersCollection = await getCollection(USERS_COLLECTION);
@@ -72,7 +74,7 @@ export async function markStudentPresent(
 
     return {
       user: updatedUser,
-      message: `successfully marked ${email} as present on ${formatDate(date)}`,
+      message: `successfully marked ${email} as present in ${classType} on ${formatDate(date)}`,
     };
   } catch (error) {
     await session.abortTransaction();

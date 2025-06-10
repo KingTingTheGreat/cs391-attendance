@@ -17,6 +17,8 @@ export enum AttendanceStatus {
 export type AttendanceProps = {
   class: Class;
   date: Date;
+  performedBy?: string;
+  permittedBy?: string;
 };
 
 export type UserProps = {

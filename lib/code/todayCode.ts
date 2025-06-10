@@ -1,7 +1,7 @@
 import { createHash } from "crypto";
+import { formatDate } from "../util/format";
 import { Class } from "@/types";
-import { formatDate } from "./util/format";
-import { INPUT_CODE_LENGTH } from "./env";
+import { INPUT_CODE_LENGTH } from "../env";
 
 export function todayCode(classType: Class, email: string) {
   const secret = process.env.SECRET as string;

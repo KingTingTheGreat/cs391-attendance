@@ -1,13 +1,14 @@
 "use server";
 import { cookies } from "next/headers";
 import { startCollectionSession, USERS_COLLECTION } from "@/db";
-import { AttendanceProps, Class, PresentResult } from "@/types";
+import { AttendanceProps, Class, PresentResult, Role } from "@/types";
 import { formatDate, formatDay } from "../util/format";
-import { todayCode } from "../generateCode";
 import { ENV, MOCK } from "../env";
 import { addToAttendanceList } from "../util/addToAttendanceList";
 import { jwtDataFromAuthCookie } from "../cookies/jwtDataFromAuthCookie";
-import tempCodeToClass from "../temporary-code/tempCodeToClass";
+import tempCodeToClass from "../code/tempCodeToClass";
+import todayCodeToClass from "../code/todayCodeToClass";
+import getUsersByRole from "../util/getUsersByRole";
 
 export default async function markAsPresent(
   code: string,
@@ -37,22 +38,25 @@ export default async function markAsPresent(
     return { newAtt: { class: Class.lecture, date: today } };
   }
 
+  const emails = (await getUsersByRole([Role.staff, Role.admin])).map(
+    (user) => user.email,
+  );
+
   let newAtt: AttendanceProps | null = null;
   if (!onlyScan) {
-    for (const classType in Class) {
-      if (code.toUpperCase() === todayCode(classType as Class)) {
-        newAtt = {
-          class: classType as Class,
-          date: today,
-        };
-        break;
-      }
+    const data = todayCodeToClass(code, emails);
+    if (data) {
+      newAtt = {
+        class: data.classType,
+        date: today,
+        performedBy: claims.email,
+        permittedBy: data.email,
+      };
     }
   }
   if (newAtt === null) {
-    // check for temporary code
-    const classType = tempCodeToClass(code, onlyScan);
-    if (!classType) {
+    const data = tempCodeToClass(code, emails, onlyScan);
+    if (!data) {
       console.log(claims.name, "tried with incorrect code");
       return {
         errorMessage: "incorrect code",
@@ -60,8 +64,10 @@ export default async function markAsPresent(
     }
 
     newAtt = {
-      class: classType as Class,
+      class: data.classType,
       date: today,
+      performedBy: claims.email,
+      permittedBy: data.email,
     };
   }
 
