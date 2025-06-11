@@ -107,11 +107,14 @@ export default function AttendanceSheet() {
             if (headers.includes(cell.colDef.headerName as string)) {
               return "bg-inherit";
             }
-            return cell.value.includes(":")
-              ? "bg-green-200"
-              : cell.value === AttendanceStatus.absent
-                ? "bg-red-200"
-                : "bg-inherit";
+            return (
+              "cursor-pointer " +
+              (cell.value.includes(":")
+                ? "bg-green-200"
+                : cell.value === AttendanceStatus.absent
+                  ? "bg-red-200"
+                  : "bg-inherit")
+            );
           }}
           onCellClick={(cell) => {
             if (headers.includes(cell.colDef.headerName as string)) {
