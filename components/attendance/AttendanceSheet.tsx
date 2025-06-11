@@ -120,7 +120,9 @@ export default function AttendanceSheet() {
             const att = users
               .find((u) => u.email === cell.id.toString())
               ?.attendanceList.find(
-                (att) => formatDate(att.date) === cell.colDef.headerName,
+                (att) =>
+                  formatDate(att.date) === cell.colDef.headerName &&
+                  att.class === classType,
               );
             setSelCell({
               name: cell.row[0],
