@@ -105,7 +105,7 @@ export default function AttendanceSheet() {
           getRowId={(row) => row[1]}
           getCellClassName={(cell) => {
             if (headers.includes(cell.colDef.headerName as string)) {
-              return "bg-inherit";
+              return "cursor-default bg-inherit";
             }
             return (
               "cursor-pointer " +
