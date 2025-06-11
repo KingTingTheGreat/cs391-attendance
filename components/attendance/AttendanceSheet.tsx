@@ -50,8 +50,8 @@ export default function AttendanceSheet() {
     date: string;
     time: string;
     status: AttendanceStatus;
-    performedBy: string | undefined;
-    permittedBy: string | undefined;
+    performedBy?: string;
+    permittedBy?: string;
   } | null>(null);
   const attendanceList = attList[classType];
 
