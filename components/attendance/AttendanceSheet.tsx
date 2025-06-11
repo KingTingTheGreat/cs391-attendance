@@ -12,12 +12,13 @@ import Paper from "@mui/material/Paper";
 import { AttendanceStatus, Class } from "@/types";
 import { useUsersContext } from "../control/UsersContext";
 import { useState } from "react";
-import { ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { Modal, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import {
   PREV_ATTENDANCE_SORT_COOKIE,
   PREV_CLASS_TYPE_COOKIE,
 } from "@/lib/cookies/cookies";
 import { headers } from "@/lib/util/getAttendanceList";
+import { formatDate, formatTime } from "@/lib/util/format";
 
 const pageSizeOpts = [25, 50, 100];
 const paginationModel = { page: 0, pageSize: pageSizeOpts[0] };
@@ -40,9 +41,18 @@ function headerWidth(h: string) {
 }
 
 export default function AttendanceSheet() {
-  const { attList } = useUsersContext();
+  const { users, attList } = useUsersContext();
   const [classType, setClassType] = useState(Class.lecture);
   const [sortModel, setSortModel] = useState<GridSortModel>(defaultSortModel);
+  const [selCell, setSelCell] = useState<{
+    name: string;
+    email: string;
+    date: string;
+    time: string;
+    status: AttendanceStatus;
+    performedBy?: string;
+    permittedBy?: string;
+  } | null>(null);
   const attendanceList = attList[classType];
 
   const columns: GridColDef[] = attendanceList[0].map((col, i) => ({
@@ -103,6 +113,30 @@ export default function AttendanceSheet() {
                 ? "bg-red-200"
                 : "bg-inherit";
           }}
+          onCellClick={(cell) => {
+            if (headers.includes(cell.colDef.headerName as string)) {
+              return;
+            }
+            const att = users
+              .find((u) => u.email === cell.id.toString())
+              ?.attendanceList.find(
+                (att) =>
+                  formatDate(att.date) === cell.colDef.headerName &&
+                  att.class === classType,
+              );
+            setSelCell({
+              name: cell.row[0],
+              email: cell.id.toString(),
+              date: cell.colDef.headerName as string,
+              time: cell.value as string,
+              status:
+                att && formatTime(att.date) === (cell.value as string)
+                  ? AttendanceStatus.present
+                  : AttendanceStatus.absent,
+              performedBy: att && att.performedBy,
+              permittedBy: att && att.permittedBy,
+            });
+          }}
           columns={columns}
           initialState={{
             pagination: { paginationModel },
@@ -138,6 +172,45 @@ export default function AttendanceSheet() {
           }}
         />
       </Paper>
+      <Modal open={selCell !== null} onClose={() => setSelCell(null)}>
+        {selCell !== null ? (
+          <div
+            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
+		    w-fit h-fit py-4 bg-white rounded-3xl flex flex-col items-center justify-center text-center"
+          >
+            <div className="w-[90%]">
+              {selCell.status === AttendanceStatus.present ? (
+                <p>
+                  {selCell.name} ({selCell.email}) marked as{" "}
+                  <span className="text-green-700">{selCell.status}</span> at{" "}
+                  <span className="text-blue-700">{selCell.time}</span> on{" "}
+                  <span className="text-blue-700">{selCell.date}</span>
+                </p>
+              ) : (
+                <p>
+                  {selCell.name} ({selCell.email}) marked as{" "}
+                  <span className="text-red-700">{selCell.status}</span> on{" "}
+                  <span className="text-blue-700">{selCell.date}</span>
+                </p>
+              )}
+              {selCell.performedBy && (
+                <p>
+                  Performed by:{" "}
+                  <span className="text-blue-700">{selCell.performedBy}</span>
+                </p>
+              )}
+              {selCell.permittedBy && (
+                <p>
+                  Permitted by:{" "}
+                  <span className="text-blue-700">{selCell.permittedBy}</span>
+                </p>
+              )}
+            </div>
+          </div>
+        ) : (
+          <></>
+        )}
+      </Modal>
     </>
   );
 }
