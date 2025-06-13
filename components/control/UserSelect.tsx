@@ -1,21 +1,24 @@
 import { UserProps } from "@/types";
 import { Dispatch, SetStateAction } from "react";
-import { useUsersContext } from "./users-context";
+import { useUsersContext } from "./UsersContext";
 import { Autocomplete, TextField } from "@mui/material";
 
 export default function UserSelect({
   val,
   setVal,
   filterFunc,
+  disabled,
 }: {
   val: UserProps | null;
   setVal: Dispatch<SetStateAction<UserProps | null>>;
   filterFunc: (user: UserProps) => boolean;
+  disabled?: boolean;
 }) {
   const { users } = useUsersContext();
 
   return (
     <Autocomplete
+      disabled={disabled}
       value={val}
       onChange={(_, newValue) => setVal(newValue)}
       options={users.filter(filterFunc)}

@@ -1,5 +1,5 @@
 "use client";
-import { UserProps } from "@/types";
+import { AttendanceDates, UserProps } from "@/types";
 import {
   createContext,
   Dispatch,
@@ -13,19 +13,22 @@ const StudentContext = createContext<StudentContextType | null>(null);
 type StudentContextType = {
   user: UserProps;
   setUser: Dispatch<SetStateAction<UserProps>>;
+  attendanceDates?: AttendanceDates;
 };
 
 export const StudentContextProvider = ({
   inputUser,
+  attendanceDates,
   children,
 }: {
   inputUser: UserProps;
+  attendanceDates?: AttendanceDates;
   children: React.ReactNode;
 }) => {
   const [user, setUser] = useState<UserProps>(inputUser);
 
   return (
-    <StudentContext.Provider value={{ user, setUser }}>
+    <StudentContext.Provider value={{ user, setUser, attendanceDates }}>
       {children}
     </StudentContext.Provider>
   );

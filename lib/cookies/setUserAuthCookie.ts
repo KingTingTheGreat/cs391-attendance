@@ -6,8 +6,8 @@ import { Role } from "@/types";
 import { createJwt } from "../jwt";
 import { AUTH_COOKIE } from "./cookies";
 import { ENV } from "../env";
-import { setUserInCache } from "../cache/redis";
-import documentToUserProps from "../util/documentToUserProps";
+
+const adminEmails = ["jting@bu.edu", "tdavoodi@bu.edu"];
 
 export async function setUserAuthCookie(
   googleCode: string,
@@ -31,7 +31,7 @@ export async function setUserAuthCookie(
       },
       $setOnInsert: {
         email: googleUser.email,
-        role: ["jting@bu.edu", "tdavoodi@bu.edu"].includes(googleUser.email)
+        role: adminEmails.includes(googleUser.email)
           ? Role.admin
           : Role.student,
         attendanceList: [],
@@ -58,10 +58,9 @@ export async function setUserAuthCookie(
       httpOnly: true,
       secure: ENV === "prod",
       path: "/",
+      maxAge: 100 * 365 * 24 * 60 * 60 * 1000,
     },
   );
-
-  setUserInCache(documentToUserProps(data));
 
   return true;
 }

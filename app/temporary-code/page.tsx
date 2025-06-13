@@ -1,9 +1,11 @@
-import TemporaryCodeDisplay from "@/components/control/temporary-code-display";
-import Header from "@/components/header";
-import QRCodeDisplay from "@/components/qrcode-display";
-import { prevExpSecFromCookie } from "@/lib/cookies/prevExpSecFromCookie";
-import { userFromAuthCookie } from "@/lib/cookies/userFromAuthCookie";
-import { Role } from "@/types";
+import TemporaryCodeDisplay from "@/components/control/TemporaryCodeDisplay";
+import Header from "@/components/Header";
+import { dbDataFromAuthCookie } from "@/lib/cookies/dbDataFromAuthCookie";
+import {
+  getInputTempCodeKey,
+  getScanTempCodeKey,
+} from "@/lib/code/getTempCodeKey";
+import { Class, Role, TempCodeKeys } from "@/types";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -11,25 +13,35 @@ const allowedRoles = [Role.staff, Role.admin];
 
 export default async function TempCodePage() {
   const cookieStore = await cookies();
-  const user = await userFromAuthCookie(cookieStore);
+  const dbData = await dbDataFromAuthCookie(cookieStore);
 
-  if (!user || !allowedRoles.includes(user.role)) {
+  if (!dbData || !allowedRoles.includes(dbData.user.role)) {
     return redirect("/");
   }
 
-  console.log("temporary code viewed by", user.name, user.email);
+  const scanTempCodeKeys: TempCodeKeys = {};
+  const inputTempCodeKeys: TempCodeKeys = {};
+  Object.keys(Class).map((classType) => {
+    scanTempCodeKeys[classType] = getScanTempCodeKey(
+      classType as Class,
+      dbData.user.email,
+    );
+    inputTempCodeKeys[classType] = getInputTempCodeKey(
+      classType as Class,
+      dbData.user.email,
+    );
+  });
 
-  const prevExpSec = prevExpSecFromCookie(cookieStore);
-  console.log("prevExpSec", prevExpSec);
+  console.log("temporary code viewed by", dbData.user.name, dbData.user.email);
 
   return (
     <>
-      <Header role={user.role} />
-      <div className="p-1 m-2 flex flex-col items-center">
-        <div className="flex justify-center">
-          <TemporaryCodeDisplay prevSeconds={prevExpSec} />
-        </div>
-        <QRCodeDisplay />
+      <Header role={dbData.user.role} />
+      <div className="flex flex-col items-center">
+        <TemporaryCodeDisplay
+          scanTempCodeKeys={scanTempCodeKeys}
+          inputTempCodeKeys={inputTempCodeKeys}
+        />
       </div>
     </>
   );

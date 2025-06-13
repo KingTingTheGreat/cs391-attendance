@@ -1,6 +1,6 @@
 import googleSignInLink from "@/lib/google/googleSignInLink";
 import Link from "next/link";
-import Header from "./header";
+import Header from "./Header";
 
 export default function SignInPage({
   errorMessage,

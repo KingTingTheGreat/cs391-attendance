@@ -1,34 +1,34 @@
 "use server";
-import { Role, ServerFuncRes } from "@/types";
+import { Class, MarkResult, Role } from "@/types";
 import { cookies } from "next/headers";
 import getCollection, { USERS_COLLECTION } from "@/db";
 import { formatDate } from "../util/format";
 import { ENV, MOCK } from "../env";
-import { userFromAuthCookie } from "../cookies/userFromAuthCookie";
 import documentToUserProps from "../util/documentToUserProps";
-import { setUserInCache } from "../cache/redis";
+import { dbDataFromAuthCookie } from "../cookies/dbDataFromAuthCookie";
 
 const allowedRoles = [Role.staff, Role.admin];
 
 export async function markStudentAbsent(
   email: string,
-  date: Date | null,
-): Promise<ServerFuncRes> {
-  if (date === null || isNaN(date.getTime())) {
-    return { success: false, message: "invalid date" };
+  date: Date,
+  classType: Class,
+): Promise<MarkResult> {
+  if (isNaN(date.getTime())) {
+    return { message: "invalid date" };
   }
 
   const cookieStore = await cookies();
-  const user = await userFromAuthCookie(cookieStore);
+  const dbData = await dbDataFromAuthCookie(cookieStore);
 
-  if (!user || !allowedRoles.includes(user.role)) {
-    return { success: false, message: "unauthorized. please sign in again." };
+  if (!dbData || !allowedRoles.includes(dbData.user.role)) {
+    return { message: "unauthorized. please sign in again." };
   }
 
+  // no way to get user data when MOCK, will show as error in the frontend
   if (ENV === "dev" && MOCK) {
     return {
-      success: true,
-      message: `successfully marked ${email} as absent on ${formatDate(date)}`,
+      message: `successfully marked ${email} as absent in ${classType} on ${formatDate(date)}`,
     };
   }
 
@@ -48,6 +48,7 @@ export async function markStudentAbsent(
             $gte: startOfDay,
             $lte: endOfDay,
           },
+          class: classType,
         },
       },
     },
@@ -57,15 +58,14 @@ export async function markStudentAbsent(
   );
   if (!data) {
     return {
-      success: false,
       message: "could not mark student as absent. please try again later.",
     };
   }
 
-  setUserInCache(documentToUserProps(data));
+  const updatedUser = documentToUserProps(data);
 
   return {
-    success: true,
+    user: updatedUser,
     message: `successfully marked ${email} as absent on ${formatDate(date)}`,
   };
 }

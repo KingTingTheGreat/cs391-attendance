@@ -1,8 +1,7 @@
-import CodeDisplay from "@/components/code-display";
-import Header from "@/components/header";
-import QRCodeDisplay from "@/components/qrcode-display";
-import { userFromAuthCookie } from "@/lib/cookies/userFromAuthCookie";
-import { todayCode } from "@/lib/generateCode";
+import TodayCodeDisplay from "@/components/control/TodayCodeDisplay";
+import Header from "@/components/Header";
+import QueryWrapper from "@/components/QueryWrapper";
+import { dbDataFromAuthCookie } from "@/lib/cookies/dbDataFromAuthCookie";
 import { Role } from "@/types";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -11,29 +10,22 @@ const allowedRoles = [Role.staff, Role.admin];
 
 export default async function CodePage() {
   const cookieStore = await cookies();
-  const user = await userFromAuthCookie(cookieStore);
+  const dbData = await dbDataFromAuthCookie(cookieStore);
 
-  if (!user || !allowedRoles.includes(user.role)) {
+  if (!dbData || !allowedRoles.includes(dbData.user.role)) {
     // only allow staff and admin to see this page
     return redirect("/");
   }
 
-  console.log("code viewed by", user.name, user.email);
+  console.log("code viewed by", dbData.user.name, dbData.user.email);
 
   return (
     <>
-      <Header role={user.role} />
+      <Header role={dbData.user.role} />
       <div className="flex justify-center">
-        <div className="p-1 m-2 flex flex-col items-center text-xl max-w-[90vw] text-center">
-          <h2 className="text-2xl font-bold text-center">Today&apos;s Code</h2>
-          <div className="flex flex-col items-center space-y-6">
-            <CodeDisplay code={todayCode()} />
-            <p className="text-center text-gray-600">
-              Use this code to confirm your attendance
-            </p>
-          </div>
-          <QRCodeDisplay />
-        </div>
+        <QueryWrapper>
+          <TodayCodeDisplay />
+        </QueryWrapper>
       </div>
     </>
   );

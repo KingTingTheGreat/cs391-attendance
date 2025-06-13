@@ -1,35 +1,35 @@
 "use server";
-import { AttendanceProps, Class, Role, ServerFuncRes } from "@/types";
+import { AttendanceProps, Class, MarkResult, Role } from "@/types";
 import { cookies } from "next/headers";
 import { startCollectionSession, USERS_COLLECTION } from "@/db";
-import { formatDate, formatDay } from "../util/format";
-import { DISCUSSION_DAYS, ENV, MOCK } from "../env";
-import { userFromAuthCookie } from "../cookies/userFromAuthCookie";
+import { formatDate } from "../util/format";
+import { ENV, MOCK } from "../env";
 import documentToUserProps from "../util/documentToUserProps";
-import { setUserInCache } from "../cache/redis";
 import { addToAttendanceList } from "../util/addToAttendanceList";
+import { dbDataFromAuthCookie } from "../cookies/dbDataFromAuthCookie";
 
 const allowedRoles = [Role.staff, Role.admin];
 
 export async function markStudentPresent(
   email: string,
-  date: Date | null,
-): Promise<ServerFuncRes> {
-  if (date === null || isNaN(date.getTime())) {
-    return { success: false, message: "invalid date" };
+  date: Date,
+  classType: Class,
+): Promise<MarkResult> {
+  if (isNaN(date.getTime())) {
+    return { message: "invalid date" };
   }
 
   const cookieStore = await cookies();
-  const user = await userFromAuthCookie(cookieStore);
+  const dbData = await dbDataFromAuthCookie(cookieStore);
 
-  if (!user || !allowedRoles.includes(user.role)) {
-    return { success: false, message: "unauthorized. please sign in again." };
+  if (!dbData || !allowedRoles.includes(dbData.user.role)) {
+    return { message: "unauthorized. please sign in again." };
   }
 
+  // no way to get user data when MOCK, will show as error in the frontend
   if (ENV === "dev" && MOCK) {
     return {
-      success: true,
-      message: `successfully marked ${email} as present on ${formatDate(date)}`,
+      message: `successfully marked ${email} as absent on ${formatDate(date)}`,
     };
   }
 
@@ -44,10 +44,10 @@ export async function markStudentPresent(
 
     const attendanceList = data.attendanceList as AttendanceProps[];
     addToAttendanceList(attendanceList, {
-      class: DISCUSSION_DAYS.includes(formatDay(date))
-        ? Class.discussion
-        : Class.lecture,
+      class: classType,
       date,
+      performedBy: dbData.user.email,
+      permittedBy: dbData.user.email,
     });
 
     // const usersCollection = await getCollection(USERS_COLLECTION);
@@ -67,25 +67,23 @@ export async function markStudentPresent(
         `could not mark ${email} as present. please try again later`,
       );
     }
-    await session.commitTransaction();
+    const updatedUser = documentToUserProps(data);
 
+    session.commitTransaction();
     console.log("SUCCESSFULLY MARKED PRESENT");
-    setUserInCache(documentToUserProps(data));
+
     return {
-      success: true,
-      message: `successfully marked ${email} as present on ${formatDate(date)}`,
+      user: updatedUser,
+      message: `successfully marked ${email} as present in ${classType} on ${formatDate(date)}`,
     };
   } catch (error) {
-    console.log("CAUGHT ERROR");
-    let message = `could not mark ${email} as present. please try again later.`;
+    await session.abortTransaction();
+    let message = "something went wrong. please try again later.";
     if (error instanceof Error) {
+      console.error("error message:", error.message);
       message = error.message;
     }
-    await session.abortTransaction();
-    return {
-      success: false,
-      message,
-    };
+    return { message };
   } finally {
     await session.endSession();
   }

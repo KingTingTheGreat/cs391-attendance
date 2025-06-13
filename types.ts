@@ -17,6 +17,8 @@ export enum AttendanceStatus {
 export type AttendanceProps = {
   class: Class;
   date: Date;
+  performedBy?: string;
+  permittedBy?: string;
 };
 
 export type PwInfo = {
@@ -58,3 +60,15 @@ export enum DayEnum {
   saturday = "saturday",
   sunday = "sunday",
 }
+
+export type AttendanceList = { [classType: string]: (string | number)[][] };
+
+export type AttendanceDates = { [classType: string]: Set<string> };
+
+export type MarkResult = { user?: UserProps; message: string };
+
+export type PresentResult =
+  | { newAtt: AttendanceProps; errorMessage?: null }
+  | { errorMessage: string };
+
+export type TempCodeKeys = { [classType: string]: string };

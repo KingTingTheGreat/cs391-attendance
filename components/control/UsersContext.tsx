@@ -1,6 +1,6 @@
 "use client";
-import { getAttendanceList } from "@/lib/util/attendanceList";
-import { Class, UserProps } from "@/types";
+import { getAttendanceList } from "@/lib/util/getAttendanceList";
+import { AttendanceList, Class, UserProps } from "@/types";
 import {
   createContext,
   Dispatch,
@@ -15,28 +15,32 @@ const UsersContext = createContext<UsersContextType | null>(null);
 type UsersContextType = {
   users: UserProps[];
   setUsers: Dispatch<SetStateAction<UserProps[]>>;
-  lecAttList: string[][];
-  discAttList: string[][];
+  attList: AttendanceList;
 };
 
 export const UsersContextProvider = ({
   usersInput,
+  initialAttList,
   children,
 }: {
   usersInput: UserProps[];
+  initialAttList: AttendanceList;
   children: React.ReactNode;
 }) => {
   const [users, setUsers] = useState<UserProps[]>(usersInput);
-  const [lecAttList, setLecAttList] = useState<string[][]>([[]]);
-  const [discAttList, setDiscAttList] = useState<string[][]>([[]]);
+  const [attList, setAttList] = useState(initialAttList);
 
   useEffect(() => {
-    setLecAttList(getAttendanceList(users, Class.lecture));
-    setDiscAttList(getAttendanceList(users, Class.discussion));
+    const tmp = { ...attList };
+    for (const clsType in Class) {
+      tmp[clsType] = getAttendanceList(users, clsType as Class);
+    }
+    setAttList(tmp);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [users]);
 
   return (
-    <UsersContext.Provider value={{ users, setUsers, lecAttList, discAttList }}>
+    <UsersContext.Provider value={{ users, setUsers, attList }}>
       {children}
     </UsersContext.Provider>
   );
