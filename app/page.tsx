@@ -1,6 +1,5 @@
 import { cookies } from "next/headers";
 import Link from "next/link";
-import SignInPage from "@/components/SignInPage";
 import StudentProfile from "@/components/student/StudentProfile";
 import Header from "@/components/Header";
 import { StudentContextProvider } from "@/components/student/StudentContext";
@@ -8,6 +7,7 @@ import markAsPresent from "@/lib/student/markAsPresent";
 import { addToAttendanceList } from "@/lib/util/addToAttendanceList";
 import { dbDataFromAuthCookie } from "@/lib/cookies/dbDataFromAuthCookie";
 import { formatDate } from "@/lib/util/format";
+import ChooseSignIn from "@/components/ChooseSignIn";
 
 export default async function Home({
   searchParams,
@@ -18,16 +18,17 @@ export default async function Home({
   const qParams = await searchParams;
   const dbData = await dbDataFromAuthCookie(cookieStore, true);
   if (!dbData) {
-    return <SignInPage errorMessage={qParams.message} />;
+    return <ChooseSignIn errorMessage={qParams.message} />;
   }
-  // don't send pw info to frontend
-  user.pwInfo = undefined;
 
   const attendanceDates = dbData.attendanceDates;
   let user = dbData.user;
   if (!user) {
-    return <SignInPage errorMessage={qParams.message} />;
+    return <ChooseSignIn errorMessage={qParams.message} />;
   }
+
+  // don't send pw info to frontend
+  user.pwInfo = undefined;
 
   if (qParams.code) {
     const res = await markAsPresent(qParams.code, true);
@@ -50,11 +51,15 @@ export default async function Home({
       <div className="flex justify-center">
         <div className="p-1 m-2 flex flex-col items-center text-xl max-w-[90vw] text-center">
           <StudentProfile />
-          <Link href="/sign-out" prefetch={false} className="hover:underline">
-            Sign Out
-          </Link>
-          <Link href="/password" className="hover:underline">
+          <Link href="/password" className="hover:underline py-2">
             Create/Edit Password
+          </Link>
+          <Link
+            href="/sign-out"
+            prefetch={false}
+            className="hover:underline py-2"
+          >
+            Sign Out
           </Link>
         </div>
       </div>

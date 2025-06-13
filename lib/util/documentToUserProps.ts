@@ -1,4 +1,4 @@
-import { AttendanceProps, Role } from "@/types";
+import { AttendanceProps, PwInfo, Role } from "@/types";
 import { Document, WithId } from "mongodb";
 
 export default function documentToUserProps(data: WithId<Document>) {
@@ -8,5 +8,6 @@ export default function documentToUserProps(data: WithId<Document>) {
     picture: data.picture,
     role: data.role as Role,
     attendanceList: data.attendanceList as AttendanceProps[],
+    pwInfo: data.pwInfo ? (data.pwInfo as PwInfo) : undefined,
   };
 }

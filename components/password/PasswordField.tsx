@@ -19,7 +19,7 @@ export default function PasswordField({
   const [show, setShow] = useState(false);
   const id = idLabel.toLowerCase().replaceAll(" ", "-");
   return (
-    <div>
+    <div className="p-1">
       <InputLabel htmlFor={id}>{idLabel}</InputLabel>
       <OutlinedInput
         id={id}
