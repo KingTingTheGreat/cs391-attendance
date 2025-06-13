@@ -27,7 +27,7 @@ export default async function signInWithPassword(
     return errorMessage;
   }
 
-  const user = documentToUserProps(data);
+  const user = documentToUserProps(data, true);
   if (!user.pwInfo) {
     return errorMessage;
   }

@@ -1,13 +1,16 @@
 import { AttendanceProps, PwInfo, Role } from "@/types";
 import { Document, WithId } from "mongodb";
 
-export default function documentToUserProps(data: WithId<Document>) {
+export default function documentToUserProps(
+  data: WithId<Document>,
+  includePwInfo?: boolean,
+) {
   return {
     name: data.name,
     email: data.email,
     picture: data.picture,
     role: data.role as Role,
     attendanceList: data.attendanceList as AttendanceProps[],
-    pwInfo: data.pwInfo ? (data.pwInfo as PwInfo) : undefined,
+    pwInfo: includePwInfo && data.pwInfo ? (data.pwInfo as PwInfo) : undefined,
   };
 }

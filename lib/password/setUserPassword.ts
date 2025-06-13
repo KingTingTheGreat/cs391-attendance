@@ -3,7 +3,7 @@ import { ServerFuncRes } from "@/types";
 import { cookies } from "next/headers";
 import { hashPassword, newSalt } from "./pwFuncs";
 import getCollection, { USERS_COLLECTION } from "@/db";
-import { ENV, MOCK } from "../env";
+import { ENABLE_PASSWORD, ENV, MOCK } from "../env";
 import { jwtDataFromAuthCookie } from "../cookies/jwtDataFromAuthCookie";
 
 const minPasswordLength = 8;
@@ -13,6 +13,13 @@ export async function setUserPassword(newPw: string): Promise<ServerFuncRes> {
     return {
       success: false,
       message: `password must be at least ${minPasswordLength} characters long`,
+    };
+  }
+
+  if (!ENABLE_PASSWORD) {
+    return {
+      success: false,
+      message: "something went wrong. please sign in again.",
     };
   }
 

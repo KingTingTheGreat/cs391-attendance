@@ -10,7 +10,7 @@ import {
 import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
 import { useActionState, useState } from "react";
 import signInWithPassword from "@/lib/password/signInWithPassword";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function PasswordSignInForm() {
   const router = useRouter();
@@ -63,8 +63,8 @@ export default function PasswordSignInForm() {
             idLabel="Password"
           />
           <div className="p-1">
-            <Button type="submit" variant="contained">
-              Sign In
+            <Button type="submit" variant="contained" disabled={pending}>
+              {!pending ? "Sign In" : "Signing In..."}
             </Button>
           </div>
         </div>

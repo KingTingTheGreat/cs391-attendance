@@ -8,6 +8,7 @@ import { addToAttendanceList } from "@/lib/util/addToAttendanceList";
 import { dbDataFromAuthCookie } from "@/lib/cookies/dbDataFromAuthCookie";
 import { formatDate } from "@/lib/util/format";
 import ChooseSignIn from "@/components/ChooseSignIn";
+import { ENABLE_PASSWORD } from "@/lib/env";
 
 export default async function Home({
   searchParams,
@@ -51,9 +52,11 @@ export default async function Home({
       <div className="flex justify-center">
         <div className="p-1 m-2 flex flex-col items-center text-xl max-w-[90vw] text-center">
           <StudentProfile />
-          <Link href="/password" className="hover:underline py-2">
-            Create/Edit Password
-          </Link>
+          {ENABLE_PASSWORD && (
+            <Link href="/password" className="hover:underline py-2">
+              Create/Edit Password
+            </Link>
+          )}
           <Link
             href="/sign-out"
             prefetch={false}
