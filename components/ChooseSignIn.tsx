@@ -1,8 +1,9 @@
 import googleSignInLink from "@/lib/google/googleSignInLink";
 import Link from "next/link";
 import Header from "./Header";
+import { ENABLE_PASSWORD } from "@/lib/env";
 
-export default function SignInPage({
+export default function ChooseSignIn({
   errorMessage,
 }: {
   errorMessage?: string;
@@ -15,10 +16,18 @@ export default function SignInPage({
           <p>Who are you? Please sign in so we can mark your attendance.</p>
           <Link
             href={googleSignInLink()}
-            className="rounded-lg px-4 py-2 m-6 border-2 hover:bg-zinc-50"
+            className="rounded-lg px-4 py-2 m-6 border-2 hover:bg-zinc-50 w-80"
           >
             Sign In With Google
           </Link>
+          {ENABLE_PASSWORD && (
+            <Link
+              href="/sign-in"
+              className="rounded-lg px-4 py-2 mt-0 m-6 border-2 hover:bg-zinc-50 w-80"
+            >
+              Sign In With Password
+            </Link>
+          )}
           {errorMessage && (
             <p>
               ERROR: <span className="text-[#F00]">{errorMessage}</span>

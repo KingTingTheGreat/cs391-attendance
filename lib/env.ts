@@ -1,6 +1,7 @@
 import { Role } from "@/types";
 
 export const ENV = process.env.ENVIRONMENT;
+export const ENABLE_PASSWORD = process.env.ENABLE_PASSWORD === "true";
 export const WINDOW_SIZE = (() => {
   const winSize = Number(process.env.WINDOW_SIZE);
   if (isNaN(winSize) || winSize < 0) {

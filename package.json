@@ -18,6 +18,7 @@
     "@mui/x-date-pickers": "^7.24.1",
     "@tanstack/react-query": "^5.74.3",
     "@vercel/speed-insights": "^1.1.0",
+    "argon2": "^0.41.1",
     "babel-plugin-react-compiler": "^19.0.0-beta-27714ef-20250124",
     "dayjs": "^1.11.13",
     "html5-qrcode": "^2.3.8",
