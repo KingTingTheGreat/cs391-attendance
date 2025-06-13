@@ -28,9 +28,6 @@ export default async function Home({
     return <ChooseSignIn errorMessage={qParams.message} />;
   }
 
-  // don't send pw info to frontend
-  user.pwInfo = undefined;
-
   if (qParams.code) {
     const res = await markAsPresent(qParams.code, true);
     if (res.errorMessage === null || res.errorMessage === undefined) {
