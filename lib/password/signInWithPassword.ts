@@ -13,6 +13,8 @@ export default async function signInWithPassword(
   email: string,
   password: string,
 ): Promise<string | null> {
+  console.log(`someone tried to log into ${email} with a password`);
+
   if (!email || !password) {
     return "email and password are both required";
   }
