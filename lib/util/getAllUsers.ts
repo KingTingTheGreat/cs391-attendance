@@ -12,7 +12,7 @@ const allowedRoles = [Role.staff, Role.admin];
 
 export async function getAllUsers(): Promise<UserProps[]> {
   const cookieStore = await cookies();
-  const authData = await dbDataFromAuthCookie(cookieStore);
+  const authData = await dbDataFromAuthCookie(cookieStore, false, true);
   if (!authData) {
     return redirect("/");
   }

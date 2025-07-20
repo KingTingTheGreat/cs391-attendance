@@ -42,7 +42,11 @@ export default async function signInWithPassword(
   const cookieStore = await cookies();
   cookieStore.set(
     AUTH_COOKIE,
-    createJwt({ name: user.name, email: user.email }),
+    createJwt({
+      name: user.name,
+      email: user.email,
+      pwSignInTime: Date.now(),
+    }),
     {
       httpOnly: true,
       secure: ENV === "prod",

@@ -24,6 +24,7 @@ export type AttendanceProps = {
 export type PwInfo = {
   pwHash: string;
   salt: string;
+  pwLastEditTime: number;
 };
 
 export type UserProps = {

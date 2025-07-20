@@ -9,7 +9,7 @@ const allowedRoles = [Role.admin];
 
 export async function deleteUser(email: string): Promise<ServerFuncRes> {
   const cookieStore = await cookies();
-  const dbData = await dbDataFromAuthCookie(cookieStore);
+  const dbData = await dbDataFromAuthCookie(cookieStore, false, true);
 
   if (!dbData || !allowedRoles.includes(dbData.user.role)) {
     return { success: false, message: "unauthorized. please sign in again." };

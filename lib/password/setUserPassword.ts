@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { hashPassword, newSalt } from "./pwFuncs";
 import getCollection, { USERS_COLLECTION } from "@/db";
 import { ENABLE_PASSWORD, ENV, MOCK } from "../env";
-import { jwtDataFromAuthCookie } from "../cookies/jwtDataFromAuthCookie";
+import { dbDataFromAuthCookie } from "../cookies/dbDataFromAuthCookie";
 
 const minPasswordLength = 8;
 
@@ -24,8 +24,8 @@ export async function setUserPassword(newPw: string): Promise<ServerFuncRes> {
   }
 
   const cookieStore = await cookies();
-  const claims = await jwtDataFromAuthCookie(cookieStore);
-  if (!claims) {
+  const dbData = await dbDataFromAuthCookie(cookieStore, false, true);
+  if (!dbData) {
     return {
       success: false,
       message: "something went wrong. please sign in again.",
@@ -44,12 +44,13 @@ export async function setUserPassword(newPw: string): Promise<ServerFuncRes> {
   const salt = newSalt();
 
   usersCollection.updateOne(
-    { email: claims.email },
+    { email: dbData.user.email },
     {
       $set: {
         pwInfo: {
           pwHash: await hashPassword(newPw, salt),
           salt: salt,
+          pwLastEditTime: Date.now(),
         },
       },
     },

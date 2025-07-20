@@ -1,10 +1,10 @@
-import { AttendanceProps, PwInfo, Role } from "@/types";
+import { AttendanceProps, PwInfo, Role, UserProps } from "@/types";
 import { Document, WithId } from "mongodb";
 
 export default function documentToUserProps(
   data: WithId<Document>,
   includePwInfo?: boolean,
-) {
+): UserProps {
   return {
     name: data.name,
     email: data.email,
