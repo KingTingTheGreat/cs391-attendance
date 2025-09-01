@@ -1,4 +1,4 @@
-import { AttendanceDates, Class, UserProps } from "@/types";
+import { AttendanceDates, Class, Role, UserProps } from "@/types";
 import { RequestCookies } from "next/dist/compiled/@edge-runtime/cookies";
 import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 import { jwtDataFromAuthCookie } from "./jwtDataFromAuthCookie";
@@ -44,6 +44,7 @@ export async function dbDataFromAuthCookie(
       $facet: {
         user: [{ $match: { email: claims.email } }, { $limit: 1 }],
         attendanceDates: [
+          { $match: { role: Role.student } },
           { $unwind: "$attendanceList" },
           {
             $project: {
