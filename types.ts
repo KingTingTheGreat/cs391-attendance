@@ -21,12 +21,19 @@ export type AttendanceProps = {
   permittedBy?: string;
 };
 
+export type PwInfo = {
+  pwHash: string;
+  salt: string;
+  pwLastEditTime: number;
+};
+
 export type UserProps = {
   name: string;
   email: string;
   picture: string;
   role: Role;
   attendanceList: AttendanceProps[];
+  pwInfo?: PwInfo;
 };
 
 export type GoogleUserProps = {

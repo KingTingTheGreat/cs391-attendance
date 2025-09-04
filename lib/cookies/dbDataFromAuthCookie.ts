@@ -22,6 +22,7 @@ function dbArrayToAttendanceDates(
 export async function dbDataFromAuthCookie(
   cookieStore: ReadonlyRequestCookies | RequestCookies,
   includeAttendanceDates?: boolean,
+  ensurePwUpToDate?: boolean,
 ): Promise<{ user: UserProps; attendanceDates?: AttendanceDates } | null> {
   const claims = await jwtDataFromAuthCookie(cookieStore);
   if (!claims) {
@@ -34,6 +35,17 @@ export async function dbDataFromAuthCookie(
     const data = await usersCollection.findOne({ email: claims.email });
     if (!data) {
       return null;
+    }
+
+    if (ensurePwUpToDate) {
+      const user = documentToUserProps(data, true);
+      if (
+        claims.pwSignInTime !== undefined &&
+        user.pwInfo !== undefined &&
+        claims.pwSignInTime < user.pwInfo.pwLastEditTime
+      ) {
+        return null;
+      }
     }
 
     return { user: documentToUserProps(data) };
@@ -104,13 +116,19 @@ export async function dbDataFromAuthCookie(
   }
 
   console.log("aggregate data", data);
+  const user = documentToUserProps(data.user);
+  if (
+    claims.pwSignInTime !== undefined &&
+    user.pwInfo !== undefined &&
+    claims.pwSignInTime < user.pwInfo.pwLastEditTime
+  ) {
+    return null;
+  }
+
   const res = {
-    user: documentToUserProps(data.user),
+    user,
     attendanceDates: dbArrayToAttendanceDates(data.attendanceDates),
   };
   console.log("aggregate res", res);
-  return {
-    user: documentToUserProps(data.user),
-    attendanceDates: dbArrayToAttendanceDates(data.attendanceDates),
-  };
+  return res;
 }

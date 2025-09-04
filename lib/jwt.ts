@@ -4,7 +4,8 @@ import { base64UrlDecode, base64UrlEncode } from "./b64";
 export type AuthClaims = {
   name: string;
   email: string;
-  expiration?: Date;
+  pwSignInDateTime?: number;
+  expiration?: number;
 };
 
 const privateKey = process.env.PRIVATE_KEY as string;
@@ -27,8 +28,7 @@ function jwtSignature(data: string): string {
 
 export function createJwt(claims: AuthClaims): string {
   if (claims.expiration === undefined) {
-    claims.expiration = new Date();
-    claims.expiration.setDate(claims.expiration.getDate() + 4); // expiration in days
+    claims.expiration = Date.now() + 4 * 24 * 60 * 60 * 1000;
   }
 
   const header = base64UrlEncode(JSON.stringify({ alg: "HS256", typ: "JWT" }));
@@ -58,7 +58,7 @@ export function verifyJwt(jwt: string): VerifyJwtRes {
   }
 
   try {
-    const claims = JSON.parse(base64UrlDecode(payload));
+    const claims = JSON.parse(base64UrlDecode(payload)) as AuthClaims;
 
     if (!claims.expiration || claims.expiration < Date.now()) {
       return { verified: false };

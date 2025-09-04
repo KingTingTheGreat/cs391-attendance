@@ -13,7 +13,7 @@ const allowedRoles = [Role.staff, Role.admin];
 
 export default async function TempCodePage() {
   const cookieStore = await cookies();
-  const dbData = await dbDataFromAuthCookie(cookieStore);
+  const dbData = await dbDataFromAuthCookie(cookieStore, false, true);
 
   if (!dbData || !allowedRoles.includes(dbData.user.role)) {
     return redirect("/");

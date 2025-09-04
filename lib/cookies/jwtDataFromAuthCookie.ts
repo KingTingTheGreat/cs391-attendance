@@ -10,6 +10,7 @@ import { AuthClaims, verifyJwt } from "../jwt";
  * does not include role or attendanceList
  * use dbDataFromAuthCookie() to get role and attendanceList
  * otherwise, returns null
+ * allows expired jwt to remain active
  */
 export async function jwtDataFromAuthCookie(
   cookieStore: ReadonlyRequestCookies | RequestCookies,
